@@ -561,6 +561,29 @@ def handle_command(text: str) -> str:
         save_state(state)
         return f"🔔 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR\nVous serez notifié quand le prix croise ce niveau (±1%)."
 
+    # ── /run ──────────────────────────────────────────────────────────────────
+    elif cmd == "/run":
+        gh_pat = os.environ.get("GH_PAT", "")
+        if not gh_pat:
+            return "⚠️ GH_PAT non configuré — impossible de déclencher un run."
+        try:
+            resp = requests.post(
+                "https://api.github.com/repos/johnbrami55/portfolio-manager/actions/workflows/portfolio_manager.yml/dispatches",
+                json={"ref": "main"},
+                headers={
+                    "Authorization": f"Bearer {gh_pat}",
+                    "Accept": "application/vnd.github+json",
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+                timeout=15,
+            )
+            if resp.status_code == 204:
+                return "🚀 Run lancé ! Tu recevras les signaux dans ~10 minutes."
+            else:
+                return f"⚠️ Erreur GitHub API: {resp.status_code} — {resp.text[:200]}"
+        except Exception as e:
+            return f"⚠️ Erreur: {e}"
+
     # ── /pause ────────────────────────────────────────────────────────────────
     elif cmd == "/pause":
         state["signals_paused"] = True
@@ -589,7 +612,8 @@ def handle_command(text: str) -> str:
             "/cash — capital disponible\n"
             "/alert <TICKER> <PRIX> — alerte prix\n"
             "/pause — suspendre les signaux\n"
-            "/resume — reprendre les signaux"
+            "/resume — reprendre les signaux\n"
+            "/run — déclencher un run immédiat"
         )
 
 
