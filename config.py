@@ -39,7 +39,7 @@ REGIME_PARAMS = {
         "beta_target_min": 1.0,
         "beta_target_max": 1.3,
         "max_beta_per_stock": 1.5,
-        "score_threshold": 65,
+        "score_threshold": 30,
         "max_lines": 6,
         "cash_pct_min": 0.10,
         "cash_pct_max": 0.15,
