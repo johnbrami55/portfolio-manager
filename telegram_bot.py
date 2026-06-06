@@ -617,6 +617,13 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
     """
     Poll Telegram for new messages and dispatch commands.
     Only processes messages from TELEGRAM_CHAT_ID.
+
+    Anti-loop guards:
+    - update_id persistence: each processed update_id is saved in portfolio_state.json
+      under "last_telegram_update_id". On next call we pass offset=last_id+1 to
+      Telegram so already-seen messages are never returned again.
+    - /run cooldown: if "last_run" in state is less than 30 minutes ago, /run is
+      silently ignored (returns a warning instead of triggering a new workflow).
     """
     try:
         _, authorized_chat_id = _get_credentials()
@@ -624,12 +631,25 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
         logger.error(str(e))
         return
 
-    updates = get_updates()
+    # ── Load last seen update_id from state ───────────────────────────────────
+    state = load_state()
+    last_update_id: int = state.get("last_telegram_update_id", 0)
+
+    # Pass offset so Telegram only returns messages we haven't seen yet
+    updates = get_updates(offset=last_update_id + 1 if last_update_id else 0)
+
+    highest_update_id = last_update_id
 
     for update in updates[-max_updates:]:
+        uid     = update.get("update_id", 0)
         msg     = update.get("message", {})
         chat_id = str(msg.get("chat", {}).get("id", ""))
         text    = msg.get("text", "")
+
+        # Track highest update_id seen in this batch regardless of whether we
+        # process the message — this prevents re-fetching on the next call.
+        if uid > highest_update_id:
+            highest_update_id = uid
 
         if not text.startswith("/"):
             continue
@@ -638,6 +658,31 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
             logger.warning(f"Unauthorized command from chat_id={chat_id}")
             continue
 
+        # ── /run cooldown: block if last_run < 30 min ago ─────────────────
+        cmd = text.strip().split()[0].lower()
+        if cmd == "/run":
+            last_run_str = state.get("last_run", "")
+            if last_run_str and last_run_str != "never":
+                try:
+                    last_run_dt = datetime.fromisoformat(last_run_str)
+                    elapsed_min = (datetime.utcnow() - last_run_dt).total_seconds() / 60
+                    if elapsed_min < 30:
+                        remaining = int(30 - elapsed_min)
+                        send_message(
+                            f"⏳ /run ignoré : un run a été lancé il y a "
+                            f"{int(elapsed_min)} min.\n"
+                            f"Réessayez dans {remaining} min."
+                        )
+                        logger.info(f"/run blocked by cooldown ({int(elapsed_min)} min ago)")
+                        continue
+                except (ValueError, TypeError):
+                    pass  # malformed date — let it through
+
         logger.info(f"Handling command: {text}")
         reply = handle_command(text)
         send_message(reply)
+
+    # ── Persist highest update_id so next call skips these messages ───────────
+    if highest_update_id > last_update_id:
+        state["last_telegram_update_id"] = highest_update_id
+        save_state(state)
