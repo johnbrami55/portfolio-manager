@@ -10,7 +10,6 @@ from config import (
 )
 
 logger = logging.getLogger(__name__)
-
 RAPIDAPI_HOST = "yahoo-finance15.p.rapidapi.com"
 
 def get_headers():
@@ -19,7 +18,7 @@ def get_headers():
         "x-rapidapi-host": RAPIDAPI_HOST,
     }
 
-def fetch_history(ticker, days=30):
+def fetch_history(ticker):
     url = f"https://{RAPIDAPI_HOST}/api/v1/markets/stock/history"
     params = {"symbol": ticker, "interval": "1d", "diffandsplits": "false"}
     try:
@@ -29,9 +28,9 @@ def fetch_history(ticker, days=30):
             return None
         body = data["body"]
         closes = [v["close"] for v in body.values() if "close" in v]
-        highs  = [v["high"]  for v in body.values() if "high"  in v]
-        lows   = [v["low"]   for v in body.values() if "low"   in v]
-        vols   = [v["volume"] for v in body.values() if "volume" in v]
+        highs = [v["high"] for v in body.values() if "high" in v]
+        lows = [v["low"] for v in body.values() if "low" in v]
+        vols = [v["volume"] for v in body.values() if "volume" in v]
         return {"closes": closes, "highs": highs, "lows": lows, "volumes": vols}
     except Exception as e:
         logger.warning(f"{ticker}: history error - {e}")
@@ -62,8 +61,39 @@ def get_liquid_universe(regime):
             if not hist or len(hist["closes"]) < 5:
                 time.sleep(0.3)
                 continue
+            n = LIQUIDITY_LOOKBACK_DAYS
+            closes = hist["closes"][-n:]
+            highs = hist["highs"][-n:]
+            lows = hist["lows"][-n:]
+            volumes = hist["volumes"][-n:]
+            last_close = closes[-1]
+            avg_volume_eur = sum(v * c for v, c in zip(volumes, closes)) / len(closes)
+            avg_spread = sum((h - l) / c for h, l, c in zip(highs, lows, closes)) / len(closes)
+            info = fetch_info(ticker)
+            market_cap = float(info.get("marketCap", 0) or 0)
+            if avg_volume_eur < min_vol:
+                time.sleep(0.3)
+                continue
+            if market_cap < min_cap:
+                time.sleep(0.3)
+                continue
+            if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
+                time.sleep(0.3)
+                continue
+            passed.append({
+                "ticker": ticker,
+                "metrics": {
+                    "avg_volume_eur": avg_volume_eur,
+                    "avg_spread": avg_spread,
+                    "market_cap": market_cap,
+                    "last_close": last_close,
+                }
+            })
+            time.sleep(0.3)
+        except Exception as e:
+            logger.warning(f"{ticker}: {e}")
+            time.sleep(0.5)
+            continue
 
-            closes  = hist["closes"][-LIQUIDITY_LOOKBACK_DAYS:]
-            highs   = hist["highs"][-LIQUIDITY_LOOKBACK_DAYS:]
-            lows    = hist["lows"][-LIQUIDITY_LOOKBACK_DAYS:]
-            volumes = hist["volumes"][-LIQUIDIT
+    logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
+    return passed
