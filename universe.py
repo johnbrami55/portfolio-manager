@@ -72,6 +72,7 @@ def get_liquid_universe(regime):
 
             passed.append({
                 "ticker": ticker,
+                "hist":   hist,
                 "metrics": {
                     "avg_volume_eur": avg_volume_eur,
                     "avg_spread":     avg_spread,
