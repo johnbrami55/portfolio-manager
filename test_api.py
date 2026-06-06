@@ -2,7 +2,7 @@ import os
 import requests
 
 key = os.environ.get("RAPIDAPI_KEY", "")
-host = "yahoo-finance187.p.rapidapi.com"
+RAPIDAPI_HOST = "yh-finance.p.rapidapi.com"
 
 headers = {
     "x-rapidapi-key": key,
