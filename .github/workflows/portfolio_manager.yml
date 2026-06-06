@@ -35,7 +35,7 @@ jobs:
         run: |
           python main.py
 
-     - name: Commit state file
+      - name: Commit state file
         run: |
           git config --global user.name "portfolio-bot"
           git config --global user.email "portfolio-bot@github-actions"
