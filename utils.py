@@ -88,8 +88,9 @@ def compute_betas(tickers: list[str]) -> dict:
         logger.error(f"Failed to download CAC40 for beta: {e}")
         return {t: 1.0 for t in tickers}
 
-    for ticker in tickers:
+     for ticker in tickers:
         try:
+            time.sleep(1)
             stock_data = yf.download(ticker, period="1y", progress=False, auto_adjust=True)
             if stock_data.empty:
                 betas[ticker] = 1.0
