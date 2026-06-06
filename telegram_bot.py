@@ -18,6 +18,16 @@ logger = logging.getLogger(__name__)
 TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
 
 
+def exchange_of(ticker: str) -> str:
+    if ticker.endswith(".PA"):
+        return "Euronext Paris"
+    if ticker.endswith(".AS"):
+        return "Euronext Amsterdam"
+    if ticker.endswith(".MI"):
+        return "Borsa Italiana (Milan)"
+    return "Euronext"
+
+
 def _get_credentials() -> tuple[str, str]:
     """Retrieve bot token and chat ID from environment."""
     token   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
@@ -80,16 +90,23 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
     if params.get("trailing_stop_pct"):
         trailing_line = f"\nTrailing stop: activated above +{params['trailing_stop_trigger']:.0%}"
 
+    exchange   = exchange_of(t["ticker"])
+    atr_pct    = t.get("atr_pct")
+    atr_line   = f"\nATR(14): {atr_pct:.1%} (volatilité)" if atr_pct else ""
+    dyn_stop   = t["model_price"] * (1 - 1.5 * atr_pct) if atr_pct else None
+    stop_final = max(t["stop_loss"], dyn_stop) if dyn_stop else t["stop_loss"]
+
     text = (
         f"🟢 *SIGNAL BUY — {regime} REGIME*\n"
-        f"📈 *{t['ticker']}*\n"
+        f"📈 *{t['ticker']}* — {exchange}\n"
         f"Score: {t['score']:.0f}/100 | Beta: {t['beta']:.2f}\n"
         f"Suggested weight: {t['weight']:.0%} (~{t['position_eur']:.0f} EUR)\n"
         f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR\n"
         f"\n*Technical: {t['tech_score']:.0f}/50*\n{tech_lines}"
         f"\n*Fundamental: {t['fund_score']:.0f}/50*\n{fund_lines}"
         f"{bonus_line}\n"
-        f"\nStop-loss: {t['stop_loss']:.2f} EUR ({params['stop_loss_pct']:.0%})"
+        f"\nStop-loss: {stop_final:.2f} EUR ({params['stop_loss_pct']:.0%})"
+        f"{atr_line}"
         f"\nTake-profit: {t['take_profit']:.2f} EUR (+{params['take_profit_pct']:.0%})"
         f"{trailing_line}\n"
         f"\n*Portfolio after trade:*\n"
