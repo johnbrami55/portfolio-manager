@@ -1,7 +1,8 @@
 import logging
 import time
+import os
+import requests
 import yfinance as yf
-import pandas as pd
 from config import (
     FULL_UNIVERSE,
     LIQUIDITY_MIN_VOLUME_EUR, LIQUIDITY_MIN_MARKET_CAP_EUR,
@@ -11,55 +12,40 @@ from config import (
 
 logger = logging.getLogger(__name__)
 
+def get_session():
+    cookie = os.environ.get("YAHOO_COOKIE", "")
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Cookie": cookie,
+    })
+    return session
+
 def get_liquid_universe(regime):
     logger.info(f"Scanning {len(FULL_UNIVERSE)} tickers (regime={regime})...")
     passed = []
-
     min_vol = BEAR_MIN_VOLUME_EUR if regime == "BEAR" else LIQUIDITY_MIN_VOLUME_EUR
     min_cap = BEAR_MIN_MARKET_CAP_EUR if regime == "BEAR" else LIQUIDITY_MIN_MARKET_CAP_EUR
-
-    # Download all tickers in one batch request
-    try:
-        data = yf.download(
-            FULL_UNIVERSE,
-            period=f"{LIQUIDITY_LOOKBACK_DAYS + 5}d",
-            progress=False,
-            auto_adjust=True,
-            group_by="ticker",
-        )
-    except Exception as e:
-        logger.error(f"Batch download failed: {e}")
-        return []
+    session = get_session()
 
     for ticker in FULL_UNIVERSE:
         try:
-            if len(FULL_UNIVERSE) > 1:
-                hist = data[ticker].dropna(how="all").tail(LIQUIDITY_LOOKBACK_DAYS)
-            else:
-                hist = data.dropna(how="all").tail(LIQUIDITY_LOOKBACK_DAYS)
-
+            tk = yf.Ticker(ticker, session=session)
+            hist = tk.history(period=f"{LIQUIDITY_LOOKBACK_DAYS + 5}d")
             if hist.empty or len(hist) < 5:
                 continue
-
+            hist = hist.tail(LIQUIDITY_LOOKBACK_DAYS)
             avg_volume_eur = (hist["Volume"] * hist["Close"]).mean()
             avg_spread = ((hist["High"] - hist["Low"]) / hist["Close"]).mean()
             last_close = float(hist["Close"].iloc[-1])
-
-            # Get market cap separately (no choice)
-            try:
-                info = yf.Ticker(ticker).info
-                market_cap = info.get("marketCap", 0) or 0
-                time.sleep(0.5)
-            except Exception:
-                market_cap = min_cap + 1
-
+            info = tk.info
+            market_cap = info.get("marketCap", 0) or 0
             if avg_volume_eur < min_vol:
                 continue
             if market_cap < min_cap:
                 continue
             if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
                 continue
-
             passed.append({
                 "ticker": ticker,
                 "metrics": {
@@ -69,9 +55,10 @@ def get_liquid_universe(regime):
                     "last_close": last_close,
                 }
             })
-
+            time.sleep(0.5)
         except Exception as e:
-            logger.debug(f"{ticker}: {e}")
+            logger.warning(f"{ticker}: {e}")
+            time.sleep(1)
             continue
 
     logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
