@@ -31,6 +31,7 @@ jobs:
       - name: Test API
         env:
           RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
         run: |
            python test_api.py
 
