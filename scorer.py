@@ -121,7 +121,7 @@ def score_ticker(ticker, regime, universe_returns, beta):
     }
     try:
         hist = fetch_daily(ticker)
-        time.sleep(12)
+        time.sleep(6)
         if not hist or len(hist["closes"]) < 50:
             result["error"] = "Insufficient data"
             return result
@@ -173,7 +173,7 @@ def score_universe(liquid_tickers, regime, betas):
         t = item["ticker"]
         try:
             hist = fetch_daily(t)
-            time.sleep(12)
+            time.sleep(6)
             if hist and len(hist["closes"]) >= 63:
                 ret = (hist["closes"][0] - hist["closes"][62]) / hist["closes"][62]
                 universe_returns.append(ret)
