@@ -52,7 +52,7 @@ def get_liquid_universe(regime):
         try:
             hist = fetch_history(ticker)
             if not hist or len(hist["closes"]) < 5:
-                time.sleep(12)
+                time.sleep(6)
                 continue
 
             closes  = hist["closes"]
@@ -66,9 +66,9 @@ def get_liquid_universe(regime):
             market_cap     = min_cap + 1  # Alpha Vantage gratuit n'a pas market cap
 
             if avg_volume_eur < min_vol:
-                time.sleep(12); continue
+                time.sleep(6); continue
             if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
-                time.sleep(12); continue
+                time.sleep(6); continue
 
             passed.append({
                 "ticker": ticker,
@@ -80,11 +80,11 @@ def get_liquid_universe(regime):
                 }
             })
             logger.info(f"{ticker}: OK (vol={avg_volume_eur:.0f} EUR)")
-            time.sleep(12)
+            time.sleep(6)
 
         except Exception as e:
             logger.warning(f"{ticker}: {e}")
-            time.sleep(12)
+            time.sleep(6)
             continue
 
     logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
