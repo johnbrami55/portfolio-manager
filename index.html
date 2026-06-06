@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Dashboard · johnbrami55</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#060709;--s1:#0e1016;--s2:#14161e;--s3:#1c1f2b;
+  --border:#252836;--border2:#2e3347;
+  --text:#e8eaf0;--muted:#6b7280;--dim:#4b5563;
+  --green:#00d084;--red:#ff4757;--yellow:#ffa502;--blue:#3d8ef8;--purple:#a78bfa;
+  --bull:#00d084;--neutral:#ffa502;--bear:#ff4757;
+  --font:'SF Mono','Fira Code','Consolas',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:44px;background:var(--s1);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+#topbar .brand{font-size:14px;font-weight:700;letter-spacing:1px;color:#fff}
+#topbar .brand span{color:var(--blue)}
+.regime-pill{padding:3px 12px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:.8px}
+.BULL{background:rgba(0,208,132,.15);color:var(--bull);border:1px solid rgba(0,208,132,.3)}
+.NEUTRAL{background:rgba(255,165,2,.15);color:var(--neutral);border:1px solid rgba(255,165,2,.3)}
+.BEAR{background:rgba(255,71,87,.15);color:var(--bear);border:1px solid rgba(255,71,87,.3)}
+.paused-badge{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3);padding:3px 10px;border-radius:3px;font-size:10px;display:none}
+#ts{color:var(--muted);font-size:11px}
+#refresh-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font)}
+#refresh-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ── NAV TABS ── */
+#nav{display:flex;background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;gap:2px}
+.tab-btn{padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;font-family:var(--font);transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── MAIN ── */
+main{max-width:1400px;margin:0 auto;padding:20px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:14px 16px}
+.kpi .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kpi .val{font-size:20px;font-weight:700;line-height:1}
+.kpi .sub{font-size:10px;color:var(--muted);margin-top:5px}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+.neu{color:var(--yellow)}
+
+/* ── PANEL ── */
+.panel{background:var(--s2);border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.panel-hdr .title{color:var(--text)}
+.panel-body{padding:16px}
+
+/* ── POSITIONS ── */
+.pos-card{background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.pos-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.pos-ticker{font-size:15px;font-weight:700}
+.pos-xch{font-size:10px;color:var(--muted);margin-top:2px}
+.pos-pnl{text-align:right}
+.pos-pnl .big{font-size:15px;font-weight:700}
+.pos-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;font-size:11px}
+.pos-meta .m-lbl{color:var(--muted);margin-bottom:2px}
+.pos-meta .m-val{font-weight:600}
+/* Gauge: stop ← current → target */
+.gauge-wrap{margin-top:6px}
+.gauge-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
+.gauge-track{height:6px;background:var(--border);border-radius:3px;position:relative;overflow:visible}
+.gauge-fill-stop{position:absolute;left:0;top:0;height:100%;background:var(--red);border-radius:3px 0 0 3px;opacity:.4}
+.gauge-fill-tp{position:absolute;right:0;top:0;height:100%;background:var(--green);border-radius:0 3px 3px 0;opacity:.4}
+.gauge-cursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;border:2px solid #fff;background:var(--blue);z-index:2}
+
+/* ── TABLES ── */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{background:var(--s1);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;text-align:right;font-weight:600;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap}
+.data-table th:first-child{text-align:left}
+.data-table th:hover{color:var(--text)}
+.data-table td{padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.data-table td:first-child{text-align:left;font-weight:600}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(255,255,255,.02)}
+.rank{color:var(--muted);font-weight:400;margin-right:4px}
+.score-bar{display:inline-flex;align-items:center;gap:6px}
+.score-track{width:60px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.score-fill{height:100%;border-radius:2px}
+
+/* ── SENSI ── */
+.sensi-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.sensi-grid{grid-template-columns:1fr}}
+.slider-wrap{margin:12px 0}
+.slider-wrap label{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px}
+.slider-wrap label span{color:var(--text);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.impact-card{background:var(--s3);border:1px solid var(--border);border-radius:4px;padding:10px;text-align:center}
+.impact-card .ilbl{font-size:10px;color:var(--muted);margin-bottom:4px}
+.impact-card .ival{font-size:16px;font-weight:700}
+.var-table td,.var-table th{padding:8px 12px}
+.sector-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.sector-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.sector-bar{height:100%;background:var(--blue);border-radius:3px}
+
+/* ── RADAR ── */
+.scoring-layout{display:grid;grid-template-columns:1fr 320px;gap:16px}
+@media(max-width:900px){.scoring-layout{grid-template-columns:1fr}}
+.radar-panel{background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:14px}
+.radar-panel h4{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+#radarChart{max-width:280px;margin:0 auto;display:block}
+
+/* ── SCENARIOS ── */
+.scenarios-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.scenarios-grid{grid-template-columns:1fr}}
+.stress-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.stress-row:last-child{border-bottom:none}
+.stress-lbl{width:140px;font-size:11px;color:var(--muted)}
+.stress-bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.stress-bar{height:100%;border-radius:4px}
+.stress-val{width:80px;text-align:right;font-size:12px;font-weight:600}
+.sim-form{display:grid;gap:10px}
+.sim-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px}
+.sim-form input{width:100%;background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:4px;font-family:var(--font);font-size:12px}
+.sim-form input:focus{outline:none;border-color:var(--blue)}
+.sim-btn{background:var(--blue);color:#fff;border:none;padding:9px 16px;border-radius:4px;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:700}
+.sim-result{background:var(--s3);border:1px solid var(--border);border-radius:4px;padding:12px;margin-top:10px;font-size:12px;display:none}
+.sim-result .sr-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)}
+.sim-result .sr-row:last-child{border-bottom:none}
+
+/* ── FILTER ── */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter-bar input{background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:4px;font-family:var(--font);font-size:11px;width:180px}
+.filter-bar input:focus{outline:none;border-color:var(--blue)}
+.filter-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--font);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.filter-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(61,142,248,.08)}
+
+/* ── TAG ── */
+.xch-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-left:4px}
+.xch-tag.PA{background:rgba(61,142,248,.15);color:var(--blue)}
+.xch-tag.AS{background:rgba(255,165,2,.15);color:var(--yellow)}
+.xch-tag.MI{background:rgba(167,139,250,.15);color:var(--purple)}
+
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:12px}
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* ── CHART CANVAS ── */
+.chart-wrap{position:relative;height:220px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="brand">PM<span>·</span>DASHBOARD</div>
+    <span id="regime-pill" class="regime-pill NEUTRAL">NEUTRAL</span>
+    <span id="paused-badge" class="paused-badge">⏸ PAUSED</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span id="ts">—</span>
+    <button id="refresh-btn" onclick="loadData()">↻ Refresh</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('positions',this)">Positions</button>
+  <button class="tab-btn" onclick="switchTab('sensi',this)">Sensibilités</button>
+  <button class="tab-btn" onclick="switchTab('scoring',this)">Scoring</button>
+  <button class="tab-btn" onclick="switchTab('scenarios',this)">Scénarios</button>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════ DASHBOARD -->
+<div id="tab-dashboard" class="tab-pane active">
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi"><div class="lbl">Valeur totale</div><div class="val" id="kpi-total">—</div><div class="sub" id="kpi-pnl-eur">—</div></div>
+    <div class="kpi"><div class="lbl">P&amp;L Global</div><div class="val" id="kpi-pnl-pct">—</div><div class="sub">vs capital initial</div></div>
+    <div class="kpi"><div class="lbl">Cash</div><div class="val" id="kpi-cash">—</div><div class="sub" id="kpi-cash-pct">—</div></div>
+    <div class="kpi"><div class="lbl">Beta portefeuille</div><div class="val" id="kpi-beta">—</div><div class="sub">exposition marché</div></div>
+    <div class="kpi"><div class="lbl">Positions</div><div class="val" id="kpi-npos">—</div><div class="sub" id="kpi-max-lines">—</div></div>
+    <div class="kpi"><div class="lbl">Dernier run</div><div class="val" style="font-size:13px" id="kpi-run">—</div><div class="sub" id="kpi-run-sub">—</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hdr"><span class="title">Résumé de Marché</span><span id="regime-detail">—</span></div>
+    <div class="panel-body">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Paramètres du régime</div>
+          <div id="regime-params" style="font-size:12px;line-height:2;color:var(--muted)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Exposition sectorielle</div>
+          <div id="dash-sectors">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Alertes prix actives</div>
+          <div id="dash-alerts" style="font-size:12px;line-height:2">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hdr"><span class="title">Top 5 Tickers du dernier run</span></div>
+    <div class="panel-body" id="dash-top5">—</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ POSITIONS -->
+<div id="tab-positions" class="tab-pane">
+  <div class="panel">
+    <div class="panel-hdr"><span class="title">Positions ouvertes</span><span id="pos-count" style="color:var(--muted)">—</span></div>
+    <div class="panel-body" id="positions-container">
+      <div class="empty-state">Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SENSIBILITÉS -->
+<div id="tab-sensi" class="tab-pane">
+  <div class="sensi-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="title">Simulateur de choc marché</span></div>
+        <div class="panel-body">
+          <div class="slider-wrap">
+            <label>Mouvement marché <span id="slider-val">0%</span></label>
+            <input type="range" id="market-slider" min="-20" max="20" value="0" step="1" oninput="updateSensi(this.value)">
+          </div>
+          <div class="impact-grid" id="sensi-impact">
+            <div class="impact-card"><div class="ilbl">Impact P&amp;L</div><div class="ival" id="si-pnl">—</div></div>
+            <div class="impact-card"><div class="ilbl">Nouvelles valeur</div><div class="ival" id="si-val">—</div></div>
+            <div class="impact-card"><div class="ilbl">Cash %</div><div class="ival" id="si-cash-pct">—</div></div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">VaR du portefeuille</div>
+          <table class="data-table var-table">
+            <thead><tr><th style="text-align:left">Horizon</th><th>VaR 99%</th><th>VaR 95%</th><th>VaR 90%</th></tr></thead>
+            <tbody id="var-table-body"><tr><td colspan="4" style="text-align:center;color:var(--muted)">—</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="title">Exposition sectorielle</span></div>
+        <div class="panel-body" id="sector-panel">—</div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <div class="panel-hdr"><span class="title">Stress scenarios</span></div>
+        <div class="panel-body" id="stress-panel">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SCORING -->
+<div id="tab-scoring" class="tab-pane">
+  <div class="scoring-layout">
+    <div>
+      <div class="filter-bar">
+        <input type="text" id="score-filter" placeholder="Filtrer ticker…" oninput="filterScores()">
+        <button class="filter-btn active" onclick="setSortScore(this,'score')">Score ↓</button>
+        <button class="filter-btn" onclick="setSortScore(this,'tech_score')">Tech</button>
+        <button class="filter-btn" onclick="setSortScore(this,'beta')">Beta</button>
+      </div>
+      <div class="panel" style="overflow-x:auto">
+        <table class="data-table" id="scores-table">
+          <thead><tr>
+            <th style="text-align:left">#  Ticker</th>
+            <th>Score</th><th>Tech</th><th>Trend</th><th>RSI</th>
+            <th>MACD</th><th>Boll.</th><th>StRSI</th><th>Mom.</th><th>Beta</th><th>ATR%</th>
+          </tr></thead>
+          <tbody id="scores-tbody"><tr><td colspan="11" class="empty-state">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="radar-panel">
+        <h4 id="radar-title">Sélectionnez un ticker</h4>
+        <canvas id="radarChart"></canvas>
+        <div id="radar-sigs" style="margin-top:12px;font-size:10px;color:var(--muted);line-height:1.8"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ SCÉNARIOS -->
+<div id="tab-scenarios" class="tab-pane">
+  <div class="scenarios-grid">
+    <div class="panel">
+      <div class="panel-hdr"><span class="title">Stress Test</span><span style="color:var(--muted)">Impact sur le portefeuille</span></div>
+      <div class="panel-body" id="stress-scenarios">—</div>
+    </div>
+    <div class="panel">
+      <div class="panel-hdr"><span class="title">Simulateur d'ajout de position</span></div>
+      <div class="panel-body">
+        <div class="sim-form">
+          <div>
+            <label>Ticker (ex: AIR.PA)</label>
+            <input type="text" id="sim-ticker" placeholder="AIR.PA" style="text-transform:uppercase">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <label>Nb titres</label>
+              <input type="number" id="sim-shares" placeholder="3" min="1">
+            </div>
+            <div>
+              <label>Prix (€)</label>
+              <input type="number" id="sim-price" placeholder="145.00" step="0.01">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <label>Beta estimé</label>
+              <input type="number" id="sim-beta" placeholder="1.2" step="0.01">
+            </div>
+            <div>
+              <label>Stop-loss %</label>
+              <input type="number" id="sim-stop" placeholder="8" step="0.5">
+            </div>
+          </div>
+          <button class="sim-btn" onclick="runSimulator()">▶ Simuler</button>
+        </div>
+        <div class="sim-result" id="sim-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const OWNER  = 'johnbrami55';
+const DASH_REPO = 'portfolio-dashboard';
+const RAW    = `https://raw.githubusercontent.com/${OWNER}/${DASH_REPO}/main`;
+const STATE_URL  = `${RAW}/portfolio_state.json`;
+const SCORES_URL = `${RAW}/scores_latest.json`;
+
+const REGIME_PARAMS = {
+  BULL:    {score_threshold:60,max_lines:7,stop_loss_pct:-.10,take_profit_pct:.22,cash_pct_min:.00,cash_pct_max:.00,beta_target_min:1.3,beta_target_max:1.6},
+  NEUTRAL: {score_threshold:65,max_lines:6,stop_loss_pct:-.08,take_profit_pct:.18,cash_pct_min:.10,cash_pct_max:.15,beta_target_min:1.0,beta_target_max:1.3},
+  BEAR:    {score_threshold:72,max_lines:5,stop_loss_pct:-.06,take_profit_pct:.14,cash_pct_min:.20,cash_pct_max:.30,beta_target_min:.7,beta_target_max:1.0},
+};
+const SECTOR_MAP = {
+  'AI.PA':'Materials','AIR.PA':'Industrials','ALO.PA':'Industrials','MT.AS':'Materials',
+  'CS.PA':'Financials','BNP.PA':'Financials','EN.PA':'Industrials','CAP.PA':'Technology',
+  'CA.PA':'Consumer Staples','ACA.PA':'Financials','BN.PA':'Consumer Staples','DSY.PA':'Technology',
+  'ENGI.PA':'Utilities','EL.PA':'Consumer Discretionary','RMS.PA':'Consumer Discretionary',
+  'KER.PA':'Consumer Discretionary','LR.PA':'Industrials','MC.PA':'Consumer Discretionary',
+  'ML.PA':'Consumer Discretionary','ORA.PA':'Communication','RI.PA':'Consumer Staples',
+  'PUB.PA':'Communication','RNO.PA':'Consumer Discretionary','SAF.PA':'Industrials',
+  'SGO.PA':'Industrials','SAN.PA':'Health Care','SU.PA':'Industrials','GLE.PA':'Financials',
+  'STM.PA':'Technology','HO.PA':'Industrials','TTE.PA':'Energy','VIE.PA':'Utilities',
+  'DG.PA':'Industrials','VIV.PA':'Communication','WLN.PA':'Technology',
+  'ADYEN.AS':'Technology','AGN.AS':'Financials','AD.AS':'Consumer Staples','AKZA.AS':'Materials',
+  'ASM.AS':'Technology','ASML.AS':'Technology','ASRNL.AS':'Financials','BESI.AS':'Technology',
+  'EXOR.AS':'Financials','HEIA.AS':'Consumer Staples','IMCD.AS':'Materials','INGA.AS':'Financials',
+  'DSFIR.AS':'Materials','KPN.AS':'Communication','NN.AS':'Financials','PHIA.AS':'Health Care',
+  'PRX.AS':'Technology','RAND.AS':'Industrials','REN.AS':'Industrials','SHELL.AS':'Energy',
+  'UMG.AS':'Communication','UNA.AS':'Consumer Staples','VPK.AS':'Materials','WKL.AS':'Technology',
+};
+
+let STATE = null, SCORES = [], sortKey = 'score', radarChart = null;
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+const f2 = n => n == null ? '—' : Number(n).toFixed(2);
+const f1 = n => n == null ? '—' : Number(n).toFixed(1);
+const f0 = n => n == null ? '—' : Number(n).toFixed(0);
+const fpct = (n,d=1) => n == null ? '—' : (n>=0?'+':'')+( Number(n)*100).toFixed(d)+'%';
+const feur = n => n == null ? '—' : (n>=0?'+':'')+Number(n).toFixed(0)+' €';
+const cc   = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+const xchTag = t => {
+  if(!t) return '';
+  if(t.endsWith('.PA')) return '<span class="xch-tag PA">PAR</span>';
+  if(t.endsWith('.AS')) return '<span class="xch-tag AS">AMS</span>';
+  if(t.endsWith('.MI')) return '<span class="xch-tag MI">MIL</span>';
+  return '';
+};
+const exchange = t => t.endsWith('.PA')?'Euronext Paris':t.endsWith('.AS')?'Euronext Amsterdam':t.endsWith('.MI')?'Borsa Italiana':'Euronext';
+const sector = t => SECTOR_MAP[t] || 'Other';
+const scoreColor = s => s>=70?'#00d084':s>=50?'#ffa502':'#ff4757';
+
+function portfolioBeta(positions) {
+  const vals = Object.values(positions);
+  const total = vals.reduce((a,p)=>a+(p.position_eur||0),0);
+  if(!total) return 0;
+  return vals.reduce((a,p)=>a+(p.beta||1)*(p.position_eur||0),0)/total;
+}
+
+function sectorExposure(positions) {
+  const vals = Object.values(positions);
+  const total = vals.reduce((a,p)=>a+(p.position_eur||0),0);
+  if(!total) return {};
+  const exp = {};
+  Object.entries(positions).forEach(([t,p])=>{
+    const s = sector(t);
+    exp[s] = (exp[s]||0) + (p.position_eur||0)/total;
+  });
+  return exp;
+}
+
+// ─── DATA LOAD ───────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const [sr, scr] = await Promise.all([
+      fetch(STATE_URL+'?t='+Date.now()),
+      fetch(SCORES_URL+'?t='+Date.now()).catch(()=>null),
+    ]);
+    STATE = await sr.json();
+    if(scr && scr.ok) {
+      const sd = await scr.json();
+      SCORES = sd.tickers || sd;
+    } else {
+      SCORES = STATE.last_scores || [];
+    }
+    renderAll();
+  } catch(e) {
+    document.getElementById('positions-container').innerHTML =
+      `<div class="empty-state">⚠ Impossible de charger les données.<br><small style="color:var(--dim)">${e.message}</small></div>`;
+  }
+}
+
+// ─── RENDER ALL ──────────────────────────────────────────────────────────────
+function renderAll() {
+  const s = STATE;
+  const regime   = s.current_regime || 'NEUTRAL';
+  const initial  = s.initial_capital || 1890;
+  const cash     = s.cash_eur || 0;
+  const positions= s.positions || {};
+  const perf     = s.performance || {};
+  const pnlEur   = perf.total_pnl_eur || 0;
+  const pnlPct   = perf.total_pnl_pct || 0;
+  const posVal   = Object.values(positions).reduce((a,p)=>a+(p.position_eur||0),0);
+  const totalVal = posVal + cash;
+  const beta     = portfolioBeta(positions);
+  const params   = REGIME_PARAMS[regime] || REGIME_PARAMS.NEUTRAL;
+  const nPos     = Object.keys(positions).length;
+
+  // Topbar
+  const pill = document.getElementById('regime-pill');
+  pill.textContent = regime; pill.className = 'regime-pill '+regime;
+  const lr = s.last_run ? s.last_run.replace('T',' ').slice(0,16)+' UTC' : '—';
+  document.getElementById('ts').textContent = lr;
+  document.getElementById('paused-badge').style.display = s.signals_paused?'inline-block':'none';
+
+  // KPIs
+  el('kpi-total').textContent = f0(totalVal)+' €';
+  el('kpi-pnl-eur').innerHTML = `<span class="${cc(pnlEur)}">${feur(pnlEur)}</span>`;
+  el('kpi-pnl-pct').innerHTML = `<span class="${cc(pnlPct)}">${fpct(pnlPct)}</span>`;
+  el('kpi-cash').textContent = f0(cash)+' €';
+  el('kpi-cash-pct').textContent = totalVal?fpct(cash/totalVal)+' du port.':'—';
+  el('kpi-beta').innerHTML = `<span class="${beta>1.3?'neg':beta<0.8?'pos':''}">${f2(beta)}</span>`;
+  el('kpi-npos').textContent = nPos;
+  el('kpi-max-lines').textContent = `/ ${params.max_lines} max`;
+  el('kpi-run').textContent = s.last_run?s.last_run.slice(0,10):'—';
+
+  // Regime detail
+  el('regime-detail').innerHTML = `<span class="regime-pill ${regime}">${regime}</span>`;
+  el('regime-params').innerHTML = [
+    `Seuil score: <b>${params.score_threshold}</b>`,
+    `Beta cible: <b>${params.beta_target_min}–${params.beta_target_max}</b>`,
+    `Stop: <b>${fpct(params.stop_loss_pct)}</b>`,
+    `TP: <b>${fpct(params.take_profit_pct)}</b>`,
+    `Cash min: <b>${fpct(params.cash_pct_min)}</b>`,
+  ].map(l=>`<div>${l}</div>`).join('');
+
+  // Sectors
+  const sexp = sectorExposure(positions);
+  renderSectorMini('dash-sectors', sexp);
+  renderSectorPanel(sexp, cash, totalVal);
+
+  // Alerts
+  const alerts = s.price_alerts || {};
+  const alertKeys = Object.keys(alerts);
+  el('dash-alerts').innerHTML = alertKeys.length
+    ? alertKeys.map(t=>`<div>${t} → <b>${f2(alerts[t])} €</b></div>`).join('')
+    : '<span style="color:var(--muted)">Aucune alerte</span>';
+
+  // Top5
+  renderTop5();
+
+  // Positions tab
+  renderPositions(positions, regime, params);
+  el('pos-count').textContent = `${nPos} position${nPos>1?'s':''}`;
+
+  // Sensi
+  updateSensi(document.getElementById('market-slider').value);
+  renderVaR(beta, totalVal, cash);
+  renderStressSensi(beta, totalVal, posVal);
+
+  // Scoring
+  renderScores();
+
+  // Scenarios stress
+  renderStressScenarios(beta, totalVal, posVal, positions);
+}
+
+function el(id){return document.getElementById(id)}
+
+// ─── TOP5 ────────────────────────────────────────────────────────────────────
+function renderTop5() {
+  const top = [...SCORES].sort((a,b)=>b.score-a.score).slice(0,5);
+  if(!top.length){el('dash-top5').innerHTML='<div class="empty-state">Aucun score disponible</div>';return;}
+  const medals=['🥇','🥈','🥉','4.','5.'];
+  el('dash-top5').innerHTML = top.map((s,i)=>{
+    const bd=s.breakdown||{};
+    const sc=s.score||0;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:16px;width:28px">${medals[i]}</span>
+      <span style="font-weight:700;width:90px">${s.ticker}${xchTag(s.ticker)}</span>
+      <span style="color:${scoreColor(sc)};font-weight:700;width:50px">${f1(sc)}</span>
+      <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+        <div style="width:${sc}%;height:100%;background:${scoreColor(sc)};border-radius:2px"></div>
+      </div>
+      <span style="color:var(--muted);font-size:11px;width:60px">β ${f2(s.beta)}</span>
+      <span style="color:var(--muted);font-size:10px">${sector(s.ticker)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── POSITIONS ───────────────────────────────────────────────────────────────
+function renderPositions(positions, regime, params) {
+  const container = el('positions-container');
+  const entries = Object.entries(positions);
+  if(!entries.length){container.innerHTML='<div class="empty-state">Aucune position ouverte</div>';return;}
+  container.innerHTML = entries.map(([ticker,pos])=>{
+    const entry  = pos.entry_price||0;
+    const stop   = pos.stop_loss||entry*(1+params.stop_loss_pct);
+    const tp     = pos.take_profit||entry*(1+params.take_profit_pct);
+    const shares = pos.nb_shares||0;
+    const range  = tp - stop;
+    const pct    = range>0 ? Math.max(0,Math.min(100,(entry-stop)/range*100)) : 50;
+    const distStopPct = entry?(entry-stop)/entry:0;
+    const distTpPct   = entry?(tp-entry)/entry:0;
+    const distStopEur = (entry-stop)*shares;
+    const distTpEur   = (tp-entry)*shares;
+    const entryDate   = pos.entry_date||'—';
+    const days = (() => { try{const d=new Date(entryDate);return Math.floor((Date.now()-d)/86400000);} catch{return 0;}})();
+    // Estimated P&L at entry (no live price in static dashboard)
+    const posEur = pos.position_eur||(entry*shares);
+    return `<div class="pos-card">
+      <div class="pos-top">
+        <div>
+          <div class="pos-ticker">${ticker}${xchTag(ticker)}</div>
+          <div class="pos-xch">${exchange(ticker)} · ${sector(ticker)} · ${days}j</div>
+        </div>
+        <div class="pos-pnl">
+          <div class="big" style="color:var(--muted)">Entrée ${f2(entry)} €</div>
+          <div style="font-size:11px;color:var(--muted)">${shares} titres · ${f0(posEur)} €</div>
+        </div>
+      </div>
+      <div class="pos-meta">
+        <div><div class="m-lbl">Stop-loss</div><div class="m-val neg">${f2(stop)} €</div></div>
+        <div><div class="m-lbl">Take-profit</div><div class="m-val pos">${f2(tp)} €</div></div>
+        <div><div class="m-lbl">Dist. stop</div><div class="m-val neg">-${fpct(distStopPct)} · ${f0(distStopEur)}€</div></div>
+        <div><div class="m-lbl">Dist. TP</div><div class="m-val pos">+${fpct(distTpPct)} · +${f0(distTpEur)}€</div></div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-lbl"><span class="neg">Stop ${f2(stop)}</span><span style="color:var(--muted)">← Position →</span><span class="pos">TP ${f2(tp)}</span></div>
+        <div class="gauge-track" style="background:linear-gradient(90deg,rgba(255,71,87,.15) 0%,var(--border) 30%,var(--border) 70%,rgba(0,208,132,.15) 100%)">
+          <div class="gauge-cursor" style="left:${pct}%"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── SENSIBILITÉS ─────────────────────────────────────────────────────────────
+function updateSensi(val) {
+  val = parseFloat(val)||0;
+  el('slider-val').textContent = (val>=0?'+':'')+val+'%';
+  document.getElementById('market-slider').value = val;
+  if(!STATE) return;
+  const s = STATE;
+  const positions = s.positions||{};
+  const posVal  = Object.values(positions).reduce((a,p)=>a+(p.position_eur||0),0);
+  const cash    = s.cash_eur||0;
+  const total   = posVal + cash;
+  const beta    = portfolioBeta(positions);
+  const impact  = posVal * beta * (val/100);
+  const newVal  = total + impact;
+  el('si-pnl').innerHTML = `<span class="${cc(impact)}">${feur(impact)}</span>`;
+  el('si-val').textContent = f0(newVal)+' €';
+  el('si-cash-pct').textContent = newVal ? fpct(cash/newVal) : '—';
+}
+
+function renderVaR(beta, total, cash) {
+  const posVal = total - cash;
+  if(!posVal){el('var-table-body').innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted)">Aucune position</td></tr>';return;}
+  const mktVol = 0.01;
+  const scenarios = [{h:'Journalière',d:1},{h:'Hebdomadaire',d:5},{h:'Mensuelle',d:21}];
+  el('var-table-body').innerHTML = scenarios.map(sc=>{
+    const v99=posVal*beta*2.33*mktVol*Math.sqrt(sc.d);
+    const v95=posVal*beta*1.65*mktVol*Math.sqrt(sc.d);
+    const v90=posVal*beta*1.28*mktVol*Math.sqrt(sc.d);
+    return `<tr>
+      <td>${sc.h}</td>
+      <td class="neg">${feur(-v99)}</td>
+      <td class="neg">${feur(-v95)}</td>
+      <td class="neg">${feur(-v90)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSectorMini(id, sexp) {
+  const sorted = Object.entries(sexp).sort((a,b)=>b[1]-a[1]);
+  el(id).innerHTML = sorted.length ? sorted.map(([s,w])=>
+    `<div class="sector-row">
+      <span style="font-size:11px;width:130px;color:var(--muted)">${s}</span>
+      <div class="sector-bar-wrap"><div class="sector-bar" style="width:${w*100}%"></div></div>
+      <span style="font-size:11px;width:36px;text-align:right">${fpct(w,0)}</span>
+    </div>`
+  ).join('') : '<span style="color:var(--muted);font-size:12px">Aucune position</span>';
+}
+
+function renderSectorPanel(sexp, cash, total) {
+  renderSectorMini('sector-panel', sexp);
+}
+
+function renderStressSensi(beta, total, posVal) {
+  const scenarios = [
+    {lbl:'Krach -30%',mv:-.30,color:'#ff4757'},
+    {lbl:'Correction -20%',mv:-.20,color:'#ff6b81'},
+    {lbl:'Recul -10%',mv:-.10,color:'#ffa502'},
+    {lbl:'Stable',mv:0,color:'#4b5563'},
+    {lbl:'Hausse +10%',mv:.10,color:'#7bed9f'},
+    {lbl:'Rally +20%',mv:.20,color:'#00d084'},
+  ];
+  el('stress-panel').innerHTML = scenarios.map(sc=>{
+    const impact = posVal * beta * sc.mv;
+    const w = Math.abs(sc.mv) / .30 * 100;
+    return `<div class="stress-row">
+      <span class="stress-lbl">${sc.lbl}</span>
+      <div class="stress-bar-track">
+        <div class="stress-bar" style="width:${w}%;background:${sc.color};opacity:.7"></div>
+      </div>
+      <span class="stress-val ${cc(impact)}">${feur(impact)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── SCORING ─────────────────────────────────────────────────────────────────
+let filteredScores = [];
+function renderScores() {
+  filteredScores = [...SCORES].sort((a,b)=>b[sortKey]-a[sortKey]);
+  const q = el('score-filter').value.toLowerCase();
+  if(q) filteredScores = filteredScores.filter(s=>s.ticker.toLowerCase().includes(q));
+  const tbody = el('scores-tbody');
+  if(!filteredScores.length){tbody.innerHTML='<tr><td colspan="11" class="empty-state">Aucun ticker</td></tr>';return;}
+  tbody.innerHTML = filteredScores.map((s,i)=>{
+    const bd = s.breakdown||{};
+    const sc = s.score||0;
+    const col = scoreColor(sc);
+    return `<tr onclick="showRadar('${s.ticker}')" style="cursor:pointer">
+      <td><span class="rank">${i+1}.</span>${s.ticker}${xchTag(s.ticker)}</td>
+      <td><div class="score-bar">
+        <span style="color:${col};font-weight:700">${f1(sc)}</span>
+        <div class="score-track"><div class="score-fill" style="width:${sc}%;background:${col}"></div></div>
+      </div></td>
+      <td>${f1(s.tech_score)}</td>
+      <td>${f1(bd.trend)}</td><td>${f1(bd.rsi)}</td>
+      <td>${f1(bd.macd)}</td><td>${f1(bd.bollinger)}</td>
+      <td>${f1(bd.stoch_rsi)}</td><td>${f1(bd.momentum)}</td>
+      <td class="${(s.beta||1)>1.3?'neg':''}">${f2(s.beta)}</td>
+      <td class="muted">${s.atr_pct!=null?fpct(s.atr_pct):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterScores(){renderScores()}
+function setSortScore(btn, key){
+  sortKey=key;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderScores();
+}
+
+function showRadar(ticker) {
+  const s = SCORES.find(x=>x.ticker===ticker);
+  if(!s) return;
+  el('radar-title').textContent = `${ticker} · Score ${f1(s.score)}/100`;
+  const bd = s.breakdown||{};
+  const labels = ['Trend','RSI','Volume','MACD','Bollinger','StochRSI','Momentum'];
+  const maxes  = [10,6,8,6,8,6,6];
+  const data   = [bd.trend||0,bd.rsi||0,bd.volume||0,bd.macd||0,bd.bollinger||0,bd.stoch_rsi||0,bd.momentum||0];
+  const normalized = data.map((v,i)=>maxes[i]?v/maxes[i]*100:0);
+
+  if(radarChart) radarChart.destroy();
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  radarChart = new Chart(ctx,{
+    type:'radar',
+    data:{
+      labels,
+      datasets:[{
+        label:ticker,
+        data:normalized,
+        backgroundColor:'rgba(61,142,248,.15)',
+        borderColor:'#3d8ef8',
+        pointBackgroundColor:'#3d8ef8',
+        pointRadius:3,
+      }]
+    },
+    options:{
+      responsive:true,
+      scales:{r:{
+        min:0,max:100,
+        ticks:{color:'#4b5563',backdropColor:'transparent',stepSize:25},
+        grid:{color:'#1c1f2b'},
+        pointLabels:{color:'#9ca3af',font:{size:10}},
+        angleLines:{color:'#1c1f2b'},
+      }},
+      plugins:{legend:{display:false}},
+    }
+  });
+  const sigs = s.signals_tech||[];
+  el('radar-sigs').innerHTML = sigs.slice(0,6).map(sg=>`· ${sg}`).join('<br>');
+}
+
+// ─── STRESS SCENARIOS ────────────────────────────────────────────────────────
+function renderStressScenarios(beta, total, posVal, positions) {
+  const scenarios = [
+    {name:'Flash Crash (-30%)',move:-.30},
+    {name:'Bear Market (-20%)',move:-.20},
+    {name:'Correction (-10%)',move:-.10},
+    {name:'Latéral (0%)',move:0},
+    {name:'Rebond (+10%)',move:.10},
+    {name:'Bull Run (+25%)',move:.25},
+    {name:'Secteur tech -15%',move:-.15,sectors:['Technology']},
+  ];
+  el('stress-scenarios').innerHTML = scenarios.map(sc=>{
+    let impact;
+    if(sc.sectors) {
+      const techVal = Object.entries(positions)
+        .filter(([t])=>sc.sectors.includes(sector(t)))
+        .reduce((a,[,p])=>a+(p.position_eur||0),0);
+      impact = techVal * (sc.move) + (posVal-techVal)*beta*(sc.move*0.3);
+    } else {
+      impact = posVal * beta * sc.move;
+    }
+    const newTotal = total + impact;
+    const pct = total?impact/total:0;
+    return `<div class="stress-row">
+      <span class="stress-lbl">${sc.name}</span>
+      <div class="stress-bar-track">
+        <div class="stress-bar" style="width:${Math.abs(sc.move||.01)/.30*100}%;background:${impact>=0?'var(--green)':'var(--red)'};opacity:.6"></div>
+      </div>
+      <div style="text-align:right;min-width:120px">
+        <span class="stress-val ${cc(impact)}">${feur(impact)}</span>
+        <div style="font-size:10px;color:var(--muted)">${fpct(pct)} · ${f0(newTotal)}€</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── SIMULATOR ───────────────────────────────────────────────────────────────
+function runSimulator() {
+  if(!STATE) return;
+  const ticker  = el('sim-ticker').value.trim().toUpperCase();
+  const shares  = parseFloat(el('sim-shares').value)||0;
+  const price   = parseFloat(el('sim-price').value)||0;
+  const simBeta = parseFloat(el('sim-beta').value)||1.0;
+  const stopPct = parseFloat(el('sim-stop').value)||8;
+  if(!ticker||!shares||!price){alert('Remplissez tous les champs requis.');return;}
+
+  const positions = STATE.positions||{};
+  const cash      = STATE.cash_eur||0;
+  const posVal    = Object.values(positions).reduce((a,p)=>a+(p.position_eur||0),0);
+  const total     = posVal + cash;
+  const positionEur = shares * price;
+  const newCash   = cash - positionEur;
+  const newPosVal = posVal + positionEur;
+  const newTotal  = newPosVal + (newCash>0?newCash:0);
+  const newWeight = newTotal ? positionEur/newTotal : 0;
+
+  // New portfolio beta
+  const existingBetaVal = Object.values(positions).reduce((a,p)=>a+(p.beta||1)*(p.position_eur||0),0);
+  const newBetaVal = existingBetaVal + simBeta * positionEur;
+  const newBeta = newPosVal ? newBetaVal/newPosVal : simBeta;
+
+  const stopLoss = price*(1-stopPct/100);
+  const maxRisk  = (price-stopLoss)*shares;
+
+  const result = el('sim-result');
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Résultat — Ajout ${ticker}</div>
+    ${[
+      ['Coût total',`${f0(positionEur)} €`],
+      ['Cash restant',`<span class="${newCash<0?'neg':'pos'}">${f0(newCash)} €</span>`],
+      ['Poids dans portefeuille',fpct(newWeight)],
+      ['Nouveau beta portefeuille',`<span class="${newBeta>1.4?'neg':''}">${f2(newBeta)}</span>`],
+      ['Stop-loss',`${f2(stopLoss)} € (-${stopPct}%)`],
+      ['Risque max',`<span class="neg">${feur(-maxRisk)}</span>`],
+    ].map(([l,v])=>`<div class="sr-row"><span style="color:var(--muted)">${l}</span><span>${v}</span></div>`).join('')}
+    ${newCash<0?'<div style="color:var(--red);margin-top:8px;font-size:11px">⚠ Cash insuffisant pour cette position</div>':''}
+  `;
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadData();
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>

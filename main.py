@@ -103,6 +103,18 @@ def run():
     update_score_history(state, scored)
     state["last_scores"] = scored  # stored for /top5 and /explain Telegram commands
 
+    # Write scores_latest.json for the public dashboard
+    try:
+        import json as _json
+        with open("scores_latest.json", "w") as _f:
+            _json.dump({
+                "generated_at": datetime.utcnow().isoformat(),
+                "regime": regime,
+                "tickers": scored,
+            }, _f, indent=2, default=str)
+    except Exception as e:
+        logger.error(f"scores_latest.json write failed: {e}")
+
     check_price_alerts(state, liquid)
 
     sell_signals = evaluate_sells(state, regime, state.get("score_history", {}))
