@@ -9,10 +9,10 @@ headers = {
     "x-rapidapi-host": host,
 }
 
+# Test endpoint de base
 r = requests.get(
-    f"https://{host}/api/v1/markets/stock/history",
+    f"https://{host}/",
     headers=headers,
-    params={"symbol": "AIR.PA", "interval": "1d", "diffandsplits": "false"},
     timeout=10,
 )
 print("Status:", r.status_code)
