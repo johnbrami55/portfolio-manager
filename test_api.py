@@ -1,16 +1,16 @@
 import os
 import requests
 
-key = os.environ.get("RAPIDAPI_KEY", "")
+RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
 RAPIDAPI_HOST = "yh-finance.p.rapidapi.com"
 
 headers = {
-    "x-rapidapi-key": key,
-    "x-rapidapi-host": host,
+    "x-rapidapi-key": RAPIDAPI_KEY,
+    "x-rapidapi-host": RAPIDAPI_HOST,
 }
 
 r = requests.get(
-    f"https://{host}/api/v1/markets/stock/history",
+    f"https://{RAPIDAPI_HOST}/api/v1/markets/stock/history",
     headers=headers,
     params={"symbol": "AIR.PA", "interval": "1d", "diffandsplits": "false"},
     timeout=10,
