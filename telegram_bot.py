@@ -563,26 +563,22 @@ def handle_command(text: str) -> str:
 
     # ── /run ──────────────────────────────────────────────────────────────────
     elif cmd == "/run":
-        gh_pat = os.environ.get("GH_PAT", "")
-        if not gh_pat:
-            return "⚠️ GH_PAT non configuré — impossible de déclencher un run."
         try:
             resp = requests.post(
                 "https://api.github.com/repos/johnbrami55/portfolio-manager/actions/workflows/portfolio_manager.yml/dispatches",
-                json={"ref": "main"},
                 headers={
-                    "Authorization": f"Bearer {gh_pat}",
-                    "Accept": "application/vnd.github+json",
-                    "X-GitHub-Api-Version": "2022-11-28",
+                    "Authorization": f"token {os.environ.get('GITHUB_PAT', '')}",
+                    "Accept": "application/vnd.github.v3+json",
                 },
-                timeout=15,
+                json={"ref": "main"},
+                timeout=10,
             )
             if resp.status_code == 204:
-                return "🚀 Run lancé ! Tu recevras les signaux dans ~10 minutes."
+                return "🚀 Run lancé immédiatement ! Signaux dans ~20 minutes."
             else:
-                return f"⚠️ Erreur GitHub API: {resp.status_code} — {resp.text[:200]}"
+                return f"❌ Erreur lancement run : {resp.status_code} — {resp.text[:200]}"
         except Exception as e:
-            return f"⚠️ Erreur: {e}"
+            return f"❌ Erreur lancement run : {e}"
 
     # ── /pause ────────────────────────────────────────────────────────────────
     elif cmd == "/pause":
