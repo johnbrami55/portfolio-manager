@@ -2,7 +2,6 @@ import logging
 import time
 import os
 import requests
-import yfinance as yf
 from config import (
     FULL_UNIVERSE,
     LIQUIDITY_MIN_VOLUME_EUR, LIQUIDITY_MIN_MARKET_CAP_EUR,
@@ -12,54 +11,59 @@ from config import (
 
 logger = logging.getLogger(__name__)
 
-def get_session():
-    cookie = os.environ.get("YAHOO_COOKIE", "")
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Cookie": cookie,
-    })
-    return session
+RAPIDAPI_HOST = "yahoo-finance15.p.rapidapi.com"
+
+def get_headers():
+    return {
+        "x-rapidapi-key": os.environ.get("RAPIDAPI_KEY", ""),
+        "x-rapidapi-host": RAPIDAPI_HOST,
+    }
+
+def fetch_history(ticker, days=30):
+    url = f"https://{RAPIDAPI_HOST}/api/v1/markets/stock/history"
+    params = {"symbol": ticker, "interval": "1d", "diffandsplits": "false"}
+    try:
+        r = requests.get(url, headers=get_headers(), params=params, timeout=10)
+        data = r.json()
+        if "body" not in data:
+            return None
+        body = data["body"]
+        closes = [v["close"] for v in body.values() if "close" in v]
+        highs  = [v["high"]  for v in body.values() if "high"  in v]
+        lows   = [v["low"]   for v in body.values() if "low"   in v]
+        vols   = [v["volume"] for v in body.values() if "volume" in v]
+        return {"closes": closes, "highs": highs, "lows": lows, "volumes": vols}
+    except Exception as e:
+        logger.warning(f"{ticker}: history error - {e}")
+        return None
+
+def fetch_info(ticker):
+    url = f"https://{RAPIDAPI_HOST}/api/v1/markets/stock/quotes"
+    params = {"ticker": ticker}
+    try:
+        r = requests.get(url, headers=get_headers(), params=params, timeout=10)
+        data = r.json()
+        if "body" not in data:
+            return {}
+        return data["body"][0] if data["body"] else {}
+    except Exception as e:
+        logger.warning(f"{ticker}: info error - {e}")
+        return {}
 
 def get_liquid_universe(regime):
     logger.info(f"Scanning {len(FULL_UNIVERSE)} tickers (regime={regime})...")
     passed = []
     min_vol = BEAR_MIN_VOLUME_EUR if regime == "BEAR" else LIQUIDITY_MIN_VOLUME_EUR
     min_cap = BEAR_MIN_MARKET_CAP_EUR if regime == "BEAR" else LIQUIDITY_MIN_MARKET_CAP_EUR
-    session = get_session()
 
     for ticker in FULL_UNIVERSE:
         try:
-            tk = yf.Ticker(ticker, session=session)
-            hist = tk.history(period=f"{LIQUIDITY_LOOKBACK_DAYS + 5}d")
-            if hist.empty or len(hist) < 5:
+            hist = fetch_history(ticker)
+            if not hist or len(hist["closes"]) < 5:
+                time.sleep(0.3)
                 continue
-            hist = hist.tail(LIQUIDITY_LOOKBACK_DAYS)
-            avg_volume_eur = (hist["Volume"] * hist["Close"]).mean()
-            avg_spread = ((hist["High"] - hist["Low"]) / hist["Close"]).mean()
-            last_close = float(hist["Close"].iloc[-1])
-            info = tk.info
-            market_cap = info.get("marketCap", 0) or 0
-            if avg_volume_eur < min_vol:
-                continue
-            if market_cap < min_cap:
-                continue
-            if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
-                continue
-            passed.append({
-                "ticker": ticker,
-                "metrics": {
-                    "avg_volume_eur": avg_volume_eur,
-                    "avg_spread": avg_spread,
-                    "market_cap": market_cap,
-                    "last_close": last_close,
-                }
-            })
-            time.sleep(0.5)
-        except Exception as e:
-            logger.warning(f"{ticker}: {e}")
-            time.sleep(1)
-            continue
 
-    logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
-    return passed
+            closes  = hist["closes"][-LIQUIDITY_LOOKBACK_DAYS:]
+            highs   = hist["highs"][-LIQUIDITY_LOOKBACK_DAYS:]
+            lows    = hist["lows"][-LIQUIDITY_LOOKBACK_DAYS:]
+            volumes = hist["volumes"][-LIQUIDIT
