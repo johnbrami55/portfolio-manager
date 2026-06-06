@@ -2,14 +2,13 @@ import os
 import requests
 
 key = os.environ.get("RAPIDAPI_KEY", "")
-host = "yahoo-finance15.p.rapidapi.com"
+host = "enclout-yahoo-finance.p.rapidapi.com"
 
 headers = {
     "x-rapidapi-key": key,
     "x-rapidapi-host": host,
 }
 
-# Test avec un ticker européen
 r = requests.get(
     f"https://{host}/api/v1/markets/stock/history",
     headers=headers,
@@ -17,4 +16,4 @@ r = requests.get(
     timeout=10,
 )
 print("Status:", r.status_code)
-print("Response:", r.text[:500])
+print("Response:", r.text[:1000])
