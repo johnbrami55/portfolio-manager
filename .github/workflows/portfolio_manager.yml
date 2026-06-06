@@ -1,0 +1,2534 @@
+"""
+config.py — Central configuration for the portfolio management system.
+All parameters are defined here and imported by other modules.
+Never hardcode values in other files.
+"""
+
+# ─── Capital & Position Sizing ───────────────────────────────────────────────
+INITIAL_CAPITAL = 1890.0          # EUR — starting capital
+MIN_POSITION_EUR = 200.0          # Minimum position size in EUR
+MAX_POSITION_PCT = 0.20           # Max weight per stock (20%)
+MAX_SECTOR_PCT = 0.35             # Max sector exposure (35%)
+MIN_LINES = 5                     # Minimum number of positions
+MAX_LINES = 7                     # Maximum number of positions
+
+# ─── Rebalancing ─────────────────────────────────────────────────────────────
+REBALANCE_FREQUENCY = "biweekly"  # Every 2 weeks
+
+# ─── DEGIRO Fee Model ─────────────────────────────────────────────────────────
+DEGIRO_FIXED_FEE = 0.50           # EUR per order (Euronext)
+DEGIRO_VARIABLE_FEE = 0.00004     # 0.004% of order value
+MAX_ROUNDTRIP_FEE_PCT = 0.008     # Skip trade if round-trip > 0.8% of position
+
+# ─── Market Regime Parameters ─────────────────────────────────────────────────
+REGIME_PARAMS = {
+    "BULL": {
+        "beta_target_min": 1.3,
+        "beta_target_max": 1.6,
+        "max_beta_per_stock": 2.0,
+        "score_threshold": 60,
+        "max_lines": 7,
+        "cash_pct_min": 0.00,
+        "cash_pct_max": 0.00,
+        "stop_loss_pct": -0.10,
+        "take_profit_pct": 0.22,
+        "trailing_stop_pct": -0.08,
+        "trailing_stop_trigger": 0.15,
+    },
+    "NEUTRAL": {
+        "beta_target_min": 1.0,
+        "beta_target_max": 1.3,
+        "max_beta_per_stock": 1.5,
+        "score_threshold": 65,
+        "max_lines": 6,
+        "cash_pct_min": 0.10,
+        "cash_pct_max": 0.15,
+        "stop_loss_pct": -0.08,
+        "take_profit_pct": 0.18,
+        "trailing_stop_pct": None,
+        "trailing_stop_trigger": None,
+    },
+    "BEAR": {
+        "beta_target_min": 0.7,
+        "beta_target_max": 1.0,
+        "max_beta_per_stock": 1.2,
+        "score_threshold": 72,
+        "max_lines": 5,
+        "cash_pct_min": 0.20,
+        "cash_pct_max": 0.30,
+        "stop_loss_pct": -0.06,
+        "take_profit_pct": 0.14,
+        "trailing_stop_pct": None,
+        "trailing_stop_trigger": None,
+    },
+}
+
+# ─── Regime Bonus ─────────────────────────────────────────────────────────────
+BULL_BETA_BONUS_THRESHOLD = 1.3
+BEAR_BETA_BONUS_THRESHOLD = 1.0
+REGIME_BONUS_PTS = 5
+
+# ─── Liquidity Filters ────────────────────────────────────────────────────────
+LIQUIDITY_MIN_VOLUME_EUR = 300_000
+LIQUIDITY_MIN_MARKET_CAP_EUR = 300_000_000
+LIQUIDITY_MAX_SPREAD_PCT = 0.03
+LIQUIDITY_LOOKBACK_DAYS = 20
+BEAR_MIN_VOLUME_EUR = 500_000
+BEAR_MIN_MARKET_CAP_EUR = 500_000_000
+
+# ─── Scoring Weights ──────────────────────────────────────────────────────────
+SCORE_TECH_TREND_MAX = 15
+SCORE_TECH_RSI_MAX = 10
+SCORE_TECH_VOLUME_MAX = 10
+SCORE_TECH_MACD_MAX = 8
+SCORE_TECH_MOMENTUM_MAX = 7
+
+SCORE_FUND_EPS_REVISIONS_MAX = 15
+SCORE_FUND_VALUATION_MAX = 15
+SCORE_FUND_BALANCE_SHEET_MAX = 10
+SCORE_FUND_GROWTH_MAX = 10
+
+RSI_THRESHOLDS = {
+    "BULL":    {"min": 45, "max": 65, "oversold": 35, "overbought": 75},
+    "NEUTRAL": {"min": 40, "max": 60, "oversold": 30, "overbought": 70},
+    "BEAR":    {"min": 35, "max": 55, "oversold": 25, "overbought": 65},
+}
+
+VOLUME_HIGH_MULT = 2.0
+VOLUME_MED_MULT  = 1.5
+MOMENTUM_LOOKBACK_MONTHS = 3
+EPS_REVISION_LOOKBACK_DAYS = 30
+PEG_GOOD_BULL = 1.5
+DEBT_EBITDA_MAX = 3.0
+
+# ─── Sell Signal Parameters ───────────────────────────────────────────────────
+SCORE_DEGRADATION_CONSECUTIVE = 2
+BEAR_SELL_BETA_THRESHOLD = 1.2
+
+# ─── Reference Indices ────────────────────────────────────────────────────────
+CAC40_TICKER  = "^FCHI"
+STOXX600_TICKER = "^STOXX"
+MA_SHORT = 50
+MA_LONG  = 200
+
+# ─── State File ───────────────────────────────────────────────────────────────
+STATE_FILE = "portfolio_state.json"
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+LOG_LEVEL  = "INFO"
+LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+
+# ─── Stock Universes ──────────────────────────────────────────────────────────
+CAC40_TICKERS = [
+    "AI.PA","AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
+    "CA.PA","ACA.PA","BN.PA","DSY.PA","ENGI.PA","EL.PA","RMS.PA","KER.PA",
+    "LR.PA","MC.PA","ML.PA","ORA.PA","RI.PA","PUB.PA","RNO.PA","SAF.PA",
+    "SGO.PA","SAN.PA","SU.PA","GLE.PA","STLAM.MI","STM.PA","TEP.PA","HO.PA",
+    "TTE.PA","URW.AS","VIE.PA","DG.PA","VIV.PA","WLN.PA",
+]
+
+AEX_TICKERS = [
+    "ADYEN.AS","AGN.AS","AD.AS","AKZA.AS","MT.AS","ASM.AS","ASML.AS",
+    "ASRNL.AS","BESI.AS","EXOR.AS","HEIA.AS","IMCD.AS","INGA.AS","DSFIR.AS",
+    "KPN.AS","NN.AS","PHIA.AS","PRX.AS","RAND.AS","REN.AS","SHELL.AS",
+    "UMG.AS","UNA.AS","VPK.AS","WKL.AS",
+]
+
+FULL_UNIVERSE = list(dict.fromkeys(CAC40_TICKERS + AEX_TICKERS))
+
+# ─── Sector Mapping ──────────────────────────────────────────────────────────
+SECTOR_MAP = {
+    "AI.PA":"Materials","AIR.PA":"Industrials","ALO.PA":"Industrials",
+    "MT.AS":"Materials","CS.PA":"Financials","BNP.PA":"Financials",
+    "EN.PA":"Industrials","CAP.PA":"Technology","CA.PA":"Consumer Staples",
+    "ACA.PA":"Financials","BN.PA":"Consumer Staples","DSY.PA":"Technology",
+    "ENGI.PA":"Utilities","EL.PA":"Consumer Discretionary","RMS.PA":"Consumer Discretionary",
+    "KER.PA":"Consumer Discretionary","LR.PA":"Industrials","MC.PA":"Consumer Discretionary",
+    "ML.PA":"Consumer Discretionary","ORA.PA":"Communication Services",
+    "RI.PA":"Consumer Staples","PUB.PA":"Communication Services",
+    "RNO.PA":"Consumer Discretionary","SAF.PA":"Industrials","SGO.PA":"Industrials",
+    "SAN.PA":"Health Care","SU.PA":"Industrials","GLE.PA":"Financials",
+    "STLAM.MI":"Consumer Discretionary","STM.PA":"Technology","TEP.PA":"Technology",
+    "HO.PA":"Industrials","TTE.PA":"Energy","URW.AS":"Real Estate",
+    "VIE.PA":"Utilities","DG.PA":"Industrials","VIV.PA":"Communication Services",
+    "WLN.PA":"Technology","ADYEN.AS":"Technology","AGN.AS":"Financials",
+    "AD.AS":"Consumer Staples","AKZA.AS":"Materials","ASM.AS":"Technology",
+    "ASML.AS":"Technology","ASRNL.AS":"Financials","BESI.AS":"Technology",
+    "EXOR.AS":"Financials","HEIA.AS":"Consumer Staples","IMCD.AS":"Materials",
+    "INGA.AS":"Financials","DSFIR.AS":"Materials","KPN.AS":"Communication Services",
+    "NN.AS":"Financials","PHIA.AS":"Health Care","PRX.AS":"Technology",
+    "RAND.AS":"Industrials","REN.AS":"Industrials","SHELL.AS":"Energy",
+    "UMG.AS":"Communication Services","UNA.AS":"Consumer Staples",
+    "VPK.AS":"Materials","WKL.AS":"Technology",
+}
+
+"""
+main.py — Orchestrator: runs the full pipeline on each GitHub Actions trigger.
+
+Pipeline:
+  1. Load state
+  2. Detect market regime (+ check for regime change)
+  3. Poll Telegram for user commands
+  4. Get liquid universe
+  5. Compute betas
+  6. Score universe
+  7. Update score history
+  8. Evaluate sell signals on open positions
+  9. Build portfolio / generate buy signals
+ 10. Send alerts (sells first, then buys)
+ 11. Save state
+ 12. Weekly summary (Mondays)
+"""
+
+import logging
+import sys
+from datetime import datetime
+
+import config
+from regime   import detect_regime
+from universe import get_liquid_universe
+from scorer   import score_universe
+from portfolio import build_portfolio
+from signals  import evaluate_sells, generate_buy_signals, check_regime_change_sells
+from state    import load_state, save_state, update_score_history
+from utils    import compute_betas, portfolio_beta
+from telegram_bot import (
+    send_message, send_buy_alert, send_sell_alert,
+    send_regime_change_alert, send_weekly_summary,
+    poll_and_handle_commands,
+)
+
+# ── Logging setup ──────────────────────────────────────────────────────────────
+logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
+logger = logging.getLogger(__name__)
+
+
+def is_monday() -> bool:
+    return datetime.utcnow().weekday() == 0  # 0 = Monday
+
+
+def is_rebalance_week(state: dict) -> bool:
+    """
+    Returns True every 2 weeks based on ISO week number.
+    Rebalances on even ISO weeks (biweekly).
+    """
+    week = datetime.utcnow().isocalendar().week
+    return week % 2 == 0
+
+
+def run():
+    logger.info("=" * 60)
+    logger.info("Portfolio Manager — starting run")
+    logger.info(f"Timestamp: {datetime.utcnow().isoformat()}")
+    logger.info("=" * 60)
+
+    # ── 1. Load state ──────────────────────────────────────────────────────────
+    state = load_state()
+    prev_regime = state.get("current_regime", "NEUTRAL")
+
+    # ── 2. Detect regime ───────────────────────────────────────────────────────
+    regime_info = detect_regime()
+    regime      = regime_info["regime"]
+    cac_data    = regime_info["cac40"]
+    state["current_regime"] = regime
+
+    logger.info(f"Regime: {regime} (prev: {prev_regime})")
+
+    # ── 3. Poll Telegram commands ──────────────────────────────────────────────
+    logger.info("Polling Telegram for commands...")
+    try:
+        poll_and_handle_commands()
+    except Exception as e:
+        logger.warning(f"Telegram poll failed (non-fatal): {e}")
+
+    # ── 4. Regime change detection ─────────────────────────────────────────────
+    regime_changed = regime != prev_regime
+    if regime_changed:
+        logger.info(f"⚠ REGIME CHANGE: {prev_regime} → {regime}")
+        positions = state.get("positions", {})
+
+        # Identify positions to sell due to regime change
+        regime_sells = check_regime_change_sells(positions, prev_regime, regime)
+        tickers_to_sell = [s["ticker"] for s in regime_sells]
+
+        try:
+            send_regime_change_alert(prev_regime, regime, cac_data, tickers_to_sell)
+        except Exception as e:
+            logger.error(f"Regime change alert failed: {e}")
+
+        # Send individual sell alerts
+        for sig in regime_sells:
+            try:
+                send_sell_alert(sig)
+            except Exception as e:
+                logger.error(f"Sell alert failed for {sig['ticker']}: {e}")
+
+    # ── 5. Universe + liquidity filter ────────────────────────────────────────
+    liquid = get_liquid_universe(regime)
+    tickers = [item["ticker"] for item in liquid]
+    logger.info(f"Liquid universe: {len(tickers)} tickers")
+
+    if not tickers:
+        logger.error("Empty universe — aborting")
+        save_state(state)
+        sys.exit(1)
+
+    # ── 6. Compute betas ───────────────────────────────────────────────────────
+    betas = compute_betas(tickers)
+
+    # ── 7. Score universe ──────────────────────────────────────────────────────
+    scored = score_universe(liquid, regime, betas)
+    logger.info(f"Scored {len(scored)} tickers")
+
+    # ── 8. Update score history ────────────────────────────────────────────────
+    update_score_history(state, scored)
+
+    # ── 9. Evaluate sell signals ───────────────────────────────────────────────
+    sell_signals = evaluate_sells(state, regime, state.get("score_history", {}))
+    logger.info(f"Sell signals: {len(sell_signals)}")
+
+    # ── 10. Build portfolio / buy signals ──────────────────────────────────────
+    # Rebalance check
+    do_rebalance = is_monday() and is_rebalance_week(state)
+
+    # Attach last_close to scored items for portfolio builder
+    liquid_map = {item["ticker"]: item.get("metrics", {}) for item in liquid}
+    for s in scored:
+        s["last_close"] = liquid_map.get(s["ticker"], {}).get("last_close")
+        s["beta"]       = betas.get(s["ticker"], 1.0)
+
+    portfolio_result = build_portfolio(scored, state, regime, betas)
+    buy_signals      = generate_buy_signals(
+        portfolio_result, state.get("positions", {}), regime
+    )
+
+    logger.info(f"Buy signals: {len(buy_signals)}")
+
+    # ── 11. Send alerts ────────────────────────────────────────────────────────
+    for sig in sell_signals:
+        try:
+            send_sell_alert(sig)
+        except Exception as e:
+            logger.error(f"Sell alert send error for {sig['ticker']}: {e}")
+
+    for sig in buy_signals:
+        try:
+            # Store pending signal in state for /bought confirmation
+            state.setdefault("pending_signals", {})[sig["ticker"]] = {
+                "model_price": sig["model_price"],
+                "stop_loss":   sig["stop_loss"],
+                "take_profit": sig["take_profit"],
+                "weight":      sig["weight"],
+                "beta":        sig["beta"],
+            }
+            send_buy_alert(sig, state, regime)
+        except Exception as e:
+            logger.error(f"Buy alert send error for {sig['ticker']}: {e}")
+
+    # ── 12. Weekly summary (Mondays) ───────────────────────────────────────────
+    if is_monday():
+        try:
+            # Compute CAC40 weekly return
+            import yfinance as yf
+            cac_hist     = yf.download(config.CAC40_TICKER, period="10d", progress=False, auto_adjust=True)
+            cac_week_ret = float(cac_hist["Close"].pct_change(5).iloc[-1]) if len(cac_hist) >= 6 else 0.0
+            send_weekly_summary(state, regime, cac_week_ret)
+        except Exception as e:
+            logger.error(f"Weekly summary failed: {e}")
+
+    # ── 13. Save state ─────────────────────────────────────────────────────────
+    pb = portfolio_beta(state.get("positions", {}))
+    logger.info(f"Portfolio beta: {pb:.2f} | Positions: {len(state.get('positions', {}))}")
+    save_state(state)
+
+    logger.info("Run complete.")
+
+
+if __name__ == "__main__":
+    run()
+
+"""
+portfolio.py — Portfolio construction and optimization.
+Applies regime-aware weighting, sector/beta constraints, and cost gating.
+"""
+
+import logging
+import numpy as np
+from config import (
+    INITIAL_CAPITAL, MIN_POSITION_EUR, MAX_POSITION_PCT, MAX_SECTOR_PCT,
+    REGIME_PARAMS, SECTOR_MAP, DEGIRO_FIXED_FEE, DEGIRO_VARIABLE_FEE,
+    MAX_ROUNDTRIP_FEE_PCT,
+)
+from utils import calculate_fee, sector_of
+
+logger = logging.getLogger(__name__)
+
+
+def compute_weights(scored: list[dict], regime: str) -> list[dict]:
+    """
+    Compute normalized portfolio weights from scored tickers.
+    Applies regime-specific weighting logic.
+    Returns list of dicts with ticker, score, beta, raw_weight, weight.
+    """
+    params = REGIME_PARAMS[regime]
+    threshold = params["score_threshold"]
+    max_lines = params["max_lines"]
+    cash_min  = params["cash_pct_min"]
+
+    # 1. Filter by score threshold
+    eligible = [s for s in scored if s["score"] >= threshold]
+
+    if not eligible:
+        logger.warning(f"No stocks pass score threshold {threshold} in {regime} regime")
+        return []
+
+    # 2. Filter by beta constraint
+    max_beta = params["max_beta_per_stock"]
+    eligible = [s for s in eligible if s["beta"] <= max_beta]
+
+    if not eligible:
+        logger.warning(f"No stocks pass beta filter ({max_beta}) in {regime} regime")
+        return []
+
+    # 3. Take top N candidates (generous pool for sector diversification)
+    candidates = eligible[:max_lines * 2]
+
+    # 4. Compute raw weights
+    for c in candidates:
+        beta = max(c["beta"], 0.1)  # avoid division by zero
+        if regime == "BULL":
+            # Reward higher beta in bull
+            c["raw_weight"] = c["score"] * beta * 0.5
+        else:
+            # Reward score per unit of risk
+            c["raw_weight"] = c["score"] / beta
+
+    # 5. Sector diversification: greedy selection respecting MAX_SECTOR_PCT
+    selected  = []
+    sector_wt = {}
+
+    for c in sorted(candidates, key=lambda x: x["raw_weight"], reverse=True):
+        if len(selected) >= max_lines:
+            break
+        sector = sector_of(c["ticker"])
+        current_sector_wt = sector_wt.get(sector, 0.0)
+        # Provisional weight (will be normalized later)
+        # Check if adding this stock would violate sector cap
+        # Approximate: assume equal weight for selection pass
+        approx_wt = 1.0 / max(len(selected) + 1, 1)
+        approx_sector = current_sector_wt + approx_wt
+        if approx_sector > MAX_SECTOR_PCT + 0.05:  # small tolerance
+            logger.debug(f"Skipping {c['ticker']} — sector {sector} capped")
+            continue
+        selected.append(c)
+        sector_wt[sector] = current_sector_wt + approx_wt
+
+    if not selected:
+        return []
+
+    # 6. Normalize weights
+    total_raw = sum(s["raw_weight"] for s in selected)
+    for s in selected:
+        s["weight"] = s["raw_weight"] / total_raw if total_raw > 0 else 1.0 / len(selected)
+
+    # 7. Clip to MAX_POSITION_PCT and renormalize (iterate up to 10x)
+    for _ in range(10):
+        clipped = False
+        for s in selected:
+            if s["weight"] > MAX_POSITION_PCT:
+                s["weight"] = MAX_POSITION_PCT
+                clipped     = True
+        if clipped:
+            total_wt = sum(s["weight"] for s in selected)
+            for s in selected:
+                s["weight"] = s["weight"] / total_wt
+
+    # 8. Cash allocation: if regime requires cash, reduce all weights proportionally
+    investable_pct = 1.0 - cash_min
+    for s in selected:
+        s["weight"] = s["weight"] * investable_pct
+
+    logger.info(f"Portfolio: {len(selected)} positions, cash={cash_min:.0%}")
+    return selected
+
+
+def apply_cost_gate(
+    proposed: list[dict],
+    current_positions: dict,
+    capital: float,
+    regime: str,
+) -> tuple[list[dict], list[str]]:
+    """
+    Remove trades where round-trip DEGIRO fee exceeds MAX_ROUNDTRIP_FEE_PCT.
+    Also removes positions already held (no change).
+    Returns (approved_trades, skipped_log).
+    """
+    approved = []
+    skipped  = []
+
+    for p in proposed:
+        ticker   = p["ticker"]
+        pos_eur  = p["weight"] * capital
+        fee      = calculate_fee(pos_eur)
+        rt_fee   = fee * 2  # buy + sell round-trip
+        rt_pct   = rt_fee / pos_eur if pos_eur > 0 else 1.0
+
+        if pos_eur < MIN_POSITION_EUR:
+            msg = f"{ticker}: position {pos_eur:.0f} EUR < min {MIN_POSITION_EUR} EUR — skipped"
+            logger.info(msg); skipped.append(msg)
+            continue
+
+        if rt_pct > MAX_ROUNDTRIP_FEE_PCT:
+            msg = (
+                f"{ticker}: round-trip fee {rt_pct:.2%} > {MAX_ROUNDTRIP_FEE_PCT:.2%} "
+                f"(pos={pos_eur:.0f} EUR) — skipped"
+            )
+            logger.info(msg); skipped.append(msg)
+            continue
+
+        approved.append(p)
+
+    return approved, skipped
+
+
+def build_portfolio(
+    scored: list[dict],
+    current_state: dict,
+    regime: str,
+    betas: dict,
+) -> dict:
+    """
+    Full portfolio construction pipeline.
+    Returns dict: {proposed_buys, skipped_trades, weights, cash_eur}.
+    """
+    current_positions = current_state.get("positions", {})
+    cash_eur          = current_state.get("cash_eur", INITIAL_CAPITAL)
+    capital           = sum(
+        p.get("nb_shares", 0) * p.get("entry_price", 0)
+        for p in current_positions.values()
+    ) + cash_eur
+
+    if capital <= 0:
+        capital = INITIAL_CAPITAL
+
+    weighted = compute_weights(scored, regime)
+    if not weighted:
+        return {"proposed_buys": [], "skipped_trades": [], "weights": [], "cash_eur": cash_eur}
+
+    approved, skipped = apply_cost_gate(weighted, current_positions, capital, regime)
+
+    # Compute share counts and EUR amounts
+    for p in approved:
+        p["position_eur"] = round(p["weight"] * capital, 2)
+        price = p.get("last_close") or 100.0  # fallback
+        p["nb_shares"]    = max(1, int(p["position_eur"] / price))
+
+    # Identify new buys (not already held)
+    proposed_buys = [p for p in approved if p["ticker"] not in current_positions]
+
+    params  = REGIME_PARAMS[regime]
+    cash_wt = params["cash_pct_min"]
+    cash_kept = round(capital * cash_wt, 2)
+
+    return {
+        "proposed_buys":  proposed_buys,
+        "full_portfolio":  approved,
+        "skipped_trades": skipped,
+        "weights":        weighted,
+        "cash_eur":       cash_kept,
+        "capital":        capital,
+    }
+
+name: Portfolio Manager
+
+on:
+  schedule:
+    # Mon-Fri at 08:00 CET (= 07:00 UTC, accounting for CET=UTC+1)
+    - cron: "0 7 * * 1-5"
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  run-portfolio-manager:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to commit portfolio_state.json back
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Setup Python 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Run the portfolio manager
+      - name: Run portfolio manager
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd portfolio_manager
+          python main.py
+
+      # 5. Commit and push portfolio_state.json if changed
+      - name: Commit state file
+        run: |
+          git config --global user.name  "portfolio-bot"
+          git config --global user.email "portfolio-bot@github-actions"
+          git add portfolio_manager/portfolio_state.json
+          # Only commit if there are changes
+          git diff --staged --quiet || git commit -m "chore: update portfolio_state [skip ci]"
+          git push
+
+{
+  "current_regime": "NEUTRAL",
+  "last_run": null,
+  "positions": {},
+  "score_history": {},
+  "pending_signals": {},
+  "performance": {
+    "total_pnl_eur": 0.0,
+    "total_pnl_pct": 0.0,
+    "weekly_returns": [],
+    "vs_cac40": []
+  },
+  "initial_capital": 1890,
+  "cash_eur": 1890
+}
+
+# 📈 Autonomous Stock Portfolio Manager
+
+A fully automated portfolio management system for CAC40 + AEX stocks, running on GitHub Actions with Telegram alerts. No VPS required.
+
+**Target:** 15% net annual return | **Capital:** €1,890 | **Universe:** CAC40 + AEX (60+ stocks)
+
+---
+
+## 🗂 Architecture
+
+```
+main.py           ← Orchestrator (runs daily via GitHub Actions)
+config.py         ← All constants and parameters (single source of truth)
+regime.py         ← Market regime detection (BULL / NEUTRAL / BEAR)
+universe.py       ← Stock universe + liquidity filter
+scorer.py         ← 0-100 scoring model (50 pts technical + 50 pts fundamental)
+portfolio.py      ← Portfolio construction and weight optimization
+signals.py        ← Buy/sell/trailing stop signal generation
+state.py          ← portfolio_state.json persistence
+utils.py          ← Beta calculation, fee calculator, sector mapping
+telegram_bot.py   ← Alerts + bidirectional command handler
+```
+
+---
+
+## 🚀 Setup Guide (Step by Step)
+
+### Step 1 — Fork / Create the GitHub Repository
+
+1. Go to [github.com](https://github.com) and sign in
+2. Click **New repository** → name it `portfolio-manager` (or any name)
+3. Upload all files from this project, preserving the folder structure:
+   ```
+   portfolio_manager/
+   ├── main.py
+   ├── config.py
+   ├── regime.py
+   ├── universe.py
+   ├── scorer.py
+   ├── portfolio.py
+   ├── signals.py
+   ├── state.py
+   ├── utils.py
+   ├── telegram_bot.py
+   ├── requirements.txt
+   ├── portfolio_state.json
+   └── .github/
+       └── workflows/
+           └── portfolio_manager.yml
+   ```
+
+### Step 2 — Create Your Telegram Bot
+
+1. Open Telegram and search for **@BotFather**
+2. Send `/newbot` and follow the prompts:
+   - Choose a name (e.g. `My Portfolio Bot`)
+   - Choose a username (must end in `bot`, e.g. `myportfolio_bot`)
+3. BotFather will reply with your **Bot Token** — looks like:
+   ```
+   1234567890:ABCDEFghijklmnopqrstuvwxyz1234567890
+   ```
+   Save this token.
+
+### Step 3 — Get Your Telegram Chat ID
+
+1. Start a conversation with your new bot (search for its username in Telegram)
+2. Send any message (e.g. `/start`)
+3. Open this URL in your browser (replace `YOUR_TOKEN`):
+   ```
+   https://api.telegram.org/botYOUR_TOKEN/getUpdates
+   ```
+4. Find `"chat":{"id":XXXXXXXX}` in the response — that number is your **Chat ID**
+
+### Step 4 — Add Secrets to GitHub
+
+1. In your GitHub repo: **Settings → Secrets and variables → Actions**
+2. Click **New repository secret** for each:
+
+   | Secret Name | Value |
+   |---|---|
+   | `TELEGRAM_BOT_TOKEN` | Your bot token from Step 2 |
+   | `TELEGRAM_CHAT_ID` | Your chat ID from Step 3 |
+
+### Step 5 — First Manual Run to Validate Setup
+
+1. Go to **Actions** tab in your GitHub repo
+2. Click **Portfolio Manager** in the left sidebar
+3. Click **Run workflow** → **Run workflow**
+4. Watch the logs — you should see:
+   - Regime detection running
+   - Universe scan (60+ tickers)
+   - Scoring computation
+   - Telegram message delivered to your bot
+5. Check your Telegram — you should receive a weekly summary or buy signals
+
+### Step 6 — Automatic Schedule
+
+After setup, the system runs automatically:
+- **Mon–Fri at 08:00 CET**: Full pipeline (regime → score → signals → alerts)
+- **Every Monday**: Also sends weekly portfolio summary
+- **Biweekly Mondays**: Rebalancing check
+
+The `portfolio_state.json` is automatically committed back to the repo after each run.
+
+---
+
+## 📱 Telegram Command Reference
+
+All commands must come from your authorized `TELEGRAM_CHAT_ID`.
+
+### `/bought <TICKER> <NB_SHARES> <EXECUTION_PRICE>`
+Record a confirmed buy execution.
+
+```
+/bought AIR.PA 3 145.50
+```
+
+Reply includes:
+- Confirmed position details
+- Stop-loss and take-profit levels
+- Slippage vs model price
+- Warning if ticker is outside model universe
+
+---
+
+### `/sold <TICKER> <NB_SHARES> <EXECUTION_PRICE>`
+Record a confirmed sell execution.
+
+```
+/sold AIR.PA 3 152.80
+```
+
+Reply includes:
+- Realized P&L (EUR and %)
+- Updated portfolio snapshot
+
+---
+
+### `/portfolio`
+Display all open positions with live P&L.
+
+Shows:
+- Each position: ticker, entry price, current price, P&L %, weight, beta
+- Portfolio beta
+- Sector exposure
+- Cash available
+- Total P&L vs initial capital
+
+---
+
+### `/status`
+System status overview.
+
+Shows:
+- Current market regime
+- Last run timestamp
+- Number of open positions
+- Cash available
+- Universe size
+
+---
+
+### `/regime`
+Detailed regime analysis.
+
+Shows:
+- CAC40 price, MA50, MA200
+- Stoxx600 secondary confirmation
+- Full parameters for current regime (thresholds, beta targets, stop levels)
+
+---
+
+## 📊 How the Scoring Works
+
+Each stock receives a **0–100 score** composed of:
+
+### Technical Block (50 pts)
+| Component | Max pts | Description |
+|---|---|---|
+| Trend (MA alignment) | 15 | MA20 > MA50 > MA200 (5 pts each) |
+| RSI 14d | 10 | Regime-adjusted optimal range |
+| Volume confirmation | 10 | vs 20-day average (>200% = full) |
+| MACD | 8 | Bullish crossover = full, bearish = 0 |
+| 3M Momentum | 7 | vs universe median (top quartile = full) |
+
+### Fundamental Block (50 pts)
+| Component | Max pts | Description |
+|---|---|---|
+| EPS revisions | 15 | Analyst upgrades last 30 days |
+| Relative valuation | 15 | PEG/P-E vs regime context |
+| Balance sheet | 10 | Debt/EBITDA + FCF yield |
+| Growth | 10 | Revenue + EPS 3Y CAGR |
+
+### Regime Bonus
+- **BULL**: +5 pts for stocks with beta > 1.3 (rewards momentum)
+- **BEAR**: +5 pts for stocks with beta < 1.0 (rewards safety)
+
+---
+
+## 🌡 Market Regime Logic
+
+| Regime | Condition | Beta Target | Max Lines | Cash |
+|---|---|---|---|---|
+| BULL | MA50 > MA200 AND price > MA50 | 1.3–1.6 | 7 | 0% |
+| NEUTRAL | MA50 > MA200 BUT price < MA50 | 1.0–1.3 | 6 | 10–15% |
+| BEAR | MA50 < MA200 | 0.7–1.0 | 5 | 20–30% |
+
+---
+
+## 🔴 Sell Triggers
+
+1. **Stop-loss**: BULL −10%, NEUTRAL −8%, BEAR −6%
+2. **Take-profit**: BULL +22%, NEUTRAL +18%, BEAR +14%
+3. **Trailing stop** (BULL only): −8% from peak, activates after +15%
+4. **Score degradation**: Below threshold for 2 consecutive runs
+5. **Regime change to BEAR**: All positions with beta > 1.2 get immediate sell alert
+
+---
+
+## 💶 Fee Model (DEGIRO Euronext)
+
+- Per order: **€0.50 + 0.004%** of order value
+- Round-trip cost gate: skip trade if **buy+sell > 0.8%** of position
+- Minimum position: **€200**
+
+---
+
+## ⚙️ Customization
+
+All parameters live in `config.py`. Key settings:
+
+```python
+INITIAL_CAPITAL = 1890.0      # Your total capital in EUR
+MAX_POSITION_PCT = 0.20        # 20% max per stock
+MAX_SECTOR_PCT = 0.35          # 35% max per sector
+REBALANCE_FREQUENCY = "biweekly"
+
+# Add/remove tickers:
+CAC40_TICKERS = [...]
+AEX_TICKERS = [...]
+```
+
+---
+
+## 🔒 Security
+
+- **Telegram credentials** are stored as GitHub Secrets only — never in code
+- Commands are only accepted from your `TELEGRAM_CHAT_ID`
+- Unauthorized command attempts are logged and silently ignored
+- `portfolio_state.json` is committed to your private repo
+
+---
+
+## 🐛 Troubleshooting
+
+**Actions not triggering?**
+- Check that the workflow file is at `.github/workflows/portfolio_manager.yml`
+- Ensure Actions are enabled: repo Settings → Actions → Allow all actions
+
+**Telegram messages not arriving?**
+- Verify secrets are named exactly `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`
+- Confirm you started a conversation with the bot before the first run
+- Test manually: run the workflow from the Actions tab
+
+**Data errors in logs?**
+- yfinance occasionally has rate limits — the system skips failing tickers gracefully
+- If many tickers fail, check yfinance GitHub for known issues
+
+**Score all zeros?**
+- Usually a data availability issue. Check the logs for specific ticker errors.
+- The system degrades gracefully: missing data = 0 pts for that component, not a crash.
+
+---
+
+## 📄 License
+
+MIT — use freely, modify to fit your strategy.
+
+> ⚠️ **Disclaimer**: This is an algorithmic decision-support tool, not financial advice. Always apply your own judgment before executing trades. Past model performance does not guarantee future returns.
+
+"""
+regime.py — Market regime detection using CAC40 moving averages.
+Computes BULL / NEUTRAL / BEAR based on MA50 vs MA200 relationship.
+"""
+
+import logging
+import yfinance as yf
+import pandas as pd
+from config import CAC40_TICKER, STOXX600_TICKER, MA_SHORT, MA_LONG
+
+logger = logging.getLogger(__name__)
+
+
+def fetch_index_history(ticker: str, period: str = "1y") -> pd.Series:
+    """Download daily close prices for an index ticker."""
+    try:
+        data = yf.download(ticker, period=period, progress=False, auto_adjust=True)
+        if data.empty:
+            raise ValueError(f"No data returned for {ticker}")
+        return data["Close"].dropna()
+    except Exception as e:
+        logger.error(f"Failed to fetch history for {ticker}: {e}")
+        return pd.Series(dtype=float)
+
+
+def compute_regime(closes: pd.Series) -> dict:
+    """
+    Compute regime from a price series.
+    Returns a dict with regime, ma50, ma200, last_close and signal details.
+    """
+    if len(closes) < MA_LONG:
+        logger.warning("Insufficient data to compute regime — defaulting to NEUTRAL")
+        return {
+            "regime": "NEUTRAL",
+            "ma50": None,
+            "ma200": None,
+            "last_close": None,
+            "detail": "Insufficient data",
+        }
+
+    ma50  = float(closes.rolling(MA_SHORT).mean().iloc[-1])
+    ma200 = float(closes.rolling(MA_LONG).mean().iloc[-1])
+    last  = float(closes.iloc[-1])
+
+    if ma50 > ma200 and last > ma50:
+        regime = "BULL"
+        detail = f"MA50({ma50:.1f}) > MA200({ma200:.1f}) AND price({last:.1f}) > MA50"
+    elif ma50 > ma200 and last <= ma50:
+        regime = "NEUTRAL"
+        detail = f"MA50({ma50:.1f}) > MA200({ma200:.1f}) BUT price({last:.1f}) < MA50"
+    else:
+        regime = "BEAR"
+        detail = f"MA50({ma50:.1f}) < MA200({ma200:.1f})"
+
+    return {
+        "regime": regime,
+        "ma50": ma50,
+        "ma200": ma200,
+        "last_close": last,
+        "detail": detail,
+    }
+
+
+def detect_regime() -> dict:
+    """
+    Main entry point: detect current market regime.
+    Uses CAC40 as primary, computes Stoxx600 for reference.
+    Returns full regime info dict.
+    """
+    logger.info("Detecting market regime...")
+
+    cac_closes = fetch_index_history(CAC40_TICKER)
+    stoxx_closes = fetch_index_history(STOXX600_TICKER)
+
+    cac_result   = compute_regime(cac_closes)
+    stoxx_result = compute_regime(stoxx_closes)
+
+    # Primary regime = CAC40
+    regime = cac_result["regime"]
+
+    logger.info(
+        f"Regime: {regime} | CAC40: {cac_result['detail']} | "
+        f"Stoxx600: {stoxx_result['regime']} ({stoxx_result['detail']})"
+    )
+
+    return {
+        "regime": regime,
+        "cac40": cac_result,
+        "stoxx600": stoxx_result,
+    }
+
+# Core data
+yfinance==0.2.54
+pandas==2.2.3
+numpy==1.26.4
+
+# HTTP (for Telegram API)
+requests==2.32.3
+
+# Timezone (used internally by yfinance)
+pytz==2024.2
+
+"""
+scorer.py — Scoring model: 0-100 composite score (50 tech + 50 fundamental).
+Gracefully handles missing data (0 pts for that sub-component, never crash).
+"""
+
+import logging
+import numpy as np
+import pandas as pd
+import yfinance as yf
+from datetime import datetime, timedelta
+from config import (
+    SCORE_TECH_TREND_MAX, SCORE_TECH_RSI_MAX, SCORE_TECH_VOLUME_MAX,
+    SCORE_TECH_MACD_MAX, SCORE_TECH_MOMENTUM_MAX,
+    SCORE_FUND_EPS_REVISIONS_MAX, SCORE_FUND_VALUATION_MAX,
+    SCORE_FUND_BALANCE_SHEET_MAX, SCORE_FUND_GROWTH_MAX,
+    RSI_THRESHOLDS, VOLUME_HIGH_MULT, VOLUME_MED_MULT,
+    MOMENTUM_LOOKBACK_MONTHS, EPS_REVISION_LOOKBACK_DAYS,
+    PEG_GOOD_BULL, DEBT_EBITDA_MAX,
+    BULL_BETA_BONUS_THRESHOLD, BEAR_BETA_BONUS_THRESHOLD, REGIME_BONUS_PTS,
+)
+
+logger = logging.getLogger(__name__)
+
+
+# ─── Technical Helpers ────────────────────────────────────────────────────────
+
+def _rsi(closes: pd.Series, period: int = 14) -> float:
+    """Compute RSI for a price series."""
+    delta = closes.diff()
+    gain  = delta.clip(lower=0).rolling(period).mean()
+    loss  = (-delta.clip(upper=0)).rolling(period).mean()
+    rs    = gain / loss.replace(0, np.nan)
+    return float(100 - 100 / (1 + rs.iloc[-1]))
+
+
+def _macd_signal(closes: pd.Series) -> str:
+    """Returns 'bullish', 'neutral', or 'bearish' MACD signal."""
+    ema12 = closes.ewm(span=12, adjust=False).mean()
+    ema26 = closes.ewm(span=26, adjust=False).mean()
+    macd  = ema12 - ema26
+    signal = macd.ewm(span=9, adjust=False).mean()
+    hist   = macd - signal
+    if len(hist) < 2:
+        return "neutral"
+    # Bullish: histogram turned positive (crossover)
+    if hist.iloc[-1] > 0 and hist.iloc[-2] <= 0:
+        return "bullish_crossover"
+    if hist.iloc[-1] > 0:
+        return "bullish"
+    if hist.iloc[-1] < 0 and hist.iloc[-2] >= 0:
+        return "bearish_crossover"
+    return "bearish"
+
+
+# ─── Technical Block ──────────────────────────────────────────────────────────
+
+def score_trend(closes: pd.Series) -> tuple[float, list[str]]:
+    """MA20 > MA50 > MA200 alignment. Max 15 pts (5 per level confirmed)."""
+    signals = []
+    pts = 0.0
+    if len(closes) < 200:
+        return 0.0, ["Insufficient history for trend scoring"]
+
+    ma20  = float(closes.rolling(20).mean().iloc[-1])
+    ma50  = float(closes.rolling(50).mean().iloc[-1])
+    ma200 = float(closes.rolling(200).mean().iloc[-1])
+    last  = float(closes.iloc[-1])
+
+    if last > ma20:
+        pts += 5; signals.append(f"Price > MA20 ({ma20:.2f})")
+    if ma20 > ma50:
+        pts += 5; signals.append(f"MA20 > MA50 ({ma50:.2f})")
+    if ma50 > ma200:
+        pts += 5; signals.append(f"MA50 > MA200 ({ma200:.2f})")
+
+    return pts, signals
+
+
+def score_rsi(closes: pd.Series, regime: str) -> tuple[float, list[str]]:
+    """RSI 14d scoring based on regime thresholds. Max 10 pts."""
+    signals = []
+    try:
+        rsi = _rsi(closes)
+        th  = RSI_THRESHOLDS[regime]
+        pts = 0.0
+
+        if th["min"] <= rsi <= th["max"]:
+            pts = SCORE_TECH_RSI_MAX
+            signals.append(f"RSI {rsi:.1f} in ideal range [{th['min']}-{th['max']}]")
+        elif rsi < th["oversold"]:
+            pts = SCORE_TECH_RSI_MAX * 0.8  # oversold bonus
+            signals.append(f"RSI {rsi:.1f} oversold (bonus)")
+        elif rsi > th["overbought"]:
+            pts = 0.0
+            signals.append(f"RSI {rsi:.1f} overbought (penalty)")
+        else:
+            # Partial credit for being somewhat in range
+            dist_from_ideal = min(abs(rsi - th["min"]), abs(rsi - th["max"]))
+            pts = max(0, SCORE_TECH_RSI_MAX * (1 - dist_from_ideal / 20))
+            signals.append(f"RSI {rsi:.1f} partial")
+
+        return pts, signals
+    except Exception as e:
+        logger.debug(f"RSI scoring error: {e}")
+        return 0.0, ["RSI unavailable"]
+
+
+def score_volume(hist: pd.DataFrame) -> tuple[float, list[str]]:
+    """Volume vs 20d average. Max 10 pts."""
+    try:
+        avg_vol = hist["Volume"].tail(20).mean()
+        cur_vol = float(hist["Volume"].iloc[-1])
+        ratio   = cur_vol / avg_vol if avg_vol > 0 else 0
+
+        if ratio >= VOLUME_HIGH_MULT:
+            return SCORE_TECH_VOLUME_MAX, [f"Volume {ratio:.1f}x avg (strong confirmation)"]
+        elif ratio >= VOLUME_MED_MULT:
+            pts = SCORE_TECH_VOLUME_MAX * 0.6
+            return pts, [f"Volume {ratio:.1f}x avg (moderate confirmation)"]
+        else:
+            return 0.0, [f"Volume {ratio:.1f}x avg (weak)"]
+    except Exception as e:
+        logger.debug(f"Volume scoring error: {e}")
+        return 0.0, ["Volume data unavailable"]
+
+
+def score_macd(closes: pd.Series) -> tuple[float, list[str]]:
+    """MACD signal scoring. Max 8 pts."""
+    signal = _macd_signal(closes)
+    if signal == "bullish_crossover":
+        return SCORE_TECH_MACD_MAX, ["MACD bullish crossover"]
+    elif signal == "bullish":
+        return SCORE_TECH_MACD_MAX * 0.6, ["MACD bullish (above signal)"]
+    elif signal == "bearish_crossover":
+        return 0.0, ["MACD bearish crossover (penalty)"]
+    else:
+        return 0.0, ["MACD bearish"]
+
+
+def score_momentum(ticker: str, closes: pd.Series, universe_returns: list[float]) -> tuple[float, list[str]]:
+    """3M momentum vs universe median. Top quartile = full pts. Max 7 pts."""
+    try:
+        lookback = MOMENTUM_LOOKBACK_MONTHS * 21  # approx trading days
+        if len(closes) < lookback + 1:
+            return 0.0, ["Insufficient history for momentum"]
+
+        ret_3m = float(closes.iloc[-1] / closes.iloc[-lookback] - 1)
+        median  = float(np.median(universe_returns)) if universe_returns else 0
+        q75     = float(np.percentile(universe_returns, 75)) if universe_returns else 0
+
+        if ret_3m >= q75:
+            return SCORE_TECH_MOMENTUM_MAX, [f"3M return {ret_3m:.1%} top quartile"]
+        elif ret_3m >= median:
+            pts = SCORE_TECH_MOMENTUM_MAX * 0.5
+            return pts, [f"3M return {ret_3m:.1%} above median"]
+        else:
+            return 0.0, [f"3M return {ret_3m:.1%} below median"]
+    except Exception as e:
+        logger.debug(f"Momentum scoring error: {e}")
+        return 0.0, ["Momentum unavailable"]
+
+
+# ─── Fundamental Block ────────────────────────────────────────────────────────
+
+def score_eps_revisions(ticker_obj) -> tuple[float, list[str]]:
+    """Analyst EPS upgrades in last 30 days. Max 15 pts."""
+    try:
+        recs = ticker_obj.recommendations
+        if recs is None or recs.empty:
+            return 0.0, ["No analyst recommendations data"]
+
+        cutoff = datetime.now() - timedelta(days=EPS_REVISION_LOOKBACK_DAYS)
+        # Filter recent recommendations
+        if hasattr(recs.index, "to_pydatetime"):
+            recent = recs[recs.index >= cutoff]
+        else:
+            recent = recs.tail(10)
+
+        if recent.empty:
+            return 0.0, ["No recent analyst activity"]
+
+        # Count upgrades vs downgrades
+        upgrade_actions   = {"upgrade", "initiated", "resumed", "reiterated"}
+        downgrade_actions = {"downgrade", "lowered"}
+
+        upgrades   = 0
+        downgrades = 0
+        for col in ["Action", "action"]:
+            if col in recent.columns:
+                actions = recent[col].str.lower().fillna("")
+                upgrades   = actions.str.contains("|".join(upgrade_actions)).sum()
+                downgrades = actions.str.contains("|".join(downgrade_actions)).sum()
+                break
+
+        net_score = upgrades - downgrades
+        if net_score >= 3:
+            pts = SCORE_FUND_EPS_REVISIONS_MAX
+        elif net_score == 2:
+            pts = SCORE_FUND_EPS_REVISIONS_MAX * 0.8
+        elif net_score == 1:
+            pts = SCORE_FUND_EPS_REVISIONS_MAX * 0.5
+        elif net_score == 0:
+            pts = SCORE_FUND_EPS_REVISIONS_MAX * 0.3
+        else:
+            pts = 0.0
+
+        return pts, [f"Analyst net revisions: {net_score:+d} ({upgrades} up, {downgrades} down)"]
+    except Exception as e:
+        logger.debug(f"EPS revision scoring error: {e}")
+        return 0.0, ["EPS revision data unavailable"]
+
+
+def score_valuation(info: dict, regime: str) -> tuple[float, list[str]]:
+    """P/E vs sector, PEG ratio. Max 15 pts."""
+    try:
+        pe  = info.get("trailingPE") or info.get("forwardPE")
+        peg = info.get("pegRatio")
+
+        if pe is None:
+            return 0.0, ["P/E not available"]
+
+        pts     = 0.0
+        signals = []
+
+        if regime == "BULL":
+            # Growth premium accepted; use PEG
+            if peg is not None:
+                if peg < 1.0:
+                    pts = SCORE_FUND_VALUATION_MAX
+                    signals.append(f"PEG {peg:.2f} — excellent value for growth")
+                elif peg < PEG_GOOD_BULL:
+                    pts = SCORE_FUND_VALUATION_MAX * 0.7
+                    signals.append(f"PEG {peg:.2f} — acceptable growth premium")
+                elif peg < 2.5:
+                    pts = SCORE_FUND_VALUATION_MAX * 0.4
+                    signals.append(f"PEG {peg:.2f} — elevated but tolerable in BULL")
+                else:
+                    pts = 0.0
+                    signals.append(f"PEG {peg:.2f} — too expensive")
+            else:
+                # Fallback to P/E
+                if pe < 15:
+                    pts = SCORE_FUND_VALUATION_MAX
+                elif pe < 25:
+                    pts = SCORE_FUND_VALUATION_MAX * 0.6
+                elif pe < 40:
+                    pts = SCORE_FUND_VALUATION_MAX * 0.3
+                else:
+                    pts = 0.0
+                signals.append(f"P/E {pe:.1f} (PEG unavailable)")
+        else:
+            # BEAR/NEUTRAL: value focus, P/E discount required
+            if pe < 12:
+                pts = SCORE_FUND_VALUATION_MAX
+                signals.append(f"P/E {pe:.1f} — deep value")
+            elif pe < 18:
+                pts = SCORE_FUND_VALUATION_MAX * 0.7
+                signals.append(f"P/E {pe:.1f} — reasonable value")
+            elif pe < 25:
+                pts = SCORE_FUND_VALUATION_MAX * 0.3
+                signals.append(f"P/E {pe:.1f} — fair")
+            else:
+                pts = 0.0
+                signals.append(f"P/E {pe:.1f} — too expensive for {regime} regime")
+
+        return pts, signals
+    except Exception as e:
+        logger.debug(f"Valuation scoring error: {e}")
+        return 0.0, ["Valuation data unavailable"]
+
+
+def score_balance_sheet(info: dict) -> tuple[float, list[str]]:
+    """Debt/EBITDA + FCF yield. Max 10 pts."""
+    try:
+        pts     = 0.0
+        signals = []
+
+        total_debt  = info.get("totalDebt", 0) or 0
+        ebitda      = info.get("ebitda", 1) or 1
+        free_cf     = info.get("freeCashflow", 0) or 0
+        market_cap  = info.get("marketCap", 1) or 1
+
+        debt_ebitda = total_debt / ebitda if ebitda != 0 else 99
+        fcf_yield   = free_cf / market_cap if market_cap != 0 else 0
+
+        # Debt/EBITDA scoring (5 pts)
+        if debt_ebitda < 1.0:
+            pts += 5; signals.append(f"D/EBITDA {debt_ebitda:.1f} — strong balance sheet")
+        elif debt_ebitda < DEBT_EBITDA_MAX:
+            pts += 3; signals.append(f"D/EBITDA {debt_ebitda:.1f} — acceptable")
+        else:
+            signals.append(f"D/EBITDA {debt_ebitda:.1f} — leveraged")
+
+        # FCF yield scoring (5 pts)
+        if fcf_yield > 0.06:
+            pts += 5; signals.append(f"FCF yield {fcf_yield:.1%} — excellent")
+        elif fcf_yield > 0.03:
+            pts += 3; signals.append(f"FCF yield {fcf_yield:.1%} — good")
+        elif fcf_yield > 0:
+            pts += 1; signals.append(f"FCF yield {fcf_yield:.1%} — positive")
+        else:
+            signals.append(f"FCF yield {fcf_yield:.1%} — negative/unavailable")
+
+        return pts, signals
+    except Exception as e:
+        logger.debug(f"Balance sheet scoring error: {e}")
+        return 0.0, ["Balance sheet data unavailable"]
+
+
+def score_growth(ticker_obj, info: dict) -> tuple[float, list[str]]:
+    """Revenue + EPS 3Y CAGR. Max 10 pts."""
+    try:
+        pts     = 0.0
+        signals = []
+
+        # Revenue growth from financials
+        try:
+            fin = ticker_obj.financials
+            if fin is not None and not fin.empty and "Total Revenue" in fin.index:
+                revenues = fin.loc["Total Revenue"].dropna().sort_index()
+                if len(revenues) >= 3:
+                    rev_cagr = float((revenues.iloc[-1] / revenues.iloc[-3]) ** (1/3) - 1)
+                    if rev_cagr > 0.15:
+                        pts += 5; signals.append(f"Revenue 3Y CAGR {rev_cagr:.1%} — strong")
+                    elif rev_cagr > 0.07:
+                        pts += 3; signals.append(f"Revenue 3Y CAGR {rev_cagr:.1%} — good")
+                    elif rev_cagr > 0:
+                        pts += 1; signals.append(f"Revenue 3Y CAGR {rev_cagr:.1%} — modest")
+                    else:
+                        signals.append(f"Revenue declining: {rev_cagr:.1%}")
+        except Exception:
+            signals.append("Revenue CAGR unavailable")
+
+        # EPS growth proxy from info
+        eps_fwd = info.get("forwardEps")
+        eps_ttm = info.get("trailingEps")
+        if eps_fwd and eps_ttm and eps_ttm > 0:
+            eps_growth = (eps_fwd - eps_ttm) / abs(eps_ttm)
+            if eps_growth > 0.15:
+                pts += 5; signals.append(f"EPS fwd growth {eps_growth:.1%} — strong")
+            elif eps_growth > 0.07:
+                pts += 3; signals.append(f"EPS fwd growth {eps_growth:.1%} — good")
+            elif eps_growth > 0:
+                pts += 1; signals.append(f"EPS fwd growth {eps_growth:.1%} — modest")
+            else:
+                signals.append(f"EPS declining: {eps_growth:.1%}")
+        else:
+            signals.append("EPS growth unavailable")
+
+        return min(pts, SCORE_FUND_GROWTH_MAX), signals
+    except Exception as e:
+        logger.debug(f"Growth scoring error: {e}")
+        return 0.0, ["Growth data unavailable"]
+
+
+# ─── Main Scorer ──────────────────────────────────────────────────────────────
+
+def score_ticker(
+    ticker: str,
+    regime: str,
+    universe_returns: list[float],
+    beta: float,
+) -> dict:
+    """
+    Compute full 0-100 score for a single ticker.
+    Returns dict with score, breakdown, and signal lists.
+    """
+    result = {
+        "ticker":     ticker,
+        "score":      0.0,
+        "tech_score": 0.0,
+        "fund_score": 0.0,
+        "regime_bonus": 0.0,
+        "signals_tech": [],
+        "signals_fund": [],
+        "beta": beta,
+        "error": None,
+    }
+
+    try:
+        stock = yf.Ticker(ticker)
+        hist  = stock.history(period="2y")
+        info  = stock.info or {}
+
+        if hist.empty or len(hist) < 50:
+            result["error"] = "Insufficient price history"
+            return result
+
+        closes = hist["Close"].dropna()
+
+        # ── Technical Block ──────────────────────────────────────────────────
+        t_trend, s1 = score_trend(closes)
+        t_rsi,   s2 = score_rsi(closes, regime)
+        t_vol,   s3 = score_volume(hist)
+        t_macd,  s4 = score_macd(closes)
+        t_mom,   s5 = score_momentum(ticker, closes, universe_returns)
+
+        tech_total = t_trend + t_rsi + t_vol + t_macd + t_mom
+        tech_sigs  = s1 + s2 + s3 + s4 + s5
+
+        # ── Fundamental Block ─────────────────────────────────────────────────
+        f_eps,  s6 = score_eps_revisions(stock)
+        f_val,  s7 = score_valuation(info, regime)
+        f_bs,   s8 = score_balance_sheet(info)
+        f_grow, s9 = score_growth(stock, info)
+
+        fund_total = f_eps + f_val + f_bs + f_grow
+        fund_sigs  = s6 + s7 + s8 + s9
+
+        # ── Regime Bonus ──────────────────────────────────────────────────────
+        bonus        = 0.0
+        bonus_reason = ""
+        if regime == "BULL" and beta >= BULL_BETA_BONUS_THRESHOLD:
+            bonus        = REGIME_BONUS_PTS
+            bonus_reason = f"High-beta stock in BULL regime (beta={beta:.2f})"
+        elif regime == "BEAR" and beta < BEAR_BETA_BONUS_THRESHOLD:
+            bonus        = REGIME_BONUS_PTS
+            bonus_reason = f"Low-beta stock in BEAR regime (beta={beta:.2f})"
+
+        total = min(100.0, tech_total + fund_total + bonus)
+
+        result.update({
+            "score":        total,
+            "tech_score":   tech_total,
+            "fund_score":   fund_total,
+            "regime_bonus": bonus,
+            "bonus_reason": bonus_reason,
+            "signals_tech": tech_sigs,
+            "signals_fund": fund_sigs,
+            "breakdown": {
+                "trend":     t_trend,
+                "rsi":       t_rsi,
+                "volume":    t_vol,
+                "macd":      t_macd,
+                "momentum":  t_mom,
+                "eps_rev":   f_eps,
+                "valuation": f_val,
+                "balance":   f_bs,
+                "growth":    f_grow,
+            },
+        })
+
+    except Exception as e:
+        logger.error(f"Scoring failed for {ticker}: {e}")
+        result["error"] = str(e)
+
+    return result
+
+
+def score_universe(liquid_tickers: list[dict], regime: str, betas: dict) -> list[dict]:
+    """
+    Score all liquid tickers. Compute universe returns first for momentum ranking.
+    Returns list of score dicts, sorted descending by score.
+    """
+    logger.info(f"Scoring {len(liquid_tickers)} tickers (regime={regime})...")
+
+    # Pre-compute 3M returns for all tickers (for momentum percentile ranking)
+    universe_returns = []
+    returns_map      = {}
+
+    for item in liquid_tickers:
+        t = item["ticker"]
+        try:
+            hist = yf.download(t, period="6mo", progress=False, auto_adjust=True)
+            if not hist.empty and len(hist) >= 63:
+                closes = hist["Close"].dropna()
+                ret    = float(closes.iloc[-1] / closes.iloc[-63] - 1)
+                universe_returns.append(ret)
+                returns_map[t] = ret
+        except Exception:
+            pass
+
+    # Score each ticker
+    scores = []
+    for item in liquid_tickers:
+        t    = item["ticker"]
+        beta = betas.get(t, 1.0)
+        res  = score_ticker(t, regime, universe_returns, beta)
+        if res["error"] is None:
+            scores.append(res)
+        else:
+            logger.debug(f"Skipping {t}: {res['error']}")
+
+    scores.sort(key=lambda x: x["score"], reverse=True)
+    logger.info(f"Scored {len(scores)} tickers successfully")
+    return scores
+
+"""
+signals.py — Buy/sell signal generation and trailing stop management.
+Evaluates all open positions for sell triggers each run.
+"""
+
+import logging
+import yfinance as yf
+from datetime import datetime
+from config import REGIME_PARAMS, SCORE_DEGRADATION_CONSECUTIVE, BEAR_SELL_BETA_THRESHOLD
+
+logger = logging.getLogger(__name__)
+
+
+def _current_price(ticker: str) -> float | None:
+    """Fetch latest closing price for a ticker."""
+    try:
+        hist = yf.Ticker(ticker).history(period="5d")
+        if hist.empty:
+            return None
+        return float(hist["Close"].iloc[-1])
+    except Exception as e:
+        logger.warning(f"Could not fetch price for {ticker}: {e}")
+        return None
+
+
+def check_stop_loss(ticker: str, position: dict, regime: str) -> dict | None:
+    """
+    Check if position has hit stop-loss level.
+    Returns sell signal dict or None.
+    """
+    price = _current_price(ticker)
+    if price is None:
+        return None
+
+    entry = position.get("entry_price", price)
+    stop  = position.get("stop_loss") or (entry * (1 + REGIME_PARAMS[regime]["stop_loss_pct"]))
+    pnl_pct = (price - entry) / entry
+
+    if price <= stop:
+        return {
+            "ticker":  ticker,
+            "reason":  "stop_loss",
+            "price":   price,
+            "pnl_pct": pnl_pct,
+            "pnl_eur": (price - entry) * position.get("nb_shares", 0),
+            "shares":  position.get("nb_shares", 0),
+        }
+    return None
+
+
+def check_take_profit(ticker: str, position: dict, regime: str) -> dict | None:
+    """
+    Check if position has hit take-profit.
+    In BULL with trailing stop active: check trail instead of fixed level.
+    Returns sell signal dict or None.
+    """
+    price = _current_price(ticker)
+    if price is None:
+        return None
+
+    entry   = position.get("entry_price", price)
+    pnl_pct = (price - entry) / entry
+    params  = REGIME_PARAMS[regime]
+
+    # Update trailing high if in BULL
+    trailing_high = position.get("trailing_high", entry)
+    if price > trailing_high:
+        trailing_high = price
+        position["trailing_high"] = trailing_high  # mutate for state persistence
+
+    # Check trailing stop (BULL only, activates after +15%)
+    trailing_trigger = params.get("trailing_stop_trigger")
+    trailing_pct     = params.get("trailing_stop_pct")
+
+    if trailing_trigger and trailing_pct:
+        peak_gain = (trailing_high - entry) / entry
+        if peak_gain >= trailing_trigger:
+            trail_stop = trailing_high * (1 + trailing_pct)
+            if price <= trail_stop:
+                return {
+                    "ticker":  ticker,
+                    "reason":  "trailing_stop",
+                    "price":   price,
+                    "pnl_pct": pnl_pct,
+                    "pnl_eur": (price - entry) * position.get("nb_shares", 0),
+                    "shares":  position.get("nb_shares", 0),
+                    "detail":  f"Peak +{peak_gain:.1%}, trail stop at {trail_stop:.2f}",
+                }
+
+    # Fixed take-profit
+    tp = position.get("take_profit") or (entry * (1 + params["take_profit_pct"]))
+    if price >= tp:
+        return {
+            "ticker":  ticker,
+            "reason":  "take_profit",
+            "price":   price,
+            "pnl_pct": pnl_pct,
+            "pnl_eur": (price - entry) * position.get("nb_shares", 0),
+            "shares":  position.get("nb_shares", 0),
+        }
+    return None
+
+
+def check_score_degradation(ticker: str, position: dict, score_history: dict, regime: str) -> dict | None:
+    """
+    Sell if score below threshold for SCORE_DEGRADATION_CONSECUTIVE consecutive runs.
+    """
+    threshold = REGIME_PARAMS[regime]["score_threshold"]
+    history   = score_history.get(ticker, [])
+
+    if len(history) < SCORE_DEGRADATION_CONSECUTIVE:
+        return None
+
+    recent_scores = [h["score"] for h in history[-SCORE_DEGRADATION_CONSECUTIVE:]]
+    if all(s < threshold for s in recent_scores):
+        price = _current_price(ticker) or position.get("entry_price", 0)
+        entry = position.get("entry_price", price)
+        return {
+            "ticker":  ticker,
+            "reason":  f"score_degradation (scores: {recent_scores})",
+            "price":   price,
+            "pnl_pct": (price - entry) / entry if entry else 0,
+            "pnl_eur": (price - entry) * position.get("nb_shares", 0),
+            "shares":  position.get("nb_shares", 0),
+            "scores":  recent_scores,
+        }
+    return None
+
+
+def check_regime_change_sells(positions: dict, old_regime: str, new_regime: str) -> list[dict]:
+    """
+    On BEAR entry: sell all positions with beta > BEAR_SELL_BETA_THRESHOLD.
+    Returns list of sell signals.
+    """
+    sell_signals = []
+
+    if new_regime != "BEAR":
+        return sell_signals
+
+    for ticker, pos in positions.items():
+        beta  = pos.get("beta", 1.0)
+        if beta > BEAR_SELL_BETA_THRESHOLD:
+            price = _current_price(ticker) or pos.get("entry_price", 0)
+            entry = pos.get("entry_price", price)
+            sell_signals.append({
+                "ticker":  ticker,
+                "reason":  f"regime_change ({old_regime}→{new_regime}, beta={beta:.2f}>{BEAR_SELL_BETA_THRESHOLD})",
+                "price":   price,
+                "pnl_pct": (price - entry) / entry if entry else 0,
+                "pnl_eur": (price - entry) * pos.get("nb_shares", 0),
+                "shares":  pos.get("nb_shares", 0),
+            })
+            logger.info(f"Regime-change sell: {ticker} (beta={beta:.2f})")
+
+    return sell_signals
+
+
+def evaluate_sells(state: dict, regime: str, score_history: dict) -> list[dict]:
+    """
+    Evaluate all open positions for sell triggers.
+    Returns list of sell signal dicts (may be empty).
+    """
+    positions = state.get("positions", {})
+    sells     = []
+
+    for ticker, pos in positions.items():
+        # Stop-loss
+        sig = check_stop_loss(ticker, pos, regime)
+        if sig:
+            logger.info(f"SELL — {ticker}: stop-loss hit at {sig['price']:.2f}")
+            sells.append(sig); continue
+
+        # Take-profit / trailing
+        sig = check_take_profit(ticker, pos, regime)
+        if sig:
+            logger.info(f"SELL — {ticker}: {sig['reason']} at {sig['price']:.2f}")
+            sells.append(sig); continue
+
+        # Score degradation
+        sig = check_score_degradation(ticker, pos, score_history, regime)
+        if sig:
+            logger.info(f"SELL — {ticker}: {sig['reason']}")
+            sells.append(sig)
+
+    return sells
+
+
+def generate_buy_signals(
+    portfolio_result: dict,
+    current_positions: dict,
+    regime: str,
+) -> list[dict]:
+    """
+    Generate BUY signals for new positions (not already held).
+    Attaches stop/target levels from regime params.
+    """
+    params       = REGIME_PARAMS[regime]
+    proposed_buys = portfolio_result.get("proposed_buys", [])
+    buy_signals   = []
+
+    for p in proposed_buys:
+        ticker = p["ticker"]
+        if ticker in current_positions:
+            continue  # already held
+
+        price = p.get("last_close") or p.get("metrics", {}).get("last_close") or 0.0
+        if price <= 0:
+            logger.warning(f"No price for {ticker}, skipping buy signal")
+            continue
+
+        stop_price = price * (1 + params["stop_loss_pct"])
+        tp_price   = price * (1 + params["take_profit_pct"])
+
+        buy_signals.append({
+            "ticker":       ticker,
+            "score":        p.get("score", 0),
+            "tech_score":   p.get("tech_score", 0),
+            "fund_score":   p.get("fund_score", 0),
+            "beta":         p.get("beta", 1.0),
+            "weight":       p.get("weight", 0),
+            "position_eur": p.get("position_eur", 0),
+            "nb_shares":    p.get("nb_shares", 0),
+            "model_price":  price,
+            "stop_loss":    round(stop_price, 2),
+            "take_profit":  round(tp_price, 2),
+            "signals_tech": p.get("signals_tech", []),
+            "signals_fund": p.get("signals_fund", []),
+            "regime_bonus": p.get("regime_bonus", 0),
+            "bonus_reason": p.get("bonus_reason", ""),
+        })
+
+    return buy_signals
+
+"""
+state.py — Portfolio state persistence via portfolio_state.json.
+Read and write operations for the entire portfolio state.
+"""
+
+import json
+import logging
+import os
+from datetime import datetime
+from config import STATE_FILE, INITIAL_CAPITAL
+
+logger = logging.getLogger(__name__)
+
+DEFAULT_STATE = {
+    "current_regime":  "NEUTRAL",
+    "last_run":        None,
+    "positions":       {},
+    "score_history":   {},
+    "performance": {
+        "total_pnl_eur":   0.0,
+        "total_pnl_pct":   0.0,
+        "weekly_returns":  [],
+        "vs_cac40":        [],
+    },
+    "initial_capital": INITIAL_CAPITAL,
+    "cash_eur":        INITIAL_CAPITAL,
+}
+
+
+def load_state() -> dict:
+    """Load portfolio state from JSON file. Returns default state if not found."""
+    if not os.path.exists(STATE_FILE):
+        logger.info(f"{STATE_FILE} not found — initializing default state")
+        return dict(DEFAULT_STATE)
+
+    try:
+        with open(STATE_FILE, "r") as f:
+            state = json.load(f)
+        logger.info(f"State loaded: {len(state.get('positions', {}))} positions, "
+                    f"cash={state.get('cash_eur', 0):.0f} EUR")
+        return state
+    except Exception as e:
+        logger.error(f"Failed to load {STATE_FILE}: {e} — using defaults")
+        return dict(DEFAULT_STATE)
+
+
+def save_state(state: dict) -> None:
+    """Persist portfolio state to JSON file."""
+    state["last_run"] = datetime.utcnow().isoformat()
+    try:
+        with open(STATE_FILE, "w") as f:
+            json.dump(state, f, indent=2, default=str)
+        logger.info(f"State saved to {STATE_FILE}")
+    except Exception as e:
+        logger.error(f"Failed to save state: {e}")
+
+
+def record_buy(
+    state: dict,
+    ticker: str,
+    nb_shares: int,
+    execution_price: float,
+    model_price: float,
+    stop_loss: float,
+    take_profit: float,
+    weight: float,
+    beta: float,
+) -> dict:
+    """
+    Record a confirmed buy execution in the state.
+    Returns slippage info.
+    """
+    slippage_pct = (execution_price - model_price) / model_price if model_price else 0
+    position_eur = nb_shares * execution_price
+
+    state["positions"][ticker] = {
+        "entry_price":   execution_price,
+        "entry_date":    datetime.utcnow().isoformat()[:10],
+        "nb_shares":     nb_shares,
+        "weight":        weight,
+        "model_price":   model_price,
+        "slippage":      slippage_pct,
+        "stop_loss":     stop_loss,
+        "take_profit":   take_profit,
+        "trailing_high": execution_price,
+        "beta":          beta,
+        "position_eur":  position_eur,
+    }
+
+    state["cash_eur"] = max(0, state.get("cash_eur", 0) - position_eur)
+    logger.info(f"Recorded BUY {ticker}: {nb_shares} shares @ {execution_price:.2f} "
+                f"(slippage {slippage_pct:.2%})")
+
+    return {
+        "ticker":         ticker,
+        "nb_shares":      nb_shares,
+        "execution_price": execution_price,
+        "model_price":    model_price,
+        "slippage_pct":   slippage_pct,
+        "stop_loss":      stop_loss,
+        "take_profit":    take_profit,
+    }
+
+
+def record_sell(
+    state: dict,
+    ticker: str,
+    nb_shares: int,
+    execution_price: float,
+) -> dict:
+    """
+    Record a confirmed sell execution.
+    Returns P&L info.
+    """
+    pos = state["positions"].get(ticker)
+    if not pos:
+        logger.warning(f"Sell recorded for {ticker} not in positions — tracking only")
+        return {"ticker": ticker, "pnl_eur": 0, "pnl_pct": 0}
+
+    entry     = pos["entry_price"]
+    shares    = min(nb_shares, pos["nb_shares"])
+    pnl_eur   = (execution_price - entry) * shares
+    pnl_pct   = (execution_price - entry) / entry
+
+    # Update performance
+    state["performance"]["total_pnl_eur"] += pnl_eur
+    initial = state.get("initial_capital", INITIAL_CAPITAL)
+    state["performance"]["total_pnl_pct"] = state["performance"]["total_pnl_eur"] / initial
+
+    # Remove or reduce position
+    if shares >= pos["nb_shares"]:
+        del state["positions"][ticker]
+    else:
+        state["positions"][ticker]["nb_shares"] -= shares
+        state["positions"][ticker]["position_eur"] = (
+            state["positions"][ticker]["nb_shares"] * execution_price
+        )
+
+    state["cash_eur"] = state.get("cash_eur", 0) + execution_price * shares
+
+    logger.info(f"Recorded SELL {ticker}: {shares} shares @ {execution_price:.2f} "
+                f"P&L {pnl_eur:+.2f} EUR ({pnl_pct:+.1%})")
+
+    return {
+        "ticker":          ticker,
+        "shares":          shares,
+        "entry_price":     entry,
+        "execution_price": execution_price,
+        "pnl_eur":         pnl_eur,
+        "pnl_pct":         pnl_pct,
+    }
+
+
+def update_score_history(state: dict, scores: list[dict]) -> None:
+    """Update rolling score history (keep last 3 runs per ticker)."""
+    today = datetime.utcnow().isoformat()[:10]
+    history = state.setdefault("score_history", {})
+
+    for s in scores:
+        ticker = s["ticker"]
+        entry  = {"score": s["score"], "date": today}
+        if ticker not in history:
+            history[ticker] = []
+        history[ticker].append(entry)
+        # Keep only last 3
+        history[ticker] = history[ticker][-3:]
+
+"""
+telegram_bot.py — Telegram alert sender + bidirectional command handler.
+Sends buy/sell/regime alerts and processes /bought, /sold, /portfolio, /status, /regime.
+"""
+
+import logging
+import os
+import json
+import requests
+from datetime import datetime
+from config import REGIME_PARAMS, INITIAL_CAPITAL
+from state import load_state, save_state, record_buy, record_sell
+from utils import format_portfolio_snapshot, portfolio_beta, sector_exposure
+
+logger = logging.getLogger(__name__)
+
+# Telegram API base
+TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
+
+
+def _get_credentials() -> tuple[str, str]:
+    """Retrieve bot token and chat ID from environment."""
+    token   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
+    if not token or not chat_id:
+        raise EnvironmentError("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set")
+    return token, chat_id
+
+
+def send_message(text: str) -> bool:
+    """Send a plain text message to the configured chat."""
+    try:
+        token, chat_id = _get_credentials()
+        url  = TELEGRAM_API.format(token=token, method="sendMessage")
+        resp = requests.post(url, json={
+            "chat_id":    chat_id,
+            "text":       text,
+            "parse_mode": "Markdown",
+        }, timeout=15)
+        ok = resp.status_code == 200
+        if not ok:
+            logger.error(f"Telegram send failed: {resp.text}")
+        return ok
+    except Exception as e:
+        logger.error(f"Telegram send error: {e}")
+        return False
+
+
+# ─── Alert Formatters ─────────────────────────────────────────────────────────
+
+def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
+    """Format and send a BUY alert."""
+    t         = signal
+    params    = REGIME_PARAMS[regime]
+    positions = portfolio.get("positions", {})
+    pb        = portfolio_beta(positions)
+    sectors   = sector_exposure(positions)
+    n_pos     = len(positions)
+
+    # Build technical signal summary
+    tech_lines = "\n".join(f"  ✓ {s}" for s in t.get("signals_tech", [])[:3])
+    fund_lines = "\n".join(f"  ✓ {s}" for s in t.get("signals_fund", [])[:3])
+
+    # Sector check
+    from config import MAX_SECTOR_PCT
+    from utils import sector_of
+    sector = sector_of(t["ticker"])
+    sec_wt = sectors.get(sector, 0)
+    sec_ok = "✓" if sec_wt < MAX_SECTOR_PCT else "⚠"
+
+    # Beta check
+    beta_max = params["max_beta_per_stock"]
+    beta_ok  = "✓" if t["beta"] <= beta_max else "⚠"
+
+    bonus_line = ""
+    if t.get("regime_bonus", 0) > 0:
+        bonus_line = f"\nRegime bonus: +{t['regime_bonus']:.0f} pts ({t.get('bonus_reason','')})"
+
+    trailing_line = ""
+    if params.get("trailing_stop_pct"):
+        trailing_line = f"\nTrailing stop: activated above +{params['trailing_stop_trigger']:.0%}"
+
+    text = (
+        f"🟢 *SIGNAL BUY — {regime} REGIME*\n"
+        f"📈 *{t['ticker']}*\n"
+        f"Score: {t['score']:.0f}/100 | Beta: {t['beta']:.2f}\n"
+        f"Suggested weight: {t['weight']:.0%} (~{t['position_eur']:.0f} EUR)\n"
+        f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR\n"
+        f"\n*Technical: {t['tech_score']:.0f}/50*\n{tech_lines}"
+        f"\n*Fundamental: {t['fund_score']:.0f}/50*\n{fund_lines}"
+        f"{bonus_line}\n"
+        f"\nStop-loss: {t['stop_loss']:.2f} EUR ({params['stop_loss_pct']:.0%})"
+        f"\nTake-profit: {t['take_profit']:.2f} EUR (+{params['take_profit_pct']:.0%})"
+        f"{trailing_line}\n"
+        f"\n*Portfolio after trade:*\n"
+        f"Regime: {regime}\n"
+        f"Global beta: {pb:.2f} {beta_ok}\n"
+        f"Sector {sector}: {sec_wt:.0%} {sec_ok}\n"
+        f"Active positions: {n_pos}/{params['max_lines']}\n"
+        f"Est. annual target: 15%\n"
+        f"\n_Confirm: /bought {t['ticker']} {t['nb_shares']} <exec_price>_"
+    )
+    send_message(text)
+
+
+def send_sell_alert(signal: dict) -> None:
+    """Format and send a SELL alert."""
+    pnl_sign = "📈" if signal.get("pnl_eur", 0) >= 0 else "📉"
+    text = (
+        f"🔴 *SIGNAL SELL*\n"
+        f"📉 *{signal['ticker']}*\n"
+        f"Reason: {signal['reason']}\n"
+        f"Performance since entry: {signal['pnl_pct']:+.1%} ({signal['pnl_eur']:+.0f} EUR)\n"
+        f"Action: SELL {signal['shares']} shares\n"
+        f"\n_Confirm: /sold {signal['ticker']} {signal['shares']} <exec_price>_"
+    )
+    send_message(text)
+
+
+def send_regime_change_alert(old: str, new: str, cac_data: dict, tickers_to_sell: list[str]) -> None:
+    """Format and send a REGIME CHANGE alert."""
+    ma50  = cac_data.get("ma50", 0)
+    ma200 = cac_data.get("ma200", 0)
+    close = cac_data.get("last_close", 0)
+    params = REGIME_PARAMS[new]
+
+    sell_str = "\n".join(f"  - {t}" for t in tickers_to_sell) if tickers_to_sell else "  (none)"
+
+    text = (
+        f"⚠️ *REGIME CHANGE: {old} → {new}*\n"
+        f"CAC40: {close:.0f} | MA50: {ma50:.0f} | MA200: {ma200:.0f}\n"
+        f"\n*Required actions:*\n"
+        f"- Raise cash to {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}\n"
+        f"- New score threshold: {params['score_threshold']}\n"
+        f"- Max beta per stock: {params['max_beta_per_stock']}\n"
+        f"- Positions to sell (beta too high):\n{sell_str}"
+    )
+    send_message(text)
+
+
+def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0) -> None:
+    """Send Monday weekly portfolio summary."""
+    positions = state.get("positions", {})
+    perf      = state.get("performance", {})
+    cash      = state.get("cash_eur", 0)
+    initial   = state.get("initial_capital", INITIAL_CAPITAL)
+    pb        = portfolio_beta(positions)
+
+    total_val = sum(p.get("position_eur", 0) for p in positions.values()) + cash
+    total_pnl = perf.get("total_pnl_eur", 0)
+    pnl_pct   = total_pnl / initial
+
+    weekly_rets = perf.get("weekly_returns", [])
+    week_ret    = weekly_rets[-1] if weekly_rets else 0.0
+    vs_cac      = week_ret - cac_weekly_return
+
+    # Find best/worst performers
+    performers = []
+    for ticker, pos in positions.items():
+        try:
+            import yfinance as yf
+            hist  = yf.Ticker(ticker).history(period="7d")
+            price = float(hist["Close"].iloc[-1]) if not hist.empty else pos.get("entry_price", 0)
+            entry = pos.get("entry_price", price)
+            performers.append((ticker, (price - entry) / entry if entry else 0))
+        except Exception:
+            pass
+
+    performers.sort(key=lambda x: x[1])
+    worst = performers[0]  if performers else ("N/A", 0)
+    best  = performers[-1] if performers else ("N/A", 0)
+
+    # Annual pace
+    ann_pace = week_ret * 52
+    pace_str = "on track" if ann_pace >= 0.12 else ("ahead" if ann_pace >= 0.15 else "behind")
+
+    sectors = sector_exposure(positions)
+    sec_str = " | ".join(f"{s}: {w:.0%}" for s, w in sectors.items())
+
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    text = (
+        f"📊 *WEEKLY PORTFOLIO SUMMARY*\n"
+        f"Week ending: {today}\n"
+        f"Portfolio return: {week_ret:+.1%} ({week_ret*total_val:+.0f} EUR)\n"
+        f"vs CAC40: {vs_cac:+.1%}\n"
+        f"Regime: {regime}\n"
+        f"Global beta: {pb:.2f}\n"
+        f"Active positions: {len(positions)}/{REGIME_PARAMS[regime]['max_lines']}\n"
+        f"Cash: {cash/total_val:.0%} (~{cash:.0f} EUR)\n"
+        f"Top performer: {best[0]} {best[1]:+.1%}\n"
+        f"Worst performer: {worst[0]} {worst[1]:+.1%}\n"
+        f"Target pace: {pace_str} for {ann_pace:.0%} annual\n"
+        f"Sectors: {sec_str}\n"
+        f"Total P&L: {total_pnl:+.0f} EUR ({pnl_pct:+.1%})"
+    )
+    send_message(text)
+
+
+# ─── Command Handler ──────────────────────────────────────────────────────────
+
+def get_updates(offset: int = 0) -> list[dict]:
+    """Fetch new Telegram updates."""
+    try:
+        token, _ = _get_credentials()
+        url  = TELEGRAM_API.format(token=token, method="getUpdates")
+        resp = requests.get(url, params={"offset": offset, "timeout": 5}, timeout=10)
+        if resp.status_code == 200:
+            return resp.json().get("result", [])
+        return []
+    except Exception as e:
+        logger.error(f"getUpdates error: {e}")
+        return []
+
+
+def handle_command(text: str) -> str:
+    """
+    Process a Telegram command and return a reply string.
+    Commands: /bought, /sold, /portfolio, /status, /regime
+    """
+    parts = text.strip().split()
+    if not parts:
+        return "Empty command."
+
+    cmd = parts[0].lower()
+    state = load_state()
+
+    # ── /bought <TICKER> <NB_SHARES> <PRICE> ────────────────────────────────
+    if cmd == "/bought":
+        if len(parts) < 4:
+            return "Usage: /bought <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
+        ticker, nb_str, price_str = parts[1].upper(), parts[2], parts[3]
+        try:
+            nb_shares = int(nb_str)
+            exec_price = float(price_str)
+        except ValueError:
+            return "Invalid nb_shares or price. Example: /bought AIR.PA 3 145.50"
+
+        # Check if ticker is in model universe
+        from config import FULL_UNIVERSE
+        in_universe = ticker in FULL_UNIVERSE
+        flag = "" if in_universe else "\n⚠ Position outside model universe — tracking P&L only, no score monitoring"
+
+        # Find model signal data if available (from score_history)
+        score_hist = state.get("score_history", {})
+        model_price = exec_price  # fallback
+        stop_loss   = exec_price * 0.90
+        take_profit = exec_price * 1.18
+        weight      = 0.0
+        beta        = 1.0
+
+        # Look up pending signal context if stored
+        pending = state.get("pending_signals", {}).get(ticker, {})
+        if pending:
+            model_price = pending.get("model_price", exec_price)
+            stop_loss   = pending.get("stop_loss", stop_loss)
+            take_profit = pending.get("take_profit", take_profit)
+            weight      = pending.get("weight", 0.0)
+            beta        = pending.get("beta", 1.0)
+
+        info = record_buy(
+            state, ticker, nb_shares, exec_price, model_price,
+            stop_loss, take_profit, weight, beta
+        )
+        save_state(state)
+
+        slippage_str = f"{info['slippage_pct']:+.2%}" if model_price != exec_price else "N/A"
+        return (
+            f"✅ *BUY recorded: {ticker}*\n"
+            f"{nb_shares} shares @ {exec_price:.2f} EUR\n"
+            f"Stop-loss: {stop_loss:.2f} EUR\n"
+            f"Take-profit: {take_profit:.2f} EUR\n"
+            f"Slippage vs model: {slippage_str}"
+            f"{flag}"
+        )
+
+    # ── /sold <TICKER> <NB_SHARES> <PRICE> ──────────────────────────────────
+    elif cmd == "/sold":
+        if len(parts) < 4:
+            return "Usage: /sold <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
+        ticker, nb_str, price_str = parts[1].upper(), parts[2], parts[3]
+        try:
+            nb_shares  = int(nb_str)
+            exec_price = float(price_str)
+        except ValueError:
+            return "Invalid nb_shares or price."
+
+        info = record_sell(state, ticker, nb_shares, exec_price)
+        save_state(state)
+
+        pnl_sign = "✅" if info["pnl_eur"] >= 0 else "🔴"
+        return (
+            f"{pnl_sign} *SELL recorded: {ticker}*\n"
+            f"{info['shares']} shares @ {exec_price:.2f} EUR\n"
+            f"Entry: {info['entry_price']:.2f} EUR\n"
+            f"P&L: {info['pnl_eur']:+.2f} EUR ({info['pnl_pct']:+.1%})\n"
+            f"\n{format_portfolio_snapshot(state)}"
+        )
+
+    # ── /portfolio ────────────────────────────────────────────────────────────
+    elif cmd == "/portfolio":
+        return format_portfolio_snapshot(state)
+
+    # ── /status ───────────────────────────────────────────────────────────────
+    elif cmd == "/status":
+        from config import FULL_UNIVERSE
+        regime    = state.get("current_regime", "?")
+        last_run  = state.get("last_run", "never")
+        n_pos     = len(state.get("positions", {}))
+        cash      = state.get("cash_eur", 0)
+        return (
+            f"⚙️ *System Status*\n"
+            f"Regime: {regime}\n"
+            f"Last run: {last_run}\n"
+            f"Positions: {n_pos}\n"
+            f"Cash: {cash:.0f} EUR\n"
+            f"Universe size: {len(FULL_UNIVERSE)} tickers"
+        )
+
+    # ── /regime ───────────────────────────────────────────────────────────────
+    elif cmd == "/regime":
+        from regime import detect_regime
+        r     = detect_regime()
+        cac   = r["cac40"]
+        stoxx = r["stoxx600"]
+        cur   = r["regime"]
+        params = REGIME_PARAMS[cur]
+        return (
+            f"📊 *Regime Analysis*\n"
+            f"Current regime: *{cur}*\n\n"
+            f"CAC40: {cac['last_close']:.0f} | MA50: {cac['ma50']:.0f} | MA200: {cac['ma200']:.0f}\n"
+            f"Detail: {cac['detail']}\n\n"
+            f"Stoxx600: {stoxx['regime']} | {stoxx['detail']}\n\n"
+            f"*Parameters for {cur}:*\n"
+            f"- Score threshold: {params['score_threshold']}\n"
+            f"- Beta target: {params['beta_target_min']}–{params['beta_target_max']}\n"
+            f"- Max lines: {params['max_lines']}\n"
+            f"- Stop: {params['stop_loss_pct']:.0%} | TP: {params['take_profit_pct']:.0%}\n"
+            f"- Cash: {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}"
+        )
+
+    else:
+        return (
+            "Unknown command. Available:\n"
+            "/bought <TICKER> <NB> <PRICE>\n"
+            "/sold <TICKER> <NB> <PRICE>\n"
+            "/portfolio\n"
+            "/status\n"
+            "/regime"
+        )
+
+
+def poll_and_handle_commands(max_updates: int = 10) -> None:
+    """
+    Poll Telegram for new messages and dispatch commands.
+    Only processes messages from TELEGRAM_CHAT_ID.
+    """
+    try:
+        _, authorized_chat_id = _get_credentials()
+    except EnvironmentError as e:
+        logger.error(str(e))
+        return
+
+    updates = get_updates()
+
+    for update in updates[-max_updates:]:
+        msg     = update.get("message", {})
+        chat_id = str(msg.get("chat", {}).get("id", ""))
+        text    = msg.get("text", "")
+
+        if not text.startswith("/"):
+            continue
+
+        if chat_id != str(authorized_chat_id):
+            logger.warning(f"Unauthorized command from chat_id={chat_id}")
+            continue
+
+        logger.info(f"Handling command: {text}")
+        reply = handle_command(text)
+        send_message(reply)
+
+"""
+universe.py — Stock universe definition + liquidity filter.
+Returns the list of tickers that pass all liquidity checks.
+"""
+
+import logging
+import yfinance as yf
+import pandas as pd
+from config import (
+    FULL_UNIVERSE,
+    LIQUIDITY_MIN_VOLUME_EUR, LIQUIDITY_MIN_MARKET_CAP_EUR,
+    LIQUIDITY_MAX_SPREAD_PCT, LIQUIDITY_LOOKBACK_DAYS,
+    BEAR_MIN_VOLUME_EUR, BEAR_MIN_MARKET_CAP_EUR,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def _check_liquidity(ticker: str, regime: str) -> tuple[bool, dict]:
+    """
+    Check liquidity for a single ticker.
+    Returns (passes: bool, metrics: dict).
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        hist  = stock.history(period=f"{LIQUIDITY_LOOKBACK_DAYS + 5}d")
+
+        if hist.empty or len(hist) < 5:
+            logger.debug(f"{ticker}: no price history, excluded")
+            return False, {}
+
+        # Use last LOOKBACK_DAYS rows
+        hist = hist.tail(LIQUIDITY_LOOKBACK_DAYS)
+
+        # Average daily EUR volume proxy: Volume * Close
+        avg_volume_eur = (hist["Volume"] * hist["Close"]).mean()
+
+        # Bid-ask proxy: avg((High-Low)/Close)
+        avg_spread = ((hist["High"] - hist["Low"]) / hist["Close"]).mean()
+
+        # Market cap from .info (graceful fallback)
+        info       = stock.info
+        market_cap = info.get("marketCap", 0) or 0
+        currency   = info.get("currency", "EUR")
+
+        # Rough EUR conversion if needed (assume 1:1 for EUR-quoted stocks)
+        # For stocks quoted in EUR exchange, Close is already EUR
+        last_close = float(hist["Close"].iloc[-1])
+
+        # Tighter filters in BEAR
+        min_vol = BEAR_MIN_VOLUME_EUR if regime == "BEAR" else LIQUIDITY_MIN_VOLUME_EUR
+        min_cap = BEAR_MIN_MARKET_CAP_EUR if regime == "BEAR" else LIQUIDITY_MIN_MARKET_CAP_EUR
+
+        metrics = {
+            "avg_volume_eur": avg_volume_eur,
+            "avg_spread":     avg_spread,
+            "market_cap":     market_cap,
+            "last_close":     last_close,
+        }
+
+        if avg_volume_eur < min_vol:
+            logger.debug(f"{ticker}: volume {avg_volume_eur:.0f} EUR < {min_vol:.0f} threshold")
+            return False, metrics
+        if market_cap < min_cap:
+            logger.debug(f"{ticker}: mkt cap {market_cap:.0f} < {min_cap:.0f} threshold")
+            return False, metrics
+        if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
+            logger.debug(f"{ticker}: spread {avg_spread:.3f} > {LIQUIDITY_MAX_SPREAD_PCT} threshold")
+            return False, metrics
+
+        return True, metrics
+
+    except Exception as e:
+        logger.warning(f"{ticker}: liquidity check error — {e}")
+        return False, {}
+
+
+def get_liquid_universe(regime: str) -> list[dict]:
+    """
+    Filter FULL_UNIVERSE by liquidity constraints.
+    Returns list of dicts: {ticker, metrics}.
+    """
+    logger.info(f"Scanning {len(FULL_UNIVERSE)} tickers for liquidity (regime={regime})...")
+    passed = []
+
+    for ticker in FULL_UNIVERSE:
+        ok, metrics = _check_liquidity(ticker, regime)
+        if ok:
+            passed.append({"ticker": ticker, "metrics": metrics})
+
+    logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
+    return passed
+
+"""
+utils.py — Utility functions: beta calculation, sector mapping, fee calculator.
+"""
+
+import logging
+import numpy as np
+import yfinance as yf
+import pandas as pd
+from config import (
+    DEGIRO_FIXED_FEE, DEGIRO_VARIABLE_FEE, SECTOR_MAP,
+    CAC40_TICKER, MA_SHORT, MA_LONG,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def calculate_fee(position_eur: float) -> float:
+    """
+    Calculate DEGIRO fee for a single-leg order (Euronext).
+    Fee = 0.50 EUR + 0.004% of order value.
+    """
+    return DEGIRO_FIXED_FEE + DEGIRO_VARIABLE_FEE * position_eur
+
+
+def calculate_roundtrip_fee(position_eur: float) -> float:
+    """Round-trip fee (buy + sell)."""
+    return calculate_fee(position_eur) * 2
+
+
+def roundtrip_fee_pct(position_eur: float) -> float:
+    """Round-trip fee as % of position."""
+    if position_eur <= 0:
+        return 1.0
+    return calculate_roundtrip_fee(position_eur) / position_eur
+
+
+def sector_of(ticker: str) -> str:
+    """Return sector for a ticker from SECTOR_MAP."""
+    return SECTOR_MAP.get(ticker, "Unknown")
+
+
+def compute_beta(ticker: str, period: str = "1y") -> float:
+    """
+    Compute beta vs CAC40.
+    Returns 1.0 on failure (neutral assumption).
+    """
+    try:
+        stock_data = yf.download(ticker, period=period, progress=False, auto_adjust=True)
+        index_data = yf.download(CAC40_TICKER, period=period, progress=False, auto_adjust=True)
+
+        if stock_data.empty or index_data.empty:
+            return 1.0
+
+        stock_ret = stock_data["Close"].pct_change().dropna()
+        index_ret = index_data["Close"].pct_change().dropna()
+
+        # Align on common dates
+        common = stock_ret.index.intersection(index_ret.index)
+        if len(common) < 30:
+            return 1.0
+
+        s = stock_ret.loc[common].values
+        m = index_ret.loc[common].values
+
+        cov  = np.cov(s, m)[0, 1]
+        var  = np.var(m)
+        beta = cov / var if var != 0 else 1.0
+        return round(float(beta), 3)
+
+    except Exception as e:
+        logger.debug(f"Beta computation failed for {ticker}: {e}")
+        return 1.0
+
+
+def compute_betas(tickers: list[str]) -> dict:
+    """
+    Compute betas for a list of tickers.
+    Returns dict {ticker: beta}.
+    """
+    logger.info(f"Computing betas for {len(tickers)} tickers...")
+    betas = {}
+
+    # Download index once
+    try:
+        index_data = yf.download(CAC40_TICKER, period="1y", progress=False, auto_adjust=True)
+        index_ret  = index_data["Close"].pct_change().dropna()
+    except Exception as e:
+        logger.error(f"Failed to download CAC40 for beta: {e}")
+        return {t: 1.0 for t in tickers}
+
+    for ticker in tickers:
+        try:
+            stock_data = yf.download(ticker, period="1y", progress=False, auto_adjust=True)
+            if stock_data.empty:
+                betas[ticker] = 1.0
+                continue
+
+            stock_ret = stock_data["Close"].pct_change().dropna()
+            common    = stock_ret.index.intersection(index_ret.index)
+
+            if len(common) < 30:
+                betas[ticker] = 1.0
+                continue
+
+            s    = stock_ret.loc[common].values
+            m    = index_ret.loc[common].values
+            cov  = np.cov(s, m)[0, 1]
+            var  = np.var(m)
+            beta = float(cov / var) if var != 0 else 1.0
+            betas[ticker] = round(beta, 3)
+
+        except Exception as e:
+            logger.debug(f"Beta failed {ticker}: {e}")
+            betas[ticker] = 1.0
+
+    return betas
+
+
+def portfolio_beta(positions: dict) -> float:
+    """Compute weighted average portfolio beta from open positions."""
+    total_val = sum(p.get("position_eur", 0) for p in positions.values())
+    if total_val == 0:
+        return 0.0
+
+    w_beta = sum(
+        p.get("beta", 1.0) * p.get("position_eur", 0)
+        for p in positions.values()
+    )
+    return round(w_beta / total_val, 3)
+
+
+def sector_exposure(positions: dict) -> dict:
+    """Compute sector weights from open positions."""
+    total_val = sum(p.get("position_eur", 0) for p in positions.values())
+    if total_val == 0:
+        return {}
+
+    sector_eur = {}
+    for ticker, pos in positions.items():
+        s = sector_of(ticker)
+        sector_eur[s] = sector_eur.get(s, 0) + pos.get("position_eur", 0)
+
+    return {s: round(v / total_val, 3) for s, v in sector_eur.items()}
+
+
+def format_portfolio_snapshot(state: dict) -> str:
+    """Format a text portfolio snapshot for Telegram."""
+    positions = state.get("positions", {})
+    cash_eur  = state.get("cash_eur", 0)
+    total_pnl = state.get("performance", {}).get("total_pnl_eur", 0)
+    initial   = state.get("initial_capital", 1890)
+    regime    = state.get("current_regime", "?")
+    pb        = portfolio_beta(positions)
+    sectors   = sector_exposure(positions)
+
+    lines = [
+        f"📊 Portfolio Snapshot | Regime: {regime}",
+        f"Global beta: {pb:.2f} | Cash: {cash_eur:.0f} EUR",
+        f"Total P&L: {total_pnl:+.2f} EUR ({total_pnl/initial:+.1%})",
+        "─" * 30,
+    ]
+
+    for ticker, pos in positions.items():
+        entry = pos.get("entry_price", 0)
+        # Attempt to get current price
+        try:
+            hist  = yf.Ticker(ticker).history(period="2d")
+            price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
+        except Exception:
+            price = entry
+
+        pnl_pct = (price - entry) / entry if entry else 0
+        pnl_eur = (price - entry) * pos.get("nb_shares", 0)
+        lines.append(
+            f"{ticker}: {pos['nb_shares']} @ {entry:.2f} | now {price:.2f} "
+            f"({pnl_pct:+.1%} | {pnl_eur:+.0f} EUR) | β={pos.get('beta',1):.2f}"
+        )
+
+    lines.append("─" * 30)
+    lines.append("Sectors: " + " | ".join(f"{s} {w:.0%}" for s, w in sectors.items()))
+    return "\n".join(lines)
