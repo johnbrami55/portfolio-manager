@@ -1,0 +1,10 @@
+# Core data
+yfinance==0.2.54
+pandas==2.2.3
+numpy==1.26.4
+
+# HTTP (for Telegram API)
+requests==2.32.3
+
+# Timezone (used internally by yfinance)
+pytz==2024.2

@@ -1,0 +1,15 @@
+{
+  "current_regime": "NEUTRAL",
+  "last_run": null,
+  "positions": {},
+  "score_history": {},
+  "pending_signals": {},
+  "performance": {
+    "total_pnl_eur": 0.0,
+    "total_pnl_pct": 0.0,
+    "weekly_returns": [],
+    "vs_cac40": []
+  },
+  "initial_capital": 1890,
+  "cash_eur": 1890
+}
