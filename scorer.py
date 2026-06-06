@@ -218,3 +218,66 @@ def score_universe(liquid_tickers, regime, betas):
     scores.sort(key=lambda x: x["score"], reverse=True)
     logger.info(f"Scored {len(scores)} tickers successfully")
     return scores
+
+def score_universe_from_cache(liquid_items, regime, betas):
+    """Score tickers using data already downloaded by universe.py — no extra API calls."""
+    logger.info(f"Scoring {len(liquid_items)} tickers from cache (regime={regime})...")
+    
+    universe_returns = []
+    for item in liquid_items:
+        hist = item.get("hist")
+        if hist and len(hist.get("closes", [])) >= 63:
+            closes = hist["closes"]
+            ret = (closes[0] - closes[62]) / closes[62]
+            universe_returns.append(ret)
+
+    scores = []
+    for item in liquid_items:
+        ticker = item["ticker"]
+        beta   = betas.get(ticker, 1.0)
+        hist   = item.get("hist")
+
+        if not hist or len(hist.get("closes", [])) < 50:
+            logger.debug(f"{ticker}: no cached data, skipping")
+            continue
+
+        closes  = hist["closes"]
+        volumes = hist["volumes"]
+
+        t1, s1 = score_trend(closes)
+        t2, s2 = score_rsi(closes, regime)
+        t3, s3 = score_volume(closes, volumes)
+        t4, s4 = score_macd(closes)
+        t5, s5 = score_momentum(closes, universe_returns)
+        tech   = t1 + t2 + t3 + t4 + t5
+
+        fund = (SCORE_FUND_EPS_REVISIONS_MAX + SCORE_FUND_VALUATION_MAX +
+                SCORE_FUND_BALANCE_SHEET_MAX + SCORE_FUND_GROWTH_MAX) * 0.3
+
+        bonus, bonus_reason = 0.0, ""
+        if regime == "BULL" and beta >= BULL_BETA_BONUS_THRESHOLD:
+            bonus = REGIME_BONUS_PTS
+            bonus_reason = f"High-beta BULL β={beta:.2f}"
+        elif regime == "BEAR" and beta < BEAR_BETA_BONUS_THRESHOLD:
+            bonus = REGIME_BONUS_PTS
+            bonus_reason = f"Low-beta BEAR β={beta:.2f}"
+
+        total = min(100.0, tech + fund + bonus)
+
+        scores.append({
+            "ticker":       ticker,
+            "score":        total,
+            "tech_score":   tech,
+            "fund_score":   fund,
+            "regime_bonus": bonus,
+            "bonus_reason": bonus_reason,
+            "signals_tech": s1+s2+s3+s4+s5,
+            "signals_fund": ["Fundamental: Alpha Vantage free tier"],
+            "beta":         beta,
+            "error":        None,
+            "breakdown":    {"trend": t1, "rsi": t2, "volume": t3, "macd": t4, "momentum": t5},
+        })
+
+    scores.sort(key=lambda x: x["score"], reverse=True)
+    logger.info(f"Scored {len(scores)} tickers successfully")
+    return scores
