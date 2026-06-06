@@ -682,7 +682,11 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
         reply = handle_command(text)
         send_message(reply)
 
-    # ── Persist highest update_id so next call skips these messages ───────────
+    # ── Acquitter les messages côté Telegram (persistant sur leurs serveurs) ──
+    # Appeler getUpdates(offset=N+1) marque tous les messages jusqu'à N comme
+    # "confirmés" côté Telegram. Le prochain appel (même sans notre state file)
+    # ne les reverra plus — c'est le seul fix fiable contre la boucle infinie.
     if highest_update_id > last_update_id:
+        get_updates(offset=highest_update_id + 1)   # ACK côté Telegram
         state["last_telegram_update_id"] = highest_update_id
         save_state(state)
