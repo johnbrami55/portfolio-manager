@@ -1,9 +1,13 @@
+bash
+
+cat > /home/claude/portfolio_manager/universe.py << 'PYEOF'
 """
 universe.py — Stock universe definition + liquidity filter.
-Returns the list of tickers that pass all liquidity checks.
+Includes rate-limit handling with delays between yfinance calls.
 """
 
 import logging
+import time
 import yfinance as yf
 import pandas as pd
 from config import (
@@ -14,6 +18,9 @@ from config import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Delay between each ticker fetch to avoid rate limiting
+FETCH_DELAY_SECONDS = 2.0
 
 
 def _check_liquidity(ticker: str, regime: str) -> tuple[bool, dict]:
@@ -29,25 +36,15 @@ def _check_liquidity(ticker: str, regime: str) -> tuple[bool, dict]:
             logger.debug(f"{ticker}: no price history, excluded")
             return False, {}
 
-        # Use last LOOKBACK_DAYS rows
         hist = hist.tail(LIQUIDITY_LOOKBACK_DAYS)
 
-        # Average daily EUR volume proxy: Volume * Close
         avg_volume_eur = (hist["Volume"] * hist["Close"]).mean()
+        avg_spread     = ((hist["High"] - hist["Low"]) / hist["Close"]).mean()
 
-        # Bid-ask proxy: avg((High-Low)/Close)
-        avg_spread = ((hist["High"] - hist["Low"]) / hist["Close"]).mean()
-
-        # Market cap from .info (graceful fallback)
         info       = stock.info
         market_cap = info.get("marketCap", 0) or 0
-        currency   = info.get("currency", "EUR")
-
-        # Rough EUR conversion if needed (assume 1:1 for EUR-quoted stocks)
-        # For stocks quoted in EUR exchange, Close is already EUR
         last_close = float(hist["Close"].iloc[-1])
 
-        # Tighter filters in BEAR
         min_vol = BEAR_MIN_VOLUME_EUR if regime == "BEAR" else LIQUIDITY_MIN_VOLUME_EUR
         min_cap = BEAR_MIN_MARKET_CAP_EUR if regime == "BEAR" else LIQUIDITY_MIN_MARKET_CAP_EUR
 
@@ -59,13 +56,13 @@ def _check_liquidity(ticker: str, regime: str) -> tuple[bool, dict]:
         }
 
         if avg_volume_eur < min_vol:
-            logger.debug(f"{ticker}: volume {avg_volume_eur:.0f} EUR < {min_vol:.0f} threshold")
+            logger.debug(f"{ticker}: volume {avg_volume_eur:.0f} EUR < {min_vol:.0f}")
             return False, metrics
         if market_cap < min_cap:
-            logger.debug(f"{ticker}: mkt cap {market_cap:.0f} < {min_cap:.0f} threshold")
+            logger.debug(f"{ticker}: mkt cap {market_cap:.0f} < {min_cap:.0f}")
             return False, metrics
         if avg_spread > LIQUIDITY_MAX_SPREAD_PCT:
-            logger.debug(f"{ticker}: spread {avg_spread:.3f} > {LIQUIDITY_MAX_SPREAD_PCT} threshold")
+            logger.debug(f"{ticker}: spread {avg_spread:.3f} > {LIQUIDITY_MAX_SPREAD_PCT}")
             return False, metrics
 
         return True, metrics
@@ -78,15 +75,26 @@ def _check_liquidity(ticker: str, regime: str) -> tuple[bool, dict]:
 def get_liquid_universe(regime: str) -> list[dict]:
     """
     Filter FULL_UNIVERSE by liquidity constraints.
+    Adds delay between calls to avoid Yahoo Finance rate limiting.
     Returns list of dicts: {ticker, metrics}.
     """
     logger.info(f"Scanning {len(FULL_UNIVERSE)} tickers for liquidity (regime={regime})...")
     passed = []
 
-    for ticker in FULL_UNIVERSE:
+    for i, ticker in enumerate(FULL_UNIVERSE):
         ok, metrics = _check_liquidity(ticker, regime)
         if ok:
             passed.append({"ticker": ticker, "metrics": metrics})
 
+        # Rate limit protection: pause between each request
+        if i < len(FULL_UNIVERSE) - 1:
+            time.sleep(FETCH_DELAY_SECONDS)
+
     logger.info(f"Liquid universe: {len(passed)}/{len(FULL_UNIVERSE)} tickers passed")
     return passed
+PYEOF
+Sortie
+
+exit code 0
+Terminé
+Voici le contenu corrigé — copie-colle le dans GitHu
