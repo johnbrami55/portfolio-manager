@@ -11,7 +11,6 @@ from config import (
 
 logger = logging.getLogger(__name__)
 RAPIDAPI_HOST = "enclout-yahoo-finance.p.rapidapi.com"
-
 def get_headers():
     return {
         "x-rapidapi-key": os.environ.get("RAPIDAPI_KEY", ""),
