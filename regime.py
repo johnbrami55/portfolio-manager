@@ -1,10 +1,32 @@
 import logging
 import time
+import requests
 import yfinance as yf
 import pandas as pd
+import os
 from config import CAC40_TICKER, STOXX600_TICKER, MA_SHORT, MA_LONG
 
 logger = logging.getLogger(__name__)
+
+def get_headers():
+    cookie = os.environ.get("YAHOO_COOKIE", "")
+    return {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Cookie": cookie,
+    }
+
+def fetch_closes(ticker, period="1y"):
+    try:
+        session = requests.Session()
+        session.headers.update(get_headers())
+        tk = yf.Ticker(ticker, session=session)
+        hist = tk.history(period=period)
+        if hist.empty:
+            raise ValueError("empty")
+        return hist["Close"].dropna()
+    except Exception as e:
+        logger.error(f"Failed to fetch {ticker}: {e}")
+        return pd.Series(dtype=float)
 
 def compute_regime(closes):
     if len(closes) < MA_LONG:
@@ -22,20 +44,9 @@ def compute_regime(closes):
 
 def detect_regime():
     logger.info("Detecting market regime...")
-    try:
-        data = yf.download(
-            [CAC40_TICKER, STOXX600_TICKER],
-            period="1y",
-            progress=False,
-            auto_adjust=True,
-            group_by="ticker",
-        )
-        cac_closes = data[CAC40_TICKER]["Close"].dropna()
-        stoxx_closes = data[STOXX600_TICKER]["Close"].dropna()
-    except Exception as e:
-        logger.error(f"Failed to fetch indices: {e}")
-        return {"regime": "NEUTRAL", "cac40": {"regime": "NEUTRAL", "detail": "Error"}, "stoxx600": {"regime": "NEUTRAL", "detail": "Error"}}
-
+    cac_closes = fetch_closes(CAC40_TICKER)
+    time.sleep(1)
+    stoxx_closes = fetch_closes(STOXX600_TICKER)
     cac_result = compute_regime(cac_closes)
     stoxx_result = compute_regime(stoxx_closes)
     regime = cac_result["regime"]
