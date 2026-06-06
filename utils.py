@@ -46,7 +46,7 @@ def compute_betas(tickers):
 
     # Use MC.PA as CAC40 proxy
     proxy_returns = fetch_returns("MC.PA")
-    time.sleep(12)
+    time.sleep(6)
 
     if not proxy_returns:
         return {t: 1.0 for t in tickers}
@@ -54,7 +54,7 @@ def compute_betas(tickers):
     for ticker in tickers:
         try:
             stock_returns = fetch_returns(ticker)
-            time.sleep(12)
+            time.sleep(6)
             if not stock_returns or len(stock_returns) < 20:
                 betas[ticker] = 1.0
                 continue
