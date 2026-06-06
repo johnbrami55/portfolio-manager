@@ -9,8 +9,12 @@ logger = logging.getLogger(__name__)
 AV_KEY = os.environ.get("ALPHA_VANTAGE_KEY", "")
 
 def convert_ticker(ticker):
-    return ticker.replace("^FCHI", "CAC40.PAR").replace("^STOXX", "STOXX50E.PAR")
-
+    if ticker == "^FCHI":
+        return "CAC40"
+    if ticker == "^STOXX":
+        return "STOXX50E"
+    return ticker
+    
 def fetch_closes(ticker):
     av_ticker = convert_ticker(ticker)
     try:
