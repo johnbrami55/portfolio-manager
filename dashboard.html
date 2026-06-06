@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Manager — Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d2e; --border: #2a2d3e;
+    --text: #e2e8f0; --muted: #94a3b8; --green: #22c55e;
+    --red: #ef4444; --blue: #3b82f6; --yellow: #f59e0b;
+    --bull: #22c55e; --neutral: #f59e0b; --bear: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  .last-update { color: var(--muted); font-size: 12px; }
+  .refresh-btn { background: var(--blue); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; }
+  .refresh-btn:hover { opacity: 0.85; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+  .kpi .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .kpi .value { font-size: 22px; font-weight: 700; }
+  .kpi .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+  /* Regime badge */
+  .regime-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; }
+  .BULL    { background: rgba(34,197,94,.15);  color: var(--bull); }
+  .NEUTRAL { background: rgba(245,158,11,.15); color: var(--neutral); }
+  .BEAR    { background: rgba(239,68,68,.15);  color: var(--bear); }
+
+  /* Panels */
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 24px; }
+  .panel-header { padding: 14px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+  .panel-body { padding: 0; overflow-x: auto; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #12152a; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 16px; text-align: right; font-weight: 600; }
+  th:first-child { text-align: left; }
+  td { padding: 10px 16px; border-top: 1px solid var(--border); text-align: right; }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:hover td { background: rgba(255,255,255,.03); }
+  .pos   { color: var(--green); }
+  .neg   { color: var(--red); }
+  .neutral-c { color: var(--yellow); }
+  .muted { color: var(--muted); font-size: 12px; }
+
+  /* Score bar */
+  .score-bar-wrap { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .score-bar { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 3px; background: var(--blue); }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag.pa { background: rgba(59,130,246,.15); color: var(--blue); }
+  .tag.as { background: rgba(245,158,11,.15); color: var(--yellow); }
+  .tag.mi { background: rgba(34,197,94,.15);  color: var(--green); }
+
+  .empty { padding: 32px; text-align: center; color: var(--muted); }
+
+  /* Paused banner */
+  .banner { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 10px 16px; color: var(--red); margin-bottom: 20px; display: none; font-weight: 600; }
+
+  footer { text-align: center; color: var(--muted); font-size: 11px; padding: 24px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <h1>📊 Portfolio Manager</h1>
+    <span id="regime-badge" class="regime-badge">—</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span class="last-update">Mis à jour : <span id="last-run">—</span></span>
+    <button class="refresh-btn" onclick="loadData()">⟳ Actualiser</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div id="paused-banner" class="banner">⏸ Signaux automatiques en pause</div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="label">Valeur totale</div>
+      <div class="value" id="kpi-total">—</div>
+      <div class="sub" id="kpi-pnl-eur">—</div>
+    </div>
+    <div class="kpi">
+      <div class="label">P&L global</div>
+      <div class="value" id="kpi-pnl-pct">—</div>
+      <div class="sub">vs capital initial</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Cash disponible</div>
+      <div class="value" id="kpi-cash">—</div>
+      <div class="sub" id="kpi-cash-pct">—</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Positions</div>
+      <div class="value" id="kpi-positions">—</div>
+      <div class="sub">ouvertes</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Régime</div>
+      <div class="value" id="kpi-regime">—</div>
+      <div class="sub" id="kpi-last-run">—</div>
+    </div>
+  </div>
+
+  <!-- Positions -->
+  <div class="panel">
+    <div class="panel-header">📈 Positions en cours</div>
+    <div class="panel-body" id="positions-body">
+      <div class="empty">Chargement…</div>
+    </div>
+  </div>
+
+  <!-- Scores last run -->
+  <div class="panel">
+    <div class="panel-header">🎯 Scores du dernier run <span class="muted" style="margin-left:8px;font-weight:400;">Top 18 tickers</span></div>
+    <div class="panel-body" id="scores-body">
+      <div class="empty">Chargement…</div>
+    </div>
+  </div>
+
+  <!-- Trade history -->
+  <div class="panel">
+    <div class="panel-header">📋 Historique des trades</div>
+    <div class="panel-body" id="history-body">
+      <div class="empty">Chargement…</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Portfolio Manager · Données issues de portfolio_state.json · Mise à jour automatique à chaque run GitHub Actions</footer>
+
+<script>
+function fmt(n, dec=2) {
+  if (n == null) return '—';
+  return Number(n).toFixed(dec);
+}
+function fmtEur(n) {
+  if (n == null) return '—';
+  const s = Number(n).toFixed(0);
+  return (n >= 0 ? '+' : '') + s + ' €';
+}
+function fmtPct(n) {
+  if (n == null) return '—';
+  return (n >= 0 ? '+' : '') + (Number(n) * 100).toFixed(2) + '%';
+}
+function colorClass(n) {
+  return n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+}
+function exchangeTag(ticker) {
+  if (ticker.endsWith('.PA')) return '<span class="tag pa">Paris</span>';
+  if (ticker.endsWith('.AS')) return '<span class="tag as">Amsterdam</span>';
+  if (ticker.endsWith('.MI')) return '<span class="tag mi">Milan</span>';
+  return '';
+}
+function scoreColor(s) {
+  if (s >= 70) return '#22c55e';
+  if (s >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
+function loadData() {
+  fetch('portfolio_state.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(render)
+    .catch(e => {
+      document.getElementById('positions-body').innerHTML =
+        '<div class="empty">⚠ Impossible de charger portfolio_state.json.<br><span style="font-size:12px">Ouvrez via un serveur local ou GitHub Pages.</span></div>';
+    });
+}
+
+function render(d) {
+  const regime  = d.current_regime || 'NEUTRAL';
+  const initial = d.initial_capital || 1890;
+  const cash    = d.cash_eur || 0;
+  const perf    = d.performance || {};
+  const pnlEur  = perf.total_pnl_eur || 0;
+  const pnlPct  = perf.total_pnl_pct || 0;
+  const positions = d.positions || {};
+  const nPos    = Object.keys(positions).length;
+  const totalEst = initial + pnlEur;
+
+  // Regime badge
+  const badge = document.getElementById('regime-badge');
+  badge.textContent = regime;
+  badge.className   = 'regime-badge ' + regime;
+
+  // Last run
+  const lr = d.last_run ? d.last_run.replace('T', ' ').slice(0, 16) + ' UTC' : '—';
+  document.getElementById('last-run').textContent = lr;
+
+  // Paused banner
+  document.getElementById('paused-banner').style.display = d.signals_paused ? 'block' : 'none';
+
+  // KPIs
+  document.getElementById('kpi-total').textContent = totalEst.toFixed(0) + ' €';
+  document.getElementById('kpi-pnl-eur').textContent = fmtEur(pnlEur);
+  document.getElementById('kpi-pnl-eur').className = 'sub ' + colorClass(pnlEur);
+
+  const pnlPctEl = document.getElementById('kpi-pnl-pct');
+  pnlPctEl.textContent = fmtPct(pnlPct);
+  pnlPctEl.className = 'value ' + colorClass(pnlPct);
+
+  document.getElementById('kpi-cash').textContent = cash.toFixed(0) + ' €';
+  document.getElementById('kpi-cash-pct').textContent = ((cash / totalEst) * 100).toFixed(0) + '% du portefeuille';
+  document.getElementById('kpi-positions').textContent = nPos;
+  document.getElementById('kpi-regime').textContent = regime;
+  document.getElementById('kpi-last-run').textContent = lr;
+
+  // Positions table
+  const posBody = document.getElementById('positions-body');
+  if (nPos === 0) {
+    posBody.innerHTML = '<div class="empty">Aucune position ouverte</div>';
+  } else {
+    let rows = '';
+    for (const [ticker, pos] of Object.entries(positions)) {
+      const entry  = pos.entry_price || 0;
+      const shares = pos.nb_shares || 0;
+      const stop   = pos.stop_loss || 0;
+      const tp     = pos.take_profit || 0;
+      const beta   = pos.beta || 1;
+      const distStop = entry ? ((entry - stop) / entry * 100).toFixed(1) : '—';
+      const distTp   = entry ? ((tp - entry) / entry * 100).toFixed(1) : '—';
+      const entryDate = pos.entry_date || '—';
+      rows += `<tr>
+        <td>${ticker} ${exchangeTag(ticker)}</td>
+        <td>${fmt(entry)}</td>
+        <td>—</td>
+        <td>${shares}</td>
+        <td class="neg">-${distStop}%</td>
+        <td class="pos">+${distTp}%</td>
+        <td>${fmt(beta)}</td>
+        <td class="muted">${entryDate}</td>
+      </tr>`;
+    }
+    posBody.innerHTML = `<table>
+      <thead><tr>
+        <th>Ticker</th><th>Entrée (€)</th><th>Actuel (€)</th><th>Titres</th>
+        <th>Dist. Stop</th><th>Dist. TP</th><th>Beta</th><th>Date</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  // Scores table
+  const scoresBody = document.getElementById('scores-body');
+  const lastScores = d.last_scores || [];
+  if (lastScores.length === 0) {
+    scoresBody.innerHTML = '<div class="empty">Aucun score disponible</div>';
+  } else {
+    let rows = '';
+    lastScores.forEach((s, i) => {
+      const sc  = s.score || 0;
+      const pct = Math.min(100, sc);
+      const col = scoreColor(sc);
+      const bd  = s.breakdown || {};
+      rows += `<tr>
+        <td>${i + 1}. ${s.ticker} ${exchangeTag(s.ticker || '')}</td>
+        <td>
+          <div class="score-bar-wrap">
+            <span style="color:${col};font-weight:700">${sc.toFixed(1)}</span>
+            <div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${col}"></div></div>
+          </div>
+        </td>
+        <td>${fmt(s.tech_score, 1)}</td>
+        <td>${fmt(bd.trend, 1)}</td>
+        <td>${fmt(bd.rsi, 1)}</td>
+        <td>${fmt(bd.macd, 1)}</td>
+        <td>${fmt(bd.bollinger, 1)}</td>
+        <td>${fmt(bd.stoch_rsi, 1)}</td>
+        <td>${fmt(bd.momentum, 1)}</td>
+        <td>${fmt(s.beta, 2)}</td>
+      </tr>`;
+    });
+    scoresBody.innerHTML = `<table>
+      <thead><tr>
+        <th>Ticker</th><th>Score /100</th><th>Tech</th><th>Trend</th>
+        <th>RSI</th><th>MACD</th><th>Bollinger</th><th>StochRSI</th><th>Momentum</th><th>Beta</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  // History table
+  const histBody = document.getElementById('history-body');
+  const history  = (d.trade_history || []).slice().reverse();
+  if (history.length === 0) {
+    histBody.innerHTML = '<div class="empty">Aucun trade clôturé</div>';
+  } else {
+    let rows = '';
+    history.forEach(t => {
+      const pnl = t.pnl_eur || 0;
+      rows += `<tr>
+        <td>${t.exit_date || '—'}</td>
+        <td>${t.ticker || '—'} ${exchangeTag(t.ticker || '')}</td>
+        <td>${t.nb_shares}</td>
+        <td>${fmt(t.entry_price)}</td>
+        <td>${fmt(t.exit_price)}</td>
+        <td class="${colorClass(pnl)}">${fmtEur(pnl)}</td>
+        <td class="${colorClass(pnl)}">${fmtPct(t.pnl_pct)}</td>
+      </tr>`;
+    });
+    histBody.innerHTML = `<table>
+      <thead><tr>
+        <th>Date sortie</th><th>Ticker</th><th>Titres</th>
+        <th>Entrée (€)</th><th>Sortie (€)</th><th>P&L (€)</th><th>P&L (%)</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+}
+
+// Auto-refresh every 60s
+loadData();
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>

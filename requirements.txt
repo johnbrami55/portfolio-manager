@@ -8,3 +8,6 @@ requests==2.32.3
 
 # Timezone (used internally by yfinance)
 pytz==2024.2
+
+# Excel report generation
+openpyxl==3.1.5

@@ -9,6 +9,7 @@ from portfolio import build_portfolio
 from signals import evaluate_sells, generate_buy_signals, check_regime_change_sells
 from state import load_state, save_state, update_score_history
 from utils import compute_betas, portfolio_beta
+from report import generate_report
 from telegram_bot import (
     send_message, send_buy_alert, send_sell_alert,
     send_regime_change_alert, send_weekly_summary,
@@ -25,6 +26,31 @@ def is_monday():
 def is_rebalance_week(state):
     week = datetime.utcnow().isocalendar().week
     return week % 2 == 0
+
+def check_price_alerts(state, liquid):
+    """Send Telegram notification when a ticker's price crosses a user-defined alert."""
+    alerts = state.get("price_alerts", {})
+    if not alerts:
+        return
+    prices = {item["ticker"]: item["metrics"]["last_close"] for item in liquid}
+    triggered = []
+    for ticker, target in list(alerts.items()):
+        current = prices.get(ticker)
+        if current is None:
+            continue
+        if abs(current - target) / target <= 0.01:
+            triggered.append((ticker, current, target))
+            del alerts[ticker]
+    state["price_alerts"] = alerts
+    for ticker, current, target in triggered:
+        try:
+            send_message(
+                f"🔔 *ALERTE PRIX — {ticker}*\n"
+                f"Prix actuel : {current:.2f} €\n"
+                f"Cible : {target:.2f} €"
+            )
+        except Exception as e:
+            logger.error(f"Price alert send failed: {e}")
 
 def run():
     logger.info("=" * 60)
@@ -75,6 +101,9 @@ def run():
     logger.info(f"Scored {len(scored)} tickers")
 
     update_score_history(state, scored)
+    state["last_scores"] = scored  # stored for /top5 and /explain Telegram commands
+
+    check_price_alerts(state, liquid)
 
     sell_signals = evaluate_sells(state, regime, state.get("score_history", {}))
     logger.info(f"Sell signals: {len(sell_signals)}")
@@ -88,24 +117,28 @@ def run():
     buy_signals = generate_buy_signals(portfolio_result, state.get("positions", {}), regime)
     logger.info(f"Buy signals: {len(buy_signals)}")
 
-    for sig in sell_signals:
-        try:
-            send_sell_alert(sig)
-        except Exception as e:
-            logger.error(f"Sell alert error: {e}")
+    paused = state.get("signals_paused", False)
+    if paused:
+        logger.info("Signals paused — skipping buy/sell alerts")
+    else:
+        for sig in sell_signals:
+            try:
+                send_sell_alert(sig)
+            except Exception as e:
+                logger.error(f"Sell alert error: {e}")
 
-    for sig in buy_signals:
-        try:
-            state.setdefault("pending_signals", {})[sig["ticker"]] = {
-                "model_price": sig["model_price"],
-                "stop_loss": sig["stop_loss"],
-                "take_profit": sig["take_profit"],
-                "weight": sig["weight"],
-                "beta": sig["beta"],
-            }
-            send_buy_alert(sig, state, regime)
-        except Exception as e:
-            logger.error(f"Buy alert error: {e}")
+        for sig in buy_signals:
+            try:
+                state.setdefault("pending_signals", {})[sig["ticker"]] = {
+                    "model_price": sig["model_price"],
+                    "stop_loss":   sig["stop_loss"],
+                    "take_profit": sig["take_profit"],
+                    "weight":      sig["weight"],
+                    "beta":        sig["beta"],
+                }
+                send_buy_alert(sig, state, regime)
+            except Exception as e:
+                logger.error(f"Buy alert error: {e}")
 
     if is_monday():
         try:
@@ -117,7 +150,17 @@ def run():
     logger.info(f"Portfolio beta: {pb:.2f} | Positions: {len(state.get('positions', {}))}")
     save_state(state)
 
-    send_message(f"Run termine | Regime: {regime} | Tickers: {len(tickers)} | Scores: {len(scored)} | Buys: {len(buy_signals)}")
+    try:
+        generate_report(state)
+        logger.info("Excel report generated")
+    except Exception as e:
+        logger.error(f"Report generation failed: {e}")
+
+    send_message(
+        f"Run terminé | Régime: {regime} | Tickers: {len(tickers)} | "
+        f"Scores: {len(scored)} | Buys: {len(buy_signals)}"
+        + (" | ⏸ Paused" if paused else "")
+    )
 
     logger.info("Run complete.")
 

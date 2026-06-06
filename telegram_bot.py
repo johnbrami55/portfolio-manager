@@ -315,7 +315,68 @@ def handle_command(text: str) -> str:
 
     # ── /portfolio ────────────────────────────────────────────────────────────
     elif cmd == "/portfolio":
-        return format_portfolio_snapshot(state)
+        positions = state.get("positions", {})
+        cash      = state.get("cash_eur", 0)
+        initial   = state.get("initial_capital", INITIAL_CAPITAL)
+        regime    = state.get("current_regime", "?")
+        pb        = portfolio_beta(positions)
+        perf      = state.get("performance", {})
+        total_pnl = perf.get("total_pnl_eur", 0)
+
+        if not positions:
+            return (
+                f"📂 *Portefeuille vide*\n"
+                f"Régime: {regime} | Cash: {cash:.0f} EUR\n"
+                f"Capital initial: {initial:.0f} EUR"
+            )
+
+        from datetime import date as _date
+        today     = _date.today()
+        lines     = [f"📂 *Portefeuille — {regime}*\n"]
+        latent    = 0.0
+
+        for ticker, pos in positions.items():
+            entry  = pos.get("entry_price", 0)
+            stop   = pos.get("stop_loss", 0)
+            tp     = pos.get("take_profit", 0)
+            shares = pos.get("nb_shares", 0)
+            try:
+                import yfinance as yf
+                hist  = yf.Ticker(ticker).history(period="5d")
+                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
+            except Exception:
+                price = entry
+
+            pnl_eur  = (price - entry) * shares
+            pnl_pct  = (price - entry) / entry if entry else 0
+            dist_stop_pct = (price - stop) / price if price else 0
+            dist_tp_pct   = (tp - price) / price if price else 0
+            dist_stop_eur = (price - stop) * shares
+            dist_tp_eur   = (tp - price) * shares
+            latent  += pnl_eur
+
+            try:
+                entry_d = _date.fromisoformat(pos.get("entry_date", str(today)))
+                days    = (today - entry_d).days
+            except Exception:
+                days = 0
+
+            sign = "🟢" if pnl_eur >= 0 else "🔴"
+            lines.append(
+                f"{sign} *{ticker}* ({days}j)\n"
+                f"   Entrée: {entry:.2f} → Actuel: {price:.2f}\n"
+                f"   P&L: {pnl_eur:+.0f}€ ({pnl_pct:+.1%})\n"
+                f"   Stop: {stop:.2f} (−{dist_stop_pct:.1%} / {-dist_stop_eur:.0f}€)\n"
+                f"   TP:   {tp:.2f} (+{dist_tp_pct:.1%} / +{dist_tp_eur:.0f}€)"
+            )
+
+        pos_val = sum(p.get("position_eur", 0) for p in positions.values())
+        lines.append(
+            f"\n*P&L latent total: {latent:+.2f} EUR*\n"
+            f"Beta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\n"
+            f"P&L clôturé: {total_pnl:+.2f} EUR"
+        )
+        return "\n\n".join(lines)
 
     # ── /status ───────────────────────────────────────────────────────────────
     elif cmd == "/status":
@@ -355,14 +416,180 @@ def handle_command(text: str) -> str:
             f"- Cash: {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}"
         )
 
+    # ── /sensi ────────────────────────────────────────────────────────────────
+    elif cmd == "/sensi":
+        positions = state.get("positions", {})
+        pb        = portfolio_beta(positions)
+        sectors   = sector_exposure(positions)
+        total_val = sum(p.get("position_eur", 0) for p in positions.values()) + state.get("cash_eur", 0)
+        # VaR 99% simplifié : valeur × 2.33 × beta × vol marché journalière (1%)
+        var_99 = total_val * 2.33 * pb * 0.01 if pb > 0 else 0
+        sec_str = "\n".join(f"  {s}: {w:.1%}" for s, w in sectors.items()) or "  (aucune position)"
+        return (
+            f"📐 *Sensibilité du portefeuille*\n"
+            f"Beta global: {pb:.2f}\n"
+            f"VaR 99% journalière (simplifiée): {var_99:.0f} EUR\n"
+            f"Valeur totale: {total_val:.0f} EUR\n\n"
+            f"*Exposition par secteur:*\n{sec_str}"
+        )
+
+    # ── /perf ─────────────────────────────────────────────────────────────────
+    elif cmd == "/perf":
+        positions = state.get("positions", {})
+        perf      = state.get("performance", {})
+        initial   = state.get("initial_capital", INITIAL_CAPITAL)
+        cash      = state.get("cash_eur", 0)
+        total_pnl = perf.get("total_pnl_eur", 0)
+        pnl_pct   = perf.get("total_pnl_pct", 0)
+        lines     = [f"📊 *Performance du portefeuille*\n"]
+        for ticker, pos in positions.items():
+            entry = pos.get("entry_price", 0)
+            try:
+                import yfinance as yf
+                hist  = yf.Ticker(ticker).history(period="5d")
+                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
+            except Exception:
+                price = entry
+            pnl_eur = (price - entry) * pos.get("nb_shares", 0)
+            pnl_pct_pos = (price - entry) / entry if entry else 0
+            sign = "✅" if pnl_eur >= 0 else "🔴"
+            lines.append(f"{sign} {ticker}: {pnl_eur:+.0f}€ ({pnl_pct_pos:+.1%})")
+        lines.append(f"\n*Total P&L:* {total_pnl:+.2f} EUR ({pnl_pct:+.1%})")
+        lines.append(f"Capital initial: {initial:.0f} EUR")
+        lines.append(f"Cash: {cash:.0f} EUR")
+        return "\n".join(lines)
+
+    # ── /risk ─────────────────────────────────────────────────────────────────
+    elif cmd == "/risk":
+        positions = state.get("positions", {})
+        if not positions:
+            return "Aucune position ouverte."
+        lines = ["⚠️ *Distances stop/TP par position*\n"]
+        for ticker, pos in positions.items():
+            entry = pos.get("entry_price", 0)
+            stop  = pos.get("stop_loss", 0)
+            tp    = pos.get("take_profit", 0)
+            try:
+                import yfinance as yf
+                hist  = yf.Ticker(ticker).history(period="5d")
+                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
+            except Exception:
+                price = entry
+            dist_stop = (price - stop) / price if price else 0
+            dist_tp   = (tp - price) / price if price else 0
+            eur_risk  = (price - stop) * pos.get("nb_shares", 0)
+            eur_tp    = (tp - price) * pos.get("nb_shares", 0)
+            lines.append(
+                f"*{ticker}*\n"
+                f"  Prix: {price:.2f} | Stop: {stop:.2f} | TP: {tp:.2f}\n"
+                f"  Dist. stop: -{dist_stop:.1%} ({-eur_risk:.0f}€)\n"
+                f"  Dist. TP:   +{dist_tp:.1%} (+{eur_tp:.0f}€)"
+            )
+        return "\n\n".join(lines)
+
+    # ── /top5 ─────────────────────────────────────────────────────────────────
+    elif cmd == "/top5":
+        last_scores = state.get("last_scores", [])
+        if not last_scores:
+            return "Aucun score disponible. Lancez d'abord un run."
+        top = last_scores[:5]
+        lines = ["🏆 *Top 5 tickers du dernier run*\n"]
+        medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"]
+        for i, s in enumerate(top):
+            bd   = s.get("breakdown", {})
+            lines.append(
+                f"{medals[i]} *{s['ticker']}* — Score: {s['score']:.1f}/100\n"
+                f"   Tech: {s['tech_score']:.1f} | Beta: {s['beta']:.2f}\n"
+                f"   Trend:{bd.get('trend',0):.0f} RSI:{bd.get('rsi',0):.0f} "
+                f"MACD:{bd.get('macd',0):.0f} Boll:{bd.get('bollinger',0):.0f} StRSI:{bd.get('stoch_rsi',0):.0f}"
+            )
+        return "\n\n".join(lines)
+
+    # ── /explain <TICKER> ─────────────────────────────────────────────────────
+    elif cmd == "/explain":
+        if len(parts) < 2:
+            return "Usage: /explain <TICKER>  (ex: /explain AIR.PA)"
+        target      = parts[1].upper()
+        last_scores = state.get("last_scores", [])
+        match       = next((s for s in last_scores if s["ticker"] == target), None)
+        if not match:
+            return f"{target} non trouvé dans le dernier run."
+        bd    = match.get("breakdown", {})
+        sigs  = match.get("signals_tech", [])
+        return (
+            f"🔍 *Analyse complète — {target}*\n"
+            f"Score global: *{match['score']:.1f}/100*\n"
+            f"Tech: {match['tech_score']:.1f} | Fund: {match['fund_score']:.1f} | Bonus régime: {match.get('regime_bonus',0):.0f}\n\n"
+            f"*Détail technique:*\n"
+            f"  Trend:    {bd.get('trend',0):.1f}/10\n"
+            f"  RSI:      {bd.get('rsi',0):.1f}/6\n"
+            f"  Volume:   {bd.get('volume',0):.1f}/8\n"
+            f"  MACD:     {bd.get('macd',0):.1f}/6\n"
+            f"  Momentum: {bd.get('momentum',0):.1f}/6\n"
+            f"  Bollinger:{bd.get('bollinger',0):.1f}/8\n"
+            f"  StochRSI: {bd.get('stoch_rsi',0):.1f}/6\n"
+            f"  ATR:      {(match.get('atr_pct') or 0)*100:.2f}%\n\n"
+            f"*Signaux:*\n" + "\n".join(f"  • {s}" for s in sigs[:6])
+        )
+
+    # ── /cash ─────────────────────────────────────────────────────────────────
+    elif cmd == "/cash":
+        cash      = state.get("cash_eur", 0)
+        initial   = state.get("initial_capital", INITIAL_CAPITAL)
+        positions = state.get("positions", {})
+        pos_val   = sum(p.get("position_eur", 0) for p in positions.values())
+        total     = pos_val + cash
+        return (
+            f"💰 *Capital disponible*\n"
+            f"Cash: {cash:.2f} EUR ({cash/total:.1%} du portefeuille)\n"
+            f"Positions: {pos_val:.2f} EUR ({pos_val/total:.1%})\n"
+            f"Total estimé: {total:.2f} EUR\n"
+            f"Capital initial: {initial:.2f} EUR\n"
+            f"Nb positions: {len(positions)}"
+        )
+
+    # ── /alert <TICKER> <PRIX> ────────────────────────────────────────────────
+    elif cmd == "/alert":
+        if len(parts) < 3:
+            return "Usage: /alert <TICKER> <PRIX>  (ex: /alert AIR.PA 150.00)"
+        ticker_a = parts[1].upper()
+        try:
+            target_price = float(parts[2])
+        except ValueError:
+            return "Prix invalide. Exemple: /alert AIR.PA 150.00"
+        state.setdefault("price_alerts", {})[ticker_a] = target_price
+        save_state(state)
+        return f"🔔 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR\nVous serez notifié quand le prix croise ce niveau (±1%)."
+
+    # ── /pause ────────────────────────────────────────────────────────────────
+    elif cmd == "/pause":
+        state["signals_paused"] = True
+        save_state(state)
+        return "⏸ Signaux automatiques *mis en pause*.\nLes runs s'exécutent toujours mais n'envoient plus d'alertes buy/sell.\nUtilisez /resume pour reprendre."
+
+    # ── /resume ───────────────────────────────────────────────────────────────
+    elif cmd == "/resume":
+        state["signals_paused"] = False
+        save_state(state)
+        return "▶️ Signaux automatiques *repris*.\nLes alertes buy/sell seront envoyées au prochain run."
+
     else:
         return (
-            "Unknown command. Available:\n"
+            "Commandes disponibles:\n"
             "/bought <TICKER> <NB> <PRICE>\n"
             "/sold <TICKER> <NB> <PRICE>\n"
-            "/portfolio\n"
-            "/status\n"
-            "/regime"
+            "/portfolio — positions + P&L\n"
+            "/status — état du système\n"
+            "/regime — analyse du régime\n"
+            "/sensi — beta, secteurs, VaR\n"
+            "/perf — performance par position\n"
+            "/risk — distances stop/TP\n"
+            "/top5 — top 5 tickers scorés\n"
+            "/explain <TICKER> — détail complet\n"
+            "/cash — capital disponible\n"
+            "/alert <TICKER> <PRIX> — alerte prix\n"
+            "/pause — suspendre les signaux\n"
+            "/resume — reprendre les signaux"
         )
 
 

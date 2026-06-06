@@ -16,6 +16,10 @@ DEFAULT_STATE = {
     "last_run":        None,
     "positions":       {},
     "score_history":   {},
+    "last_scores":     [],
+    "trade_history":   [],
+    "price_alerts":    {},
+    "signals_paused":  False,
     "performance": {
         "total_pnl_eur":   0.0,
         "total_pnl_pct":   0.0,
@@ -137,6 +141,18 @@ def record_sell(
         )
 
     state["cash_eur"] = state.get("cash_eur", 0) + execution_price * shares
+
+    state.setdefault("trade_history", []).append({
+        "ticker":      ticker,
+        "side":        "SELL",
+        "nb_shares":   shares,
+        "entry_price": entry,
+        "exit_price":  execution_price,
+        "pnl_eur":     round(pnl_eur, 2),
+        "pnl_pct":     round(pnl_pct, 4),
+        "entry_date":  pos.get("entry_date", ""),
+        "exit_date":   datetime.utcnow().isoformat()[:10],
+    })
 
     logger.info(f"Recorded SELL {ticker}: {shares} shares @ {execution_price:.2f} "
                 f"P&L {pnl_eur:+.2f} EUR ({pnl_pct:+.1%})")
