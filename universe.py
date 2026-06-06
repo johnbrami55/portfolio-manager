@@ -10,7 +10,7 @@ from config import (
 )
 
 logger = logging.getLogger(__name__)
-RAPIDAPI_HOST = "yahoo-finance15.p.rapidapi.com"
+RAPIDAPI_HOST = "enclout-yahoo-finance.p.rapidapi.com"
 
 def get_headers():
     return {
