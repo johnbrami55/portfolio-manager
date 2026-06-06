@@ -1,0 +1,33 @@
+name: Drain Telegram Queue
+
+on:
+  workflow_dispatch:
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Drain Telegram queue (ACK all pending messages)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          python3 -c "
+          import requests, os
+          token = os.environ['TELEGRAM_BOT_TOKEN']
+          r = requests.get(
+              f'https://api.telegram.org/bot{token}/getUpdates',
+              params={'timeout': 5},
+              timeout=10
+          )
+          updates = r.json().get('result', [])
+          if updates:
+              max_id = max(u['update_id'] for u in updates)
+              requests.get(
+                  f'https://api.telegram.org/bot{token}/getUpdates',
+                  params={'offset': max_id + 1, 'timeout': 0},
+                  timeout=5
+              )
+              print(f'ACK {len(updates)} message(s), dernier update_id={max_id}')
+          else:
+              print('Queue vide — rien a faire')
+          "
