@@ -58,7 +58,6 @@ def run():
         except Exception as e:
             logger.error(f"Regime change alert failed: {e}")
 
-    # Get liquid universe WITH price data
     liquid = get_liquid_universe(regime)
     tickers = [item["ticker"] for item in liquid]
     logger.info(f"Liquid universe: {len(tickers)} tickers")
@@ -66,13 +65,11 @@ def run():
     if not tickers:
         logger.error("Empty universe — aborting")
         save_state(state)
-        send_message("⚠️ Portfolio Manager: univers vide, run annulé.")
+        send_message("Portfolio Manager: univers vide, run annule.")
         sys.exit(1)
 
-    # Compute betas using cached data from universe
     betas = {item["ticker"]: 1.0 for item in liquid}
 
-    # Score using cached data — pass liquid data directly
     from scorer import score_universe_from_cache
     scored = score_universe_from_cache(liquid, regime, betas)
     logger.info(f"Scored {len(scored)} tickers")
@@ -83,7 +80,8 @@ def run():
     logger.info(f"Sell signals: {len(sell_signals)}")
 
     for s in scored:
-        s["last_close"] = liquid[tickers.index(s["ticker"])]["metrics"].get("last_close")
+        idx = tickers.index(s["ticker"]) if s["ticker"] in tickers else 0
+        s["last_close"] = liquid[idx]["metrics"].get("last_close")
         s["beta"] = betas.get(s["ticker"], 1.0)
 
     portfolio_result = build_portfolio(scored, state, regime, betas)
@@ -101,4 +99,28 @@ def run():
             state.setdefault("pending_signals", {})[sig["ticker"]] = {
                 "model_price": sig["model_price"],
                 "stop_loss": sig["stop_loss"],
-                "take_profit": sig[
+                "take_profit": sig["take_profit"],
+                "weight": sig["weight"],
+                "beta": sig["beta"],
+            }
+            send_buy_alert(sig, state, regime)
+        except Exception as e:
+            logger.error(f"Buy alert error: {e}")
+
+    if is_monday():
+        try:
+            send_weekly_summary(state, regime, 0.0)
+        except Exception as e:
+            logger.error(f"Weekly summary failed: {e}")
+
+    pb = portfolio_beta(state.get("positions", {}))
+    logger.info(f"Portfolio beta: {pb:.2f} | Positions: {len(state.get('positions', {}))}")
+    save_state(state)
+
+    send_message(f"Run termine | Regime: {regime} | Tickers: {len(tickers)} | Scores: {len(scored)} | Buys: {len(buy_signals)}")
+
+    logger.info("Run complete.")
+
+
+if __name__ == "__main__":
+    run()
