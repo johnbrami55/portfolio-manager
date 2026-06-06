@@ -10,9 +10,9 @@ AV_KEY = os.environ.get("ALPHA_VANTAGE_KEY", "")
 
 def convert_ticker(ticker):
     if ticker == "^FCHI":
-        return "CAC40"
+        return "MC.PAR"
     if ticker == "^STOXX":
-        return "STOXX50E"
+        return "ASML.AMS"
     return ticker
     
 def fetch_closes(ticker):
