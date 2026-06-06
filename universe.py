@@ -32,7 +32,7 @@ def fetch_history(ticker):
         ts = data.get("Time Series (Daily)", {})
         if not ts:
             return None
-        dates = sorted(ts.keys(), reverse=True)[:LIQUIDITY_LOOKBACK_DAYS]
+        dates = sorted(ts.keys(), reverse=True)[:250]
         closes  = [float(ts[d]["4. close"])  for d in dates]
         highs   = [float(ts[d]["2. high"])   for d in dates]
         lows    = [float(ts[d]["3. low"])    for d in dates]
