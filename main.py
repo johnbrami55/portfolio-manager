@@ -177,6 +177,12 @@ def run():
     logger.info(f"Portfolio beta: {pb:.2f} | Positions: {len(state.get('positions', {}))}")
     save_state(state)
 
+    # Test Telegram
+    try:
+        send_message("🤖 Portfolio Manager actif! Run complete. Tickers liquides: " + str(len(tickers)))
+    except Exception as e:
+        logger.error(f"Telegram test failed: {e}")
+
     logger.info("Run complete.")
 
 
