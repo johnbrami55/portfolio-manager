@@ -67,7 +67,7 @@ def send_message(text: str) -> bool:
         return False
 
 
-# ─── Alert Formatters ─────────────────────────────────────────────────────────
+# ─── Alert Formatters ─────────────────────────────────────────────
 
 def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
     """Format and send a BUY alert."""
@@ -95,7 +95,7 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
 
     bonus_line = ""
     if t.get("regime_bonus", 0) > 0:
-        bonus_line = f"\nRegime bonus: +{t['regime_bonus']:.0f} pts ({t.get('bonus_reason','')})"
+        bonus_line = f"\nRegime bonus: +{t['regime_bonus']:.0f} pts ({t.get('bonus_reason','')})"  
 
     trailing_line = ""
     if params.get("trailing_stop_pct"):
@@ -114,8 +114,8 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
                  f" | ~{_fee_*2:.2f}€ aller-retour")
 
     text = (
-        f"🟢 *SIGNAL BUY — {regime} REGIME*\n"
-        f"📈 *{t['ticker']}* — {exchange}\n"
+        f"\U0001f7e2 *SIGNAL BUY — {regime} REGIME*\n"
+        f"\U0001f4c8 *{t['ticker']}* — {exchange}\n"
         f"Score: {t['score']:.0f}/100 | Beta: {t['beta']:.2f}\n"
         f"Suggested weight: {t['weight']:.0%} (~{t['position_eur']:.0f} EUR)\n"
         f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR"
@@ -140,10 +140,10 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
 
 def send_sell_alert(signal: dict) -> None:
     """Format and send a SELL alert."""
-    pnl_sign = "📈" if signal.get("pnl_eur", 0) >= 0 else "📉"
+    pnl_sign = "\U0001f4c8" if signal.get("pnl_eur", 0) >= 0 else "\U0001f4c9"
     text = (
-        f"🔴 *SIGNAL SELL*\n"
-        f"📉 *{signal['ticker']}*\n"
+        f"\U0001f534 *SIGNAL SELL*\n"
+        f"\U0001f4c9 *{signal['ticker']}*\n"
         f"Reason: {signal['reason']}\n"
         f"Performance since entry: {signal['pnl_pct']:+.1%} ({signal['pnl_eur']:+.0f} EUR)\n"
         f"Action: SELL {signal['shares']} shares\n"
@@ -214,7 +214,7 @@ def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0
 
     today = datetime.utcnow().strftime("%Y-%m-%d")
     text = (
-        f"📊 *WEEKLY PORTFOLIO SUMMARY*\n"
+        f"\U0001f4ca *WEEKLY PORTFOLIO SUMMARY*\n"
         f"Week ending: {today}\n"
         f"Portfolio return: {week_ret:+.1%} ({week_ret*total_val:+.0f} EUR)\n"
         f"vs CAC40: {vs_cac:+.1%}\n"
@@ -231,7 +231,7 @@ def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0
     send_message(text)
 
 
-# ─── Command Handler ──────────────────────────────────────────────────────────
+# ─── Command Handler ────────────────────────────────────────────
 
 def get_updates(offset: int = 0) -> list[dict]:
     """Fetch new Telegram updates."""
@@ -259,7 +259,7 @@ def handle_command(text: str) -> str:
     cmd = parts[0].lower()
     state = load_state()
 
-    # ── /bought <TICKER> <NB_SHARES> <PRICE> ────────────────────────────────
+    # ── /bought <TICKER> <NB_SHARES> <PRICE> ────────────────────────────────────────
     if cmd == "/bought":
         if len(parts) < 4:
             return "Usage: /bought <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
@@ -308,7 +308,7 @@ def handle_command(text: str) -> str:
             f"{flag}"
         )
 
-    # ── /sold <TICKER> <NB_SHARES> <PRICE> ──────────────────────────────────
+    # ── /sold <TICKER> <NB_SHARES> <PRICE> ──────────────────────────────────────────
     elif cmd == "/sold":
         if len(parts) < 4:
             return "Usage: /sold <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
@@ -322,7 +322,7 @@ def handle_command(text: str) -> str:
         info = record_sell(state, ticker, nb_shares, exec_price)
         save_state(state)
 
-        pnl_sign = "✅" if info["pnl_eur"] >= 0 else "🔴"
+        pnl_sign = "✅" if info["pnl_eur"] >= 0 else "\U0001f534"
         return (
             f"{pnl_sign} *SELL recorded: {ticker}*\n"
             f"{info['shares']} shares @ {exec_price:.2f} EUR\n"
@@ -331,7 +331,7 @@ def handle_command(text: str) -> str:
             f"\n{format_portfolio_snapshot(state)}"
         )
 
-    # ── /portfolio ────────────────────────────────────────────────────────────
+    # ── /portfolio ─────────────────────────────────────────────────────
     elif cmd == "/portfolio":
         positions = state.get("positions", {})
         cash      = state.get("cash_eur", 0)
@@ -343,14 +343,14 @@ def handle_command(text: str) -> str:
 
         if not positions:
             return (
-                f"📂 *Portefeuille vide*\n"
+                f"\U0001f4c2 *Portefeuille vide*\n"
                 f"Régime: {regime} | Cash: {cash:.0f} EUR\n"
                 f"Capital initial: {initial:.0f} EUR"
             )
 
         from datetime import date as _date
         today     = _date.today()
-        lines     = [f"📂 *Portefeuille — {regime}*\n"]
+        lines     = [f"\U0001f4c2 *Portefeuille — {regime}*\n"]
         latent    = 0.0
 
         for ticker, pos in positions.items():
@@ -379,7 +379,7 @@ def handle_command(text: str) -> str:
             except Exception:
                 days = 0
 
-            sign = "🟢" if pnl_eur >= 0 else "🔴"
+            sign = "\U0001f7e2" if pnl_eur >= 0 else "\U0001f534"
             lines.append(
                 f"{sign} *{ticker}* ({days}j)\n"
                 f"   Entrée: {entry:.2f} → Actuel: {price:.2f}\n"
@@ -396,7 +396,7 @@ def handle_command(text: str) -> str:
         )
         return "\n\n".join(lines)
 
-    # ── /status ───────────────────────────────────────────────────────────────
+    # ── /status ─────────────────────────────────────────────────────────────
     elif cmd == "/status":
         from config import FULL_UNIVERSE
         regime    = state.get("current_regime", "?")
@@ -412,7 +412,7 @@ def handle_command(text: str) -> str:
             f"Universe size: {len(FULL_UNIVERSE)} tickers"
         )
 
-    # ── /regime ───────────────────────────────────────────────────────────────
+    # ── /regime ─────────────────────────────────────────────────────────────
     elif cmd == "/regime":
         from regime import detect_regime
         r     = detect_regime()
@@ -421,7 +421,7 @@ def handle_command(text: str) -> str:
         cur   = r["regime"]
         params = REGIME_PARAMS[cur]
         return (
-            f"📊 *Regime Analysis*\n"
+            f"\U0001f4ca *Regime Analysis*\n"
             f"Current regime: *{cur}*\n\n"
             f"CAC40: {cac['last_close']:.0f} | MA50: {cac['ma50']:.0f} | MA200: {cac['ma200']:.0f}\n"
             f"Detail: {cac['detail']}\n\n"
@@ -434,7 +434,7 @@ def handle_command(text: str) -> str:
             f"- Cash: {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}"
         )
 
-    # ── /sensi ────────────────────────────────────────────────────────────────
+    # ── /sensi ───────────────────────────────────────────────────────────────
     elif cmd == "/sensi":
         positions = state.get("positions", {})
         pb        = portfolio_beta(positions)
@@ -444,7 +444,7 @@ def handle_command(text: str) -> str:
         var_99 = total_val * 2.33 * pb * 0.01 if pb > 0 else 0
         sec_str = "\n".join(f"  {s}: {w:.1%}" for s, w in sectors.items()) or "  (aucune position)"
         return (
-            f"📐 *Sensibilité du portefeuille*\n"
+            f"\U0001f4d0 *Sensibilité du portefeuille*\n"
             f"Beta global: {pb:.2f}\n"
             f"VaR 99% journalière (simplifiée): {var_99:.0f} EUR\n"
             f"Valeur totale: {total_val:.0f} EUR\n\n"
@@ -459,7 +459,7 @@ def handle_command(text: str) -> str:
         cash      = state.get("cash_eur", 0)
         total_pnl = perf.get("total_pnl_eur", 0)
         pnl_pct   = perf.get("total_pnl_pct", 0)
-        lines     = [f"📊 *Performance du portefeuille*\n"]
+        lines     = [f"\U0001f4ca *Performance du portefeuille*\n"]
         for ticker, pos in positions.items():
             entry = pos.get("entry_price", 0)
             try:
@@ -470,7 +470,7 @@ def handle_command(text: str) -> str:
                 price = entry
             pnl_eur = (price - entry) * pos.get("nb_shares", 0)
             pnl_pct_pos = (price - entry) / entry if entry else 0
-            sign = "✅" if pnl_eur >= 0 else "🔴"
+            sign = "✅" if pnl_eur >= 0 else "\U0001f534"
             lines.append(f"{sign} {ticker}: {pnl_eur:+.0f}€ ({pnl_pct_pos:+.1%})")
         lines.append(f"\n*Total P&L:* {total_pnl:+.2f} EUR ({pnl_pct:+.1%})")
         lines.append(f"Capital initial: {initial:.0f} EUR")
@@ -511,8 +511,8 @@ def handle_command(text: str) -> str:
         if not last_scores:
             return "Aucun score disponible. Lancez d'abord un run."
         top = last_scores[:5]
-        lines = ["🏆 *Top 5 tickers du dernier run*\n"]
-        medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"]
+        lines = ["\U0001f3c6 *Top 5 tickers du dernier run*\n"]
+        medals = ["\U0001f947", "\U0001f948", "\U0001f949", "4️⃣", "5️⃣"]
         for i, s in enumerate(top):
             bd   = s.get("breakdown", {})
             lines.append(
@@ -535,7 +535,7 @@ def handle_command(text: str) -> str:
         bd    = match.get("breakdown", {})
         sigs  = match.get("signals_tech", [])
         return (
-            f"🔍 *Analyse complète — {target}*\n"
+            f"\U0001f50d *Analyse complète — {target}*\n"
             f"Score global: *{match['score']:.1f}/100*\n"
             f"Tech: {match['tech_score']:.1f} | Fund: {match['fund_score']:.1f} | Bonus régime: {match.get('regime_bonus',0):.0f}\n\n"
             f"*Détail technique:*\n"
@@ -558,7 +558,7 @@ def handle_command(text: str) -> str:
         pos_val   = sum(p.get("position_eur", 0) for p in positions.values())
         total     = pos_val + cash
         return (
-            f"💰 *Capital disponible*\n"
+            f"\U0001f4b0 *Capital disponible*\n"
             f"Cash: {cash:.2f} EUR ({cash/total:.1%} du portefeuille)\n"
             f"Positions: {pos_val:.2f} EUR ({pos_val/total:.1%})\n"
             f"Total estimé: {total:.2f} EUR\n"
@@ -566,7 +566,7 @@ def handle_command(text: str) -> str:
             f"Nb positions: {len(positions)}"
         )
 
-    # ── /alert <TICKER> <PRIX> ────────────────────────────────────────────────
+    # ── /alert <TICKER> <PRIX> ──────────────────────────────────────────────────
     elif cmd == "/alert":
         if len(parts) < 3:
             return "Usage: /alert <TICKER> <PRIX>  (ex: /alert AIR.PA 150.00)"
@@ -577,26 +577,7 @@ def handle_command(text: str) -> str:
             return "Prix invalide. Exemple: /alert AIR.PA 150.00"
         state.setdefault("price_alerts", {})[ticker_a] = target_price
         save_state(state)
-        return f"🔔 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR\nVous serez notifié quand le prix croise ce niveau (±1%)."
-
-    # ── /run ──────────────────────────────────────────────────────────────────
-    elif cmd == "/run":
-        try:
-            resp = requests.post(
-                "https://api.github.com/repos/johnbrami55/portfolio-manager/actions/workflows/portfolio_manager.yml/dispatches",
-                headers={
-                    "Authorization": f"token {os.environ.get('GITHUB_PAT', '')}",
-                    "Accept": "application/vnd.github.v3+json",
-                },
-                json={"ref": "main"},
-                timeout=10,
-            )
-            if resp.status_code == 204:
-                return "🚀 Run lancé immédiatement ! Signaux dans ~20 minutes."
-            else:
-                return f"❌ Erreur lancement run : {resp.status_code} — {resp.text[:200]}"
-        except Exception as e:
-            return f"❌ Erreur lancement run : {e}"
+        return f"\U0001f514 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR\nVous serez notifié quand le prix croise ce niveau (±1%)."
 
     # ── /pause ────────────────────────────────────────────────────────────────
     elif cmd == "/pause":
@@ -626,8 +607,7 @@ def handle_command(text: str) -> str:
             "/cash — capital disponible\n"
             "/alert <TICKER> <PRIX> — alerte prix\n"
             "/pause — suspendre les signaux\n"
-            "/resume — reprendre les signaux\n"
-            "/run — déclencher un run immédiat"
+            "/resume — reprendre les signaux"
         )
 
 
@@ -640,8 +620,6 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
     1. On récupère tous les updates en attente.
     2. On ACK immédiatement côté Telegram (getUpdates offset+1) AVANT tout traitement.
        => même si le run est annulé ensuite, les messages ne seront plus jamais revus.
-    3. /run ne peut être dispatché qu'UNE seule fois par batch, peu importe combien
-       de fois l'utilisateur l'a envoyé.
     """
     try:
         _, authorized_chat_id = _get_credentials()
@@ -658,7 +636,7 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
 
     highest_update_id = max(u.get("update_id", 0) for u in updates)
 
-    # ── ÉTAPE 1 : ACK immédiat côté Telegram ─────────────────────────────────
+    # ── ÉTAPE 1 : ACK immédiat côté Telegram ─────────────────────────────────────
     # Marque tous les messages comme lus sur les serveurs Telegram AVANT de les
     # traiter. Empêche toute boucle même si le run est annulé mid-flight.
     get_updates(offset=highest_update_id + 1)
@@ -666,9 +644,7 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
     save_state(state)
     logger.info(f"ACK Telegram updates up to {highest_update_id}")
 
-    # ── ÉTAPE 2 : Traitement des commandes ───────────────────────────────────
-    run_already_dispatched = False  # /run ne se déclenche qu'une seule fois
-
+    # ── ÉTAPE 2 : Traitement des commandes ─────────────────────────────────────────
     for update in updates[-max_updates:]:
         msg     = update.get("message", {})
         chat_id = str(msg.get("chat", {}).get("id", ""))
@@ -680,16 +656,6 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
             logger.warning(f"Unauthorized command from chat_id={chat_id}")
             continue
 
-        cmd = text.split()[0].lower()
-
-        # /run : un seul dispatch par batch, quelle que soit la quantité de messages
-        if cmd == "/run":
-            if run_already_dispatched:
-                logger.info("/run ignoré : déjà dispatché dans ce batch")
-                continue
-            run_already_dispatched = True
-
         logger.info(f"Handling command: {text}")
         reply = handle_command(text)
         send_message(reply)
-
