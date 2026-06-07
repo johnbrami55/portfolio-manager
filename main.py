@@ -13,7 +13,6 @@ from report import generate_report
 from telegram_bot import (
     send_message, send_buy_alert, send_sell_alert,
     send_regime_change_alert, send_weekly_summary,
-    poll_and_handle_commands,
 )
 
 logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
@@ -45,9 +44,8 @@ def check_price_alerts(state, liquid):
     for ticker, current, target in triggered:
         try:
             send_message(
-                f"🔔 *ALERTE PRIX — {ticker}*\n"
-                f"Prix actuel : {current:.2f} €\n"
-                f"Cible : {target:.2f} €"
+                f"\U0001f514 *ALERTE PRIX — {ticker}*\n"
+                f"Prix actuel : {current:.2f} €\nCible : {target:.2f} €"
             )
         except Exception as e:
             logger.error(f"Price alert send failed: {e}")
@@ -62,21 +60,15 @@ def run():
     prev_regime = state.get("current_regime", "NEUTRAL")
 
     regime_info = detect_regime()
-    regime = regime_info["regime"]
-    cac_data = regime_info["cac40"]
+    regime      = regime_info["regime"]
+    cac_data    = regime_info["cac40"]
     state["current_regime"] = regime
     logger.info(f"Regime: {regime} (prev: {prev_regime})")
-
-    logger.info("Polling Telegram for commands...")
-    try:
-        poll_and_handle_commands()
-    except Exception as e:
-        logger.warning(f"Telegram poll failed: {e}")
 
     regime_changed = regime != prev_regime
     if regime_changed:
         logger.info(f"REGIME CHANGE: {prev_regime} -> {regime}")
-        positions = state.get("positions", {})
+        positions    = state.get("positions", {})
         regime_sells = check_regime_change_sells(positions, prev_regime, regime)
         tickers_to_sell = [s["ticker"] for s in regime_sells]
         try:
@@ -84,14 +76,14 @@ def run():
         except Exception as e:
             logger.error(f"Regime change alert failed: {e}")
 
-    liquid = get_liquid_universe(regime)
+    liquid  = get_liquid_universe(regime)
     tickers = [item["ticker"] for item in liquid]
     logger.info(f"Liquid universe: {len(tickers)} tickers")
 
     if not tickers:
         logger.error("Empty universe — aborting")
         save_state(state)
-        send_message("Portfolio Manager: univers vide, run annule.")
+        send_message("Portfolio Manager: univers vide, run annulé.")
         sys.exit(1)
 
     betas = {item["ticker"]: 1.0 for item in liquid}
@@ -101,9 +93,8 @@ def run():
     logger.info(f"Scored {len(scored)} tickers")
 
     update_score_history(state, scored)
-    state["last_scores"] = scored  # stored for /top5 and /explain Telegram commands
+    state["last_scores"] = scored
 
-    # Write scores_latest.json for the public dashboard
     try:
         import json as _json
         with open("scores_latest.json", "w") as _f:
@@ -126,7 +117,7 @@ def run():
         s["beta"] = betas.get(s["ticker"], 1.0)
 
     portfolio_result = build_portfolio(scored, state, regime, betas)
-    buy_signals = generate_buy_signals(portfolio_result, state.get("positions", {}), regime)
+    buy_signals      = generate_buy_signals(portfolio_result, state.get("positions", {}), regime)
     logger.info(f"Buy signals: {len(buy_signals)}")
 
     paused = state.get("signals_paused", False)
@@ -138,7 +129,6 @@ def run():
                 send_sell_alert(sig)
             except Exception as e:
                 logger.error(f"Sell alert error: {e}")
-
         for sig in buy_signals:
             try:
                 state.setdefault("pending_signals", {})[sig["ticker"]] = {
@@ -173,7 +163,6 @@ def run():
         f"Scores: {len(scored)} | Buys: {len(buy_signals)}"
         + (" | ⏸ Paused" if paused else "")
     )
-
     logger.info("Run complete.")
 
 

@@ -1,8 +1,8 @@
 """
-telegram_listener.py — Minimal Telegram listener.
-Only /run (exact match) from the authorized chat triggers portfolio_manager.yml.
-All other messages are silently marked as read via offset.
-Offset is persisted in telegram_offset.txt on GitHub via the API.
+telegram_listener.py — Central Telegram hub.
+Handles ALL commands every 5 minutes via GitHub Actions cron.
+/run triggers portfolio_manager.yml. All other commands delegated to handle_command.
+Offset persisted in telegram_offset.txt on GitHub via the API.
 """
 
 import os
@@ -72,8 +72,8 @@ def trigger_workflow(pat: str) -> bool:
 def send_telegram(token: str, chat_id: str, text: str) -> None:
     requests.post(
         TELEGRAM_API.format(token=token, method="sendMessage"),
-        json={"chat_id": chat_id, "text": text},
-        timeout=10,
+        json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+        timeout=15,
     )
 
 
@@ -99,14 +99,24 @@ def main() -> None:
     # ACK immediately before processing — prevents reprocessing on crash
     write_offset(pat, new_id, sha)
 
+    from telegram_bot import handle_command
+
     for update in updates:
         msg = update.get("message", {})
         if str(msg.get("chat", {}).get("id", "")) != str(authorized_chat):
             continue
-        if msg.get("text", "").strip() != "/run":
+        text = msg.get("text", "").strip()
+        if not text.startswith("/"):
             continue
-        if trigger_workflow(pat):
-            send_telegram(token, authorized_chat, "\U0001f680 Run lancé ! Signaux dans ~20 minutes")
+
+        if text == "/run":
+            if trigger_workflow(pat):
+                send_telegram(token, authorized_chat, "\U0001f680 Run lancé ! Signaux dans ~20 minutes")
+            else:
+                send_telegram(token, authorized_chat, "❌ Erreur lors du lancement du run.")
+        else:
+            reply = handle_command(text)
+            send_telegram(token, authorized_chat, reply)
 
 
 if __name__ == "__main__":

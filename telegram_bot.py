@@ -1,6 +1,7 @@
 """
-telegram_bot.py — Telegram alert sender + bidirectional command handler.
-Sends buy/sell/regime alerts and processes /bought, /sold, /portfolio, /status, /regime.
+telegram_bot.py — Telegram alert sender + command handler.
+Sends buy/sell/regime alerts. handle_command() is called by telegram_listener.
+Polling is handled exclusively by telegram_listener.py.
 """
 
 import logging
@@ -14,7 +15,6 @@ from utils import format_portfolio_snapshot, portfolio_beta, sector_exposure
 
 logger = logging.getLogger(__name__)
 
-# Telegram API base
 TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
 
 
@@ -25,25 +25,18 @@ _NYSE_TICKERS = {
 }
 
 def exchange_of(ticker: str) -> str:
-    if ticker.endswith(".PA"):
-        return "Euronext Paris"
-    if ticker.endswith(".AS"):
-        return "Euronext Amsterdam"
-    if ticker.endswith(".MI"):
-        return "Borsa Italiana"
-    if ticker.endswith(".HK"):
-        return "HKEX"
-    if ticker in _NYSE_TICKERS:
-        return "NYSE"
+    if ticker.endswith(".PA"): return "Euronext Paris"
+    if ticker.endswith(".AS"): return "Euronext Amsterdam"
+    if ticker.endswith(".MI"): return "Borsa Italiana"
+    if ticker.endswith(".HK"): return "HKEX"
+    if ticker in _NYSE_TICKERS: return "NYSE"
     return "Nasdaq"
 
 
-
 def _get_credentials() -> tuple[str, str]:
-    """Retrieve bot token and chat ID from environment."""
     token   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
-    if not token or not chat_id:  
+    if not token or not chat_id:
         raise EnvironmentError("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set")
     return token, chat_id
 
@@ -54,9 +47,7 @@ def send_message(text: str) -> bool:
         token, chat_id = _get_credentials()
         url  = TELEGRAM_API.format(token=token, method="sendMessage")
         resp = requests.post(url, json={
-            "chat_id":    chat_id,
-            "text":       text,
-            "parse_mode": "Markdown",
+            "chat_id": chat_id, "text": text, "parse_mode": "Markdown",
         }, timeout=15)
         ok = resp.status_code == 200
         if not ok:
@@ -70,66 +61,49 @@ def send_message(text: str) -> bool:
 # ─── Alert Formatters ─────────────────────────────────────────────
 
 def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
-    """Format and send a BUY alert."""
-    t         = signal
-    params    = REGIME_PARAMS[regime]
+    t      = signal
+    params = REGIME_PARAMS[regime]
     positions = portfolio.get("positions", {})
-    pb        = portfolio_beta(positions)
-    sectors   = sector_exposure(positions)
-    n_pos     = len(positions)
+    pb     = portfolio_beta(positions)
+    sectors = sector_exposure(positions)
+    n_pos  = len(positions)
 
-    # Build technical signal summary
     tech_lines = "\n".join(f"  ✓ {s}" for s in t.get("signals_tech", [])[:3])
     fund_lines = "\n".join(f"  ✓ {s}" for s in t.get("signals_fund", [])[:3])
 
-    # Sector check
     from config import MAX_SECTOR_PCT
     from utils import sector_of
     sector = sector_of(t["ticker"])
     sec_wt = sectors.get(sector, 0)
     sec_ok = "✓" if sec_wt < MAX_SECTOR_PCT else "⚠"
+    beta_ok = "✓" if t["beta"] <= params["max_beta_per_stock"] else "⚠"
 
-    # Beta check
-    beta_max = params["max_beta_per_stock"]
-    beta_ok  = "✓" if t["beta"] <= beta_max else "⚠"
+    bonus_line = f"\nRegime bonus: +{t['regime_bonus']:.0f} pts ({t.get('bonus_reason','')})" if t.get("regime_bonus", 0) > 0 else ""
+    trailing_line = f"\nTrailing stop: activated above +{params['trailing_stop_trigger']:.0%}" if params.get("trailing_stop_pct") else ""
 
-    bonus_line = ""
-    if t.get("regime_bonus", 0) > 0:
-        bonus_line = f"\nRegime bonus: +{t['regime_bonus']:.0f} pts ({t.get('bonus_reason','')})"  
-
-    trailing_line = ""
-    if params.get("trailing_stop_pct"):
-        trailing_line = f"\nTrailing stop: activated above +{params['trailing_stop_trigger']:.0%}"
-
-    exchange   = exchange_of(t["ticker"])
-    atr_pct    = t.get("atr_pct")
-    atr_line   = f"\nATR(14): {atr_pct:.1%} (volatilité)" if atr_pct else ""
-    dyn_stop   = t["model_price"] * (1 - 1.5 * atr_pct) if atr_pct else None
+    exchange  = exchange_of(t["ticker"])
+    atr_pct   = t.get("atr_pct")
+    atr_line  = f"\nATR(14): {atr_pct:.1%} (volatilité)" if atr_pct else ""
+    dyn_stop  = t["model_price"] * (1 - 1.5 * atr_pct) if atr_pct else None
     stop_final = max(t["stop_loss"], dyn_stop) if dyn_stop else t["stop_loss"]
 
-    from utils import calculate_fee, market_of as _market_of_
-    _mkt_     = _market_of_(t["ticker"])
-    _fee_     = calculate_fee(t["position_eur"], t["ticker"])
-    fee_line  = (f"\nFrais DEGIRO ({_mkt_}): ~{_fee_:.2f}€/leg"
-                 f" | ~{_fee_*2:.2f}€ aller-retour")
+    from utils import calculate_fee, market_of as _mof
+    _fee = calculate_fee(t["position_eur"], t["ticker"])
+    fee_line = f"\nFrais DEGIRO ({_mof(t['ticker'])}): ~{_fee:.2f}€/leg | ~{_fee*2:.2f}€ aller-retour"
 
     text = (
         f"\U0001f7e2 *SIGNAL BUY — {regime} REGIME*\n"
         f"\U0001f4c8 *{t['ticker']}* — {exchange}\n"
         f"Score: {t['score']:.0f}/100 | Beta: {t['beta']:.2f}\n"
         f"Suggested weight: {t['weight']:.0%} (~{t['position_eur']:.0f} EUR)\n"
-        f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR"
-        f"{fee_line}\n"
+        f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR{fee_line}\n"
         f"\n*Technical: {t['tech_score']:.0f}/50*\n{tech_lines}"
         f"\n*Fundamental: {t['fund_score']:.0f}/50*\n{fund_lines}"
         f"{bonus_line}\n"
-        f"\nStop-loss: {stop_final:.2f} EUR ({params['stop_loss_pct']:.0%})"
-        f"{atr_line}"
-        f"\nTake-profit: {t['take_profit']:.2f} EUR (+{params['take_profit_pct']:.0%})"
-        f"{trailing_line}\n"
+        f"\nStop-loss: {stop_final:.2f} EUR ({params['stop_loss_pct']:.0%}){atr_line}"
+        f"\nTake-profit: {t['take_profit']:.2f} EUR (+{params['take_profit_pct']:.0%}){trailing_line}\n"
         f"\n*Portfolio after trade:*\n"
-        f"Regime: {regime}\n"
-        f"Global beta: {pb:.2f} {beta_ok}\n"
+        f"Regime: {regime}\nGlobal beta: {pb:.2f} {beta_ok}\n"
         f"Sector {sector}: {sec_wt:.0%} {sec_ok}\n"
         f"Active positions: {n_pos}/{params['max_lines']}\n"
         f"Est. annual target: 15%\n"
@@ -139,8 +113,6 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
 
 
 def send_sell_alert(signal: dict) -> None:
-    """Format and send a SELL alert."""
-    pnl_sign = "\U0001f4c8" if signal.get("pnl_eur", 0) >= 0 else "\U0001f4c9"
     text = (
         f"\U0001f534 *SIGNAL SELL*\n"
         f"\U0001f4c9 *{signal['ticker']}*\n"
@@ -153,17 +125,11 @@ def send_sell_alert(signal: dict) -> None:
 
 
 def send_regime_change_alert(old: str, new: str, cac_data: dict, tickers_to_sell: list[str]) -> None:
-    """Format and send a REGIME CHANGE alert."""
-    ma50  = cac_data.get("ma50", 0)
-    ma200 = cac_data.get("ma200", 0)
-    close = cac_data.get("last_close", 0)
-    params = REGIME_PARAMS[new]
-
+    params   = REGIME_PARAMS[new]
     sell_str = "\n".join(f"  - {t}" for t in tickers_to_sell) if tickers_to_sell else "  (none)"
-
     text = (
         f"⚠️ *REGIME CHANGE: {old} → {new}*\n"
-        f"CAC40: {close:.0f} | MA50: {ma50:.0f} | MA200: {ma200:.0f}\n"
+        f"CAC40: {cac_data.get('last_close',0):.0f} | MA50: {cac_data.get('ma50',0):.0f} | MA200: {cac_data.get('ma200',0):.0f}\n"
         f"\n*Required actions:*\n"
         f"- Raise cash to {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}\n"
         f"- New score threshold: {params['score_threshold']}\n"
@@ -174,22 +140,18 @@ def send_regime_change_alert(old: str, new: str, cac_data: dict, tickers_to_sell
 
 
 def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0) -> None:
-    """Send Monday weekly portfolio summary."""
     positions = state.get("positions", {})
     perf      = state.get("performance", {})
     cash      = state.get("cash_eur", 0)
     initial   = state.get("initial_capital", INITIAL_CAPITAL)
     pb        = portfolio_beta(positions)
-
     total_val = sum(p.get("position_eur", 0) for p in positions.values()) + cash
     total_pnl = perf.get("total_pnl_eur", 0)
     pnl_pct   = total_pnl / initial
-
     weekly_rets = perf.get("weekly_returns", [])
     week_ret    = weekly_rets[-1] if weekly_rets else 0.0
     vs_cac      = week_ret - cac_weekly_return
 
-    # Find best/worst performers
     performers = []
     for ticker, pos in positions.items():
         try:
@@ -204,83 +166,50 @@ def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0
     performers.sort(key=lambda x: x[1])
     worst = performers[0]  if performers else ("N/A", 0)
     best  = performers[-1] if performers else ("N/A", 0)
-
-    # Annual pace
     ann_pace = week_ret * 52
     pace_str = "on track" if ann_pace >= 0.12 else ("ahead" if ann_pace >= 0.15 else "behind")
+    sectors  = sector_exposure(positions)
+    sec_str  = " | ".join(f"{s}: {w:.0%}" for s, w in sectors.items())
+    today    = datetime.utcnow().strftime("%Y-%m-%d")
 
-    sectors = sector_exposure(positions)
-    sec_str = " | ".join(f"{s}: {w:.0%}" for s, w in sectors.items())
-
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    text = (
+    send_message(
         f"\U0001f4ca *WEEKLY PORTFOLIO SUMMARY*\n"
         f"Week ending: {today}\n"
         f"Portfolio return: {week_ret:+.1%} ({week_ret*total_val:+.0f} EUR)\n"
-        f"vs CAC40: {vs_cac:+.1%}\n"
-        f"Regime: {regime}\n"
-        f"Global beta: {pb:.2f}\n"
+        f"vs CAC40: {vs_cac:+.1%}\nRegime: {regime}\nGlobal beta: {pb:.2f}\n"
         f"Active positions: {len(positions)}/{REGIME_PARAMS[regime]['max_lines']}\n"
         f"Cash: {cash/total_val:.0%} (~{cash:.0f} EUR)\n"
         f"Top performer: {best[0]} {best[1]:+.1%}\n"
         f"Worst performer: {worst[0]} {worst[1]:+.1%}\n"
         f"Target pace: {pace_str} for {ann_pace:.0%} annual\n"
-        f"Sectors: {sec_str}\n"
-        f"Total P&L: {total_pnl:+.0f} EUR ({pnl_pct:+.1%})"
+        f"Sectors: {sec_str}\nTotal P&L: {total_pnl:+.0f} EUR ({pnl_pct:+.1%})"
     )
-    send_message(text)
 
 
-# ─── Command Handler ────────────────────────────────────────────
-
-def get_updates(offset: int = 0) -> list[dict]:
-    """Fetch new Telegram updates."""
-    try:
-        token, _ = _get_credentials()
-        url  = TELEGRAM_API.format(token=token, method="getUpdates")
-        resp = requests.get(url, params={"offset": offset, "timeout": 5}, timeout=10)
-        if resp.status_code == 200:
-            return resp.json().get("result", [])
-        return []
-    except Exception as e:
-        logger.error(f"getUpdates error: {e}")
-        return []
-
+# ─── Command Handler (called by telegram_listener) ──────────────────────────
 
 def handle_command(text: str) -> str:
-    """
-    Process a Telegram command and return a reply string.
-    Commands: /bought, /sold, /portfolio, /status, /regime
-    """
     parts = text.strip().split()
     if not parts:
         return "Empty command."
-
-    cmd = parts[0].lower()
+    cmd   = parts[0].lower()
     state = load_state()
 
-    # ── /bought <TICKER> <NB_SHARES> <PRICE> ────────────────────────────────────────
     if cmd == "/bought":
         if len(parts) < 4:
             return "Usage: /bought <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
         ticker, nb_str, price_str = parts[1].upper(), parts[2], parts[3]
         try:
-            nb_shares = int(nb_str)
+            nb_shares  = int(nb_str)
             exec_price = float(price_str)
         except ValueError:
             return "Invalid nb_shares or price. Example: /bought AIR.PA 3 145.50"
-
         from config import FULL_UNIVERSE
-        in_universe = ticker in FULL_UNIVERSE
-        flag = "" if in_universe else "\n⚠ Position outside model universe — tracking P&L only, no score monitoring"
-
-        score_hist = state.get("score_history", {})
+        flag = "" if ticker in FULL_UNIVERSE else "\n⚠ Position outside model universe — tracking P&L only"
         model_price = exec_price
         stop_loss   = exec_price * 0.90
         take_profit = exec_price * 1.18
-        weight      = 0.0
-        beta        = 1.0
-
+        weight = beta = 0.0
         pending = state.get("pending_signals", {}).get(ticker, {})
         if pending:
             model_price = pending.get("model_price", exec_price)
@@ -288,24 +217,16 @@ def handle_command(text: str) -> str:
             take_profit = pending.get("take_profit", take_profit)
             weight      = pending.get("weight", 0.0)
             beta        = pending.get("beta", 1.0)
-
-        info = record_buy(
-            state, ticker, nb_shares, exec_price, model_price,
-            stop_loss, take_profit, weight, beta
-        )
+        info = record_buy(state, ticker, nb_shares, exec_price, model_price, stop_loss, take_profit, weight, beta)
         save_state(state)
-
         slippage_str = f"{info['slippage_pct']:+.2%}" if model_price != exec_price else "N/A"
         return (
             f"✅ *BUY recorded: {ticker}*\n"
             f"{nb_shares} shares @ {exec_price:.2f} EUR\n"
-            f"Stop-loss: {stop_loss:.2f} EUR\n"
-            f"Take-profit: {take_profit:.2f} EUR\n"
-            f"Slippage vs model: {slippage_str}"
-            f"{flag}"
+            f"Stop-loss: {stop_loss:.2f} EUR\nTake-profit: {take_profit:.2f} EUR\n"
+            f"Slippage vs model: {slippage_str}{flag}"
         )
 
-    # ── /sold <TICKER> <NB_SHARES> <PRICE> ──────────────────────────────────────────
     elif cmd == "/sold":
         if len(parts) < 4:
             return "Usage: /sold <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
@@ -315,10 +236,8 @@ def handle_command(text: str) -> str:
             exec_price = float(price_str)
         except ValueError:
             return "Invalid nb_shares or price."
-
-        info = record_sell(state, ticker, nb_shares, exec_price)
+        info     = record_sell(state, ticker, nb_shares, exec_price)
         save_state(state)
-
         pnl_sign = "✅" if info["pnl_eur"] >= 0 else "\U0001f534"
         return (
             f"{pnl_sign} *SELL recorded: {ticker}*\n"
@@ -328,28 +247,19 @@ def handle_command(text: str) -> str:
             f"\n{format_portfolio_snapshot(state)}"
         )
 
-    # ── /portfolio ─────────────────────────────────────────────────────
     elif cmd == "/portfolio":
         positions = state.get("positions", {})
         cash      = state.get("cash_eur", 0)
         initial   = state.get("initial_capital", INITIAL_CAPITAL)
         regime    = state.get("current_regime", "?")
         pb        = portfolio_beta(positions)
-        perf      = state.get("performance", {})
-        total_pnl = perf.get("total_pnl_eur", 0)
-
+        total_pnl = state.get("performance", {}).get("total_pnl_eur", 0)
         if not positions:
-            return (
-                f"\U0001f4c2 *Portefeuille vide*\n"
-                f"Régime: {regime} | Cash: {cash:.0f} EUR\n"
-                f"Capital initial: {initial:.0f} EUR"
-            )
-
+            return f"\U0001f4c2 *Portefeuille vide*\nRégime: {regime} | Cash: {cash:.0f} EUR\nCapital initial: {initial:.0f} EUR"
         from datetime import date as _date
-        today     = _date.today()
-        lines     = [f"\U0001f4c2 *Portefeuille — {regime}*\n"]
-        latent    = 0.0
-
+        today  = _date.today()
+        lines  = [f"\U0001f4c2 *Portefeuille — {regime}*\n"]
+        latent = 0.0
         for ticker, pos in positions.items():
             entry  = pos.get("entry_price", 0)
             stop   = pos.get("stop_loss", 0)
@@ -361,68 +271,48 @@ def handle_command(text: str) -> str:
                 price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
             except Exception:
                 price = entry
-
-            pnl_eur  = (price - entry) * shares
-            pnl_pct  = (price - entry) / entry if entry else 0
+            pnl_eur = (price - entry) * shares
+            pnl_pct = (price - entry) / entry if entry else 0
             dist_stop_pct = (price - stop) / price if price else 0
             dist_tp_pct   = (tp - price) / price if price else 0
-            dist_stop_eur = (price - stop) * shares
-            dist_tp_eur   = (tp - price) * shares
-            latent  += pnl_eur
-
+            latent += pnl_eur
             try:
-                entry_d = _date.fromisoformat(pos.get("entry_date", str(today)))
-                days    = (today - entry_d).days
+                days = (_date.today() - _date.fromisoformat(pos.get("entry_date", str(today)))).days
             except Exception:
                 days = 0
-
             sign = "\U0001f7e2" if pnl_eur >= 0 else "\U0001f534"
             lines.append(
                 f"{sign} *{ticker}* ({days}j)\n"
                 f"   Entrée: {entry:.2f} → Actuel: {price:.2f}\n"
                 f"   P&L: {pnl_eur:+.0f}€ ({pnl_pct:+.1%})\n"
-                f"   Stop: {stop:.2f} (−{dist_stop_pct:.1%} / {-dist_stop_eur:.0f}€)\n"
-                f"   TP:   {tp:.2f} (+{dist_tp_pct:.1%} / +{dist_tp_eur:.0f}€)"
+                f"   Stop: {stop:.2f} (−{dist_stop_pct:.1%})   TP: {tp:.2f} (+{dist_tp_pct:.1%})"
             )
-
         pos_val = sum(p.get("position_eur", 0) for p in positions.values())
-        lines.append(
-            f"\n*P&L latent total: {latent:+.2f} EUR*\n"
-            f"Beta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\n"
-            f"P&L clôturé: {total_pnl:+.2f} EUR"
-        )
+        lines.append(f"\n*P&L latent: {latent:+.2f} EUR*\nBeta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\nP&L clôturé: {total_pnl:+.2f} EUR")
         return "\n\n".join(lines)
 
-    # ── /status ─────────────────────────────────────────────────────────────
     elif cmd == "/status":
         from config import FULL_UNIVERSE
-        regime    = state.get("current_regime", "?")
-        last_run  = state.get("last_run", "never")
-        n_pos     = len(state.get("positions", {}))
-        cash      = state.get("cash_eur", 0)
         return (
             f"⚙️ *System Status*\n"
-            f"Regime: {regime}\n"
-            f"Last run: {last_run}\n"
-            f"Positions: {n_pos}\n"
-            f"Cash: {cash:.0f} EUR\n"
+            f"Regime: {state.get('current_regime','?')}\n"
+            f"Last run: {state.get('last_run','never')}\n"
+            f"Positions: {len(state.get('positions',{}))}\n"
+            f"Cash: {state.get('cash_eur',0):.0f} EUR\n"
             f"Universe size: {len(FULL_UNIVERSE)} tickers"
         )
 
-    # ── /regime ─────────────────────────────────────────────────────────────
     elif cmd == "/regime":
         from regime import detect_regime
-        r     = detect_regime()
-        cac   = r["cac40"]
-        stoxx = r["stoxx600"]
-        cur   = r["regime"]
+        r      = detect_regime()
+        cac    = r["cac40"]
+        stoxx  = r["stoxx600"]
+        cur    = r["regime"]
         params = REGIME_PARAMS[cur]
         return (
-            f"\U0001f4ca *Regime Analysis*\n"
-            f"Current regime: *{cur}*\n\n"
+            f"\U0001f4ca *Regime Analysis*\nCurrent regime: *{cur}*\n\n"
             f"CAC40: {cac['last_close']:.0f} | MA50: {cac['ma50']:.0f} | MA200: {cac['ma200']:.0f}\n"
-            f"Detail: {cac['detail']}\n\n"
-            f"Stoxx600: {stoxx['regime']} | {stoxx['detail']}\n\n"
+            f"Detail: {cac['detail']}\n\nStoxx600: {stoxx['regime']} | {stoxx['detail']}\n\n"
             f"*Parameters for {cur}:*\n"
             f"- Score threshold: {params['score_threshold']}\n"
             f"- Beta target: {params['beta_target_min']}–{params['beta_target_max']}\n"
@@ -431,23 +321,19 @@ def handle_command(text: str) -> str:
             f"- Cash: {params['cash_pct_min']:.0%}–{params['cash_pct_max']:.0%}"
         )
 
-    # ── /sensi ───────────────────────────────────────────────────────────────
     elif cmd == "/sensi":
         positions = state.get("positions", {})
         pb        = portfolio_beta(positions)
         sectors   = sector_exposure(positions)
         total_val = sum(p.get("position_eur", 0) for p in positions.values()) + state.get("cash_eur", 0)
-        var_99 = total_val * 2.33 * pb * 0.01 if pb > 0 else 0
-        sec_str = "\n".join(f"  {s}: {w:.1%}" for s, w in sectors.items()) or "  (aucune position)"
+        var_99    = total_val * 2.33 * pb * 0.01 if pb > 0 else 0
+        sec_str   = "\n".join(f"  {s}: {w:.1%}" for s, w in sectors.items()) or "  (aucune position)"
         return (
             f"\U0001f4d0 *Sensibilité du portefeuille*\n"
-            f"Beta global: {pb:.2f}\n"
-            f"VaR 99% journalière (simplifiée): {var_99:.0f} EUR\n"
-            f"Valeur totale: {total_val:.0f} EUR\n\n"
-            f"*Exposition par secteur:*\n{sec_str}"
+            f"Beta global: {pb:.2f}\nVaR 99% journalière: {var_99:.0f} EUR\n"
+            f"Valeur totale: {total_val:.0f} EUR\n\n*Exposition par secteur:*\n{sec_str}"
         )
 
-    # ── /perf ─────────────────────────────────────────────────────────────────
     elif cmd == "/perf":
         positions = state.get("positions", {})
         perf      = state.get("performance", {})
@@ -455,7 +341,7 @@ def handle_command(text: str) -> str:
         cash      = state.get("cash_eur", 0)
         total_pnl = perf.get("total_pnl_eur", 0)
         pnl_pct   = perf.get("total_pnl_pct", 0)
-        lines     = [f"\U0001f4ca *Performance du portefeuille*\n"]
+        lines     = ["\U0001f4ca *Performance du portefeuille*\n"]
         for ticker, pos in positions.items():
             entry = pos.get("entry_price", 0)
             try:
@@ -464,16 +350,14 @@ def handle_command(text: str) -> str:
                 price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
             except Exception:
                 price = entry
-            pnl_eur = (price - entry) * pos.get("nb_shares", 0)
+            pnl_eur     = (price - entry) * pos.get("nb_shares", 0)
             pnl_pct_pos = (price - entry) / entry if entry else 0
             sign = "✅" if pnl_eur >= 0 else "\U0001f534"
             lines.append(f"{sign} {ticker}: {pnl_eur:+.0f}€ ({pnl_pct_pos:+.1%})")
         lines.append(f"\n*Total P&L:* {total_pnl:+.2f} EUR ({pnl_pct:+.1%})")
-        lines.append(f"Capital initial: {initial:.0f} EUR")
-        lines.append(f"Cash: {cash:.0f} EUR")
+        lines.append(f"Capital initial: {initial:.0f} EUR\nCash: {cash:.0f} EUR")
         return "\n".join(lines)
 
-    # ── /risk ─────────────────────────────────────────────────────────────────
     elif cmd == "/risk":
         positions = state.get("positions", {})
         if not positions:
@@ -494,23 +378,20 @@ def handle_command(text: str) -> str:
             eur_risk  = (price - stop) * pos.get("nb_shares", 0)
             eur_tp    = (tp - price) * pos.get("nb_shares", 0)
             lines.append(
-                f"*{ticker}*\n"
-                f"  Prix: {price:.2f} | Stop: {stop:.2f} | TP: {tp:.2f}\n"
+                f"*{ticker}*\n  Prix: {price:.2f} | Stop: {stop:.2f} | TP: {tp:.2f}\n"
                 f"  Dist. stop: -{dist_stop:.1%} ({-eur_risk:.0f}€)\n"
                 f"  Dist. TP:   +{dist_tp:.1%} (+{eur_tp:.0f}€)"
             )
         return "\n\n".join(lines)
 
-    # ── /top5 ─────────────────────────────────────────────────────────────────
     elif cmd == "/top5":
         last_scores = state.get("last_scores", [])
         if not last_scores:
             return "Aucun score disponible. Lancez d'abord un run."
-        top = last_scores[:5]
-        lines = ["\U0001f3c6 *Top 5 tickers du dernier run*\n"]
-        medals = ["\U0001f947", "\U0001f948", "\U0001f949", "4️⃣", "5️⃣"]
-        for i, s in enumerate(top):
-            bd   = s.get("breakdown", {})
+        lines  = ["\U0001f3c6 *Top 5 tickers du dernier run*\n"]
+        medals = ["\U0001f947","\U0001f948","\U0001f949","4️⃣","5️⃣"]
+        for i, s in enumerate(last_scores[:5]):
+            bd = s.get("breakdown", {})
             lines.append(
                 f"{medals[i]} *{s['ticker']}* — Score: {s['score']:.1f}/100\n"
                 f"   Tech: {s['tech_score']:.1f} | Beta: {s['beta']:.2f}\n"
@@ -519,77 +400,67 @@ def handle_command(text: str) -> str:
             )
         return "\n\n".join(lines)
 
-    # ── /explain <TICKER> ─────────────────────────────────────────────────────
     elif cmd == "/explain":
         if len(parts) < 2:
-            return "Usage: /explain <TICKER>  (ex: /explain AIR.PA)"
+            return "Usage: /explain <TICKER>"
         target      = parts[1].upper()
         last_scores = state.get("last_scores", [])
         match       = next((s for s in last_scores if s["ticker"] == target), None)
         if not match:
             return f"{target} non trouvé dans le dernier run."
-        bd    = match.get("breakdown", {})
-        sigs  = match.get("signals_tech", [])
+        bd   = match.get("breakdown", {})
+        sigs = match.get("signals_tech", [])
         return (
             f"\U0001f50d *Analyse complète — {target}*\n"
             f"Score global: *{match['score']:.1f}/100*\n"
-            f"Tech: {match['tech_score']:.1f} | Fund: {match['fund_score']:.1f} | Bonus régime: {match.get('regime_bonus',0):.0f}\n\n"
+            f"Tech: {match['tech_score']:.1f} | Fund: {match['fund_score']:.1f} | Bonus: {match.get('regime_bonus',0):.0f}\n\n"
             f"*Détail technique:*\n"
-            f"  Trend:    {bd.get('trend',0):.1f}/10\n"
-            f"  RSI:      {bd.get('rsi',0):.1f}/6\n"
-            f"  Volume:   {bd.get('volume',0):.1f}/8\n"
-            f"  MACD:     {bd.get('macd',0):.1f}/6\n"
-            f"  Momentum: {bd.get('momentum',0):.1f}/6\n"
-            f"  Bollinger:{bd.get('bollinger',0):.1f}/8\n"
-            f"  StochRSI: {bd.get('stoch_rsi',0):.1f}/6\n"
-            f"  ATR:      {(match.get('atr_pct') or 0)*100:.2f}%\n\n"
+            f"  Trend: {bd.get('trend',0):.1f}/10  RSI: {bd.get('rsi',0):.1f}/6\n"
+            f"  Volume: {bd.get('volume',0):.1f}/8  MACD: {bd.get('macd',0):.1f}/6\n"
+            f"  Momentum: {bd.get('momentum',0):.1f}/6  Bollinger: {bd.get('bollinger',0):.1f}/8\n"
+            f"  StochRSI: {bd.get('stoch_rsi',0):.1f}/6  ATR: {(match.get('atr_pct') or 0)*100:.2f}%\n\n"
             f"*Signaux:*\n" + "\n".join(f"  • {s}" for s in sigs[:6])
         )
 
-    # ── /cash ─────────────────────────────────────────────────────────────────
     elif cmd == "/cash":
-        cash      = state.get("cash_eur", 0)
-        initial   = state.get("initial_capital", INITIAL_CAPITAL)
-        positions = state.get("positions", {})
-        pos_val   = sum(p.get("position_eur", 0) for p in positions.values())
-        total     = pos_val + cash
+        cash     = state.get("cash_eur", 0)
+        initial  = state.get("initial_capital", INITIAL_CAPITAL)
+        pos_val  = sum(p.get("position_eur", 0) for p in state.get("positions", {}).values())
+        total    = pos_val + cash
         return (
             f"\U0001f4b0 *Capital disponible*\n"
-            f"Cash: {cash:.2f} EUR ({cash/total:.1%} du portefeuille)\n"
+            f"Cash: {cash:.2f} EUR ({cash/total:.1%})\n"
             f"Positions: {pos_val:.2f} EUR ({pos_val/total:.1%})\n"
-            f"Total estimé: {total:.2f} EUR\n"
-            f"Capital initial: {initial:.2f} EUR\n"
-            f"Nb positions: {len(positions)}"
+            f"Total estimé: {total:.2f} EUR\nCapital initial: {initial:.2f} EUR\n"
+            f"Nb positions: {len(state.get('positions', {}))}"
         )
 
-    # ── /alert <TICKER> <PRIX> ──────────────────────────────────────────────────
     elif cmd == "/alert":
         if len(parts) < 3:
-            return "Usage: /alert <TICKER> <PRIX>  (ex: /alert AIR.PA 150.00)"
+            return "Usage: /alert <TICKER> <PRIX>"
         ticker_a = parts[1].upper()
         try:
             target_price = float(parts[2])
         except ValueError:
-            return "Prix invalide. Exemple: /alert AIR.PA 150.00"
+            return "Prix invalide."
         state.setdefault("price_alerts", {})[ticker_a] = target_price
         save_state(state)
-        return f"\U0001f514 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR\nVous serez notifié quand le prix croise ce niveau (±1%)."
+        return f"\U0001f514 Alerte créée : *{ticker_a}* @ {target_price:.2f} EUR"
 
-    # ── /pause ────────────────────────────────────────────────────────────────
     elif cmd == "/pause":
         state["signals_paused"] = True
         save_state(state)
-        return "⏸ Signaux automatiques *mis en pause*.\nLes runs s'exécutent toujours mais n'envoient plus d'alertes buy/sell.\nUtilisez /resume pour reprendre."
+        return "⏸ Signaux automatiques *mis en pause*."
 
-    # ── /resume ───────────────────────────────────────────────────────────────
     elif cmd == "/resume":
         state["signals_paused"] = False
         save_state(state)
-        return "▶️ Signaux automatiques *repris*.\nLes alertes buy/sell seront envoyées au prochain run."
+        return "▶️ Signaux automatiques *repris*."
 
     else:
         return (
             "Commandes disponibles:\n"
+            "/run — déclencher un run immédiat\n"
             "/bought <TICKER> <NB> <PRICE>\n"
             "/sold <TICKER> <NB> <PRICE>\n"
             "/portfolio — positions + P&L\n"
@@ -605,53 +476,3 @@ def handle_command(text: str) -> str:
             "/pause — suspendre les signaux\n"
             "/resume — reprendre les signaux"
         )
-
-
-def poll_and_handle_commands(max_updates: int = 10) -> None:
-    """
-    Poll Telegram for new messages and dispatch commands.
-    Only processes messages from TELEGRAM_CHAT_ID.
-
-    Anti-boucle :
-    1. On récupère tous les updates en attente.
-    2. On ACK immédiatement côté Telegram (getUpdates offset+1) AVANT tout traitement.
-       => même si le run est annulé ensuite, les messages ne seront plus jamais revus.
-    """
-    try:
-        _, authorized_chat_id = _get_credentials()
-    except EnvironmentError as e:
-        logger.error(str(e))
-        return
-
-    state = load_state()
-    last_update_id: int = state.get("last_telegram_update_id", 0)
-
-    updates = get_updates(offset=last_update_id + 1 if last_update_id else 0)
-    if not updates:
-        return
-
-    highest_update_id = max(u.get("update_id", 0) for u in updates)
-
-    # ── ÉTAPE 1 : ACK immédiat côté Telegram ─────────────────────────────────────
-    # Marque tous les messages comme lus sur les serveurs Telegram AVANT de les
-    # traiter. Empêche toute boucle même si le run est annulé mid-flight.
-    get_updates(offset=highest_update_id + 1)
-    state["last_telegram_update_id"] = highest_update_id
-    save_state(state)
-    logger.info(f"ACK Telegram updates up to {highest_update_id}")
-
-    # ── ÉTAPE 2 : Traitement des commandes ─────────────────────────────────────────
-    for update in updates[-max_updates:]:
-        msg     = update.get("message", {})
-        chat_id = str(msg.get("chat", {}).get("id", ""))
-        text    = msg.get("text", "").strip()
-
-        if not text.startswith("/"):
-            continue
-        if chat_id != str(authorized_chat_id):
-            logger.warning(f"Unauthorized command from chat_id={chat_id}")
-            continue
-
-        logger.info(f"Handling command: {text}")
-        reply = handle_command(text)
-        send_message(reply)
