@@ -18,14 +18,25 @@ logger = logging.getLogger(__name__)
 TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
 
 
+_NYSE_TICKERS = {
+    "BRK-B","JPM","UNH","XOM","JNJ","WMT","MA","PG","LLY","HD",
+    "MRK","ABBV","PEP","KO","COST","TMO","MCD","ACN","BAC","NEE",
+    "RTX","HON","UPS","PM","V","LIN","ABT","DHR","AVGO",
+}
+
 def exchange_of(ticker: str) -> str:
     if ticker.endswith(".PA"):
         return "Euronext Paris"
     if ticker.endswith(".AS"):
         return "Euronext Amsterdam"
     if ticker.endswith(".MI"):
-        return "Borsa Italiana (Milan)"
-    return "Euronext"
+        return "Borsa Italiana"
+    if ticker.endswith(".HK"):
+        return "HKEX"
+    if ticker in _NYSE_TICKERS:
+        return "NYSE"
+    return "Nasdaq"
+
 
 
 def _get_credentials() -> tuple[str, str]:
@@ -96,12 +107,19 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
     dyn_stop   = t["model_price"] * (1 - 1.5 * atr_pct) if atr_pct else None
     stop_final = max(t["stop_loss"], dyn_stop) if dyn_stop else t["stop_loss"]
 
+    from utils import calculate_fee, market_of as _market_of_
+    _mkt_     = _market_of_(t["ticker"])
+    _fee_     = calculate_fee(t["position_eur"], t["ticker"])
+    fee_line  = (f"\nFrais DEGIRO ({_mkt_}): ~{_fee_:.2f}€/leg"
+                 f" | ~{_fee_*2:.2f}€ aller-retour")
+
     text = (
         f"🟢 *SIGNAL BUY — {regime} REGIME*\n"
         f"📈 *{t['ticker']}* — {exchange}\n"
         f"Score: {t['score']:.0f}/100 | Beta: {t['beta']:.2f}\n"
         f"Suggested weight: {t['weight']:.0%} (~{t['position_eur']:.0f} EUR)\n"
-        f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR\n"
+        f"Nb shares: {t['nb_shares']} shares @ ~{t['model_price']:.2f} EUR"
+        f"{fee_line}\n"
         f"\n*Technical: {t['tech_score']:.0f}/50*\n{tech_lines}"
         f"\n*Fundamental: {t['fund_score']:.0f}/50*\n{fund_lines}"
         f"{bonus_line}\n"
@@ -674,3 +692,4 @@ def poll_and_handle_commands(max_updates: int = 10) -> None:
         logger.info(f"Handling command: {text}")
         reply = handle_command(text)
         send_message(reply)
+

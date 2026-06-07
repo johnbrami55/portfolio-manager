@@ -1,74 +1,61 @@
 """
-config.py — Central configuration for the portfolio management system.
+config.py -- Central configuration for the portfolio management system.
 All parameters are defined here and imported by other modules.
 Never hardcode values in other files.
 """
 
-# ─── Capital & Position Sizing ───────────────────────────────────────────────
-INITIAL_CAPITAL = 1890.0          # EUR — starting capital
-MIN_POSITION_EUR = 200.0          # Minimum position size in EUR
-MAX_POSITION_PCT = 0.20           # Max weight per stock (20%)
-MAX_SECTOR_PCT = 0.35             # Max sector exposure (35%)
-MIN_LINES = 5                     # Minimum number of positions
-MAX_LINES = 7                     # Maximum number of positions
+# Capital and Position Sizing
+INITIAL_CAPITAL = 1890.0
+MIN_POSITION_EUR = 200.0
+MAX_POSITION_PCT = 0.20
+MAX_SECTOR_PCT = 0.35
+MIN_LINES = 5
+MAX_LINES = 7
 
-# ─── Rebalancing ─────────────────────────────────────────────────────────────
-REBALANCE_FREQUENCY = "biweekly"  # Every 2 weeks
+# Rebalancing
+REBALANCE_FREQUENCY = "biweekly"
 
-# ─── DEGIRO Fee Model ─────────────────────────────────────────────────────────
-DEGIRO_FIXED_FEE = 0.50           # EUR per order (Euronext)
-DEGIRO_VARIABLE_FEE = 0.00004     # 0.004% of order value
-MAX_ROUNDTRIP_FEE_PCT = 0.008     # Skip trade if round-trip > 0.8% of position
+# DEGIRO Fee Model (kept for backward compat)
+DEGIRO_FIXED_FEE = 0.50
+DEGIRO_VARIABLE_FEE = 0.00004
+MAX_ROUNDTRIP_FEE_PCT = 0.008
 
-# ─── Market Regime Parameters ─────────────────────────────────────────────────
+# Adaptive fees by market
+DEGIRO_FEES = {
+    "EU": {"fixed": 0.50,  "variable": 0.00004},
+    "US": {"fixed": 2.00,  "variable": 0.00004},
+    "HK": {"fixed": 1.50,  "variable": 0.00050},
+}
+
+# Market Regime Parameters
 REGIME_PARAMS = {
     "BULL": {
-        "beta_target_min": 1.3,
-        "beta_target_max": 1.6,
-        "max_beta_per_stock": 2.0,
-        "score_threshold": 60,
-        "max_lines": 7,
-        "cash_pct_min": 0.00,
-        "cash_pct_max": 0.00,
-        "stop_loss_pct": -0.10,
-        "take_profit_pct": 0.22,
-        "trailing_stop_pct": -0.08,
-        "trailing_stop_trigger": 0.15,
+        "beta_target_min": 1.3, "beta_target_max": 1.6,
+        "max_beta_per_stock": 2.0, "score_threshold": 60, "max_lines": 7,
+        "cash_pct_min": 0.00, "cash_pct_max": 0.00,
+        "stop_loss_pct": -0.10, "take_profit_pct": 0.22,
+        "trailing_stop_pct": -0.08, "trailing_stop_trigger": 0.15,
     },
     "NEUTRAL": {
-        "beta_target_min": 1.0,
-        "beta_target_max": 1.3,
-        "max_beta_per_stock": 1.5,
-        "score_threshold": 65,
-        "max_lines": 6,
-        "cash_pct_min": 0.10,
-        "cash_pct_max": 0.15,
-        "stop_loss_pct": -0.08,
-        "take_profit_pct": 0.18,
-        "trailing_stop_pct": None,
-        "trailing_stop_trigger": None,
+        "beta_target_min": 1.0, "beta_target_max": 1.3,
+        "max_beta_per_stock": 1.5, "score_threshold": 65, "max_lines": 6,
+        "cash_pct_min": 0.10, "cash_pct_max": 0.15,
+        "stop_loss_pct": -0.08, "take_profit_pct": 0.18,
+        "trailing_stop_pct": None, "trailing_stop_trigger": None,
     },
     "BEAR": {
-        "beta_target_min": 0.7,
-        "beta_target_max": 1.0,
-        "max_beta_per_stock": 1.2,
-        "score_threshold": 72,
-        "max_lines": 5,
-        "cash_pct_min": 0.20,
-        "cash_pct_max": 0.30,
-        "stop_loss_pct": -0.06,
-        "take_profit_pct": 0.14,
-        "trailing_stop_pct": None,
-        "trailing_stop_trigger": None,
+        "beta_target_min": 0.7, "beta_target_max": 1.0,
+        "max_beta_per_stock": 1.2, "score_threshold": 72, "max_lines": 5,
+        "cash_pct_min": 0.20, "cash_pct_max": 0.30,
+        "stop_loss_pct": -0.06, "take_profit_pct": 0.14,
+        "trailing_stop_pct": None, "trailing_stop_trigger": None,
     },
 }
 
-# ─── Regime Bonus ─────────────────────────────────────────────────────────────
 BULL_BETA_BONUS_THRESHOLD = 1.3
 BEAR_BETA_BONUS_THRESHOLD = 1.0
 REGIME_BONUS_PTS = 5
 
-# ─── Liquidity Filters ────────────────────────────────────────────────────────
 LIQUIDITY_MIN_VOLUME_EUR = 300_000
 LIQUIDITY_MIN_MARKET_CAP_EUR = 300_000_000
 LIQUIDITY_MAX_SPREAD_PCT = 0.03
@@ -76,7 +63,6 @@ LIQUIDITY_LOOKBACK_DAYS = 20
 BEAR_MIN_VOLUME_EUR = 500_000
 BEAR_MIN_MARKET_CAP_EUR = 500_000_000
 
-# ─── Scoring Weights ──────────────────────────────────────────────────────────
 SCORE_TECH_TREND_MAX = 10
 SCORE_TECH_RSI_MAX = 6
 SCORE_TECH_VOLUME_MAX = 8
@@ -84,7 +70,6 @@ SCORE_TECH_MACD_MAX = 6
 SCORE_TECH_MOMENTUM_MAX = 6
 SCORE_TECH_BOLLINGER_MAX = 8
 SCORE_TECH_STOCHRSI_MAX = 6
-
 SCORE_FUND_EPS_REVISIONS_MAX = 15
 SCORE_FUND_VALUATION_MAX = 15
 SCORE_FUND_BALANCE_SHEET_MAX = 10
@@ -103,24 +88,25 @@ EPS_REVISION_LOOKBACK_DAYS = 30
 PEG_GOOD_BULL = 1.5
 DEBT_EBITDA_MAX = 3.0
 
-# ─── Sell Signal Parameters ───────────────────────────────────────────────────
 SCORE_DEGRADATION_CONSECUTIVE = 2
 BEAR_SELL_BETA_THRESHOLD = 1.2
 
-# ─── Reference Indices ────────────────────────────────────────────────────────
 CAC40_TICKER  = "^FCHI"
 STOXX600_TICKER = "^STOXX"
 MA_SHORT = 50
 MA_LONG  = 200
 
-# ─── State File ───────────────────────────────────────────────────────────────
-STATE_FILE = "portfolio_state.json"
+# Index used for beta calculation by market (via yfinance)
+INDEX_BY_MARKET = {
+    "EU": "^FCHI",
+    "US": "^GSPC",
+    "HK": "^HSI",
+}
 
-# ─── Logging ──────────────────────────────────────────────────────────────────
+STATE_FILE = "portfolio_state.json"
 LOG_LEVEL  = "INFO"
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
-# ─── Stock Universes ──────────────────────────────────────────────────────────
 CAC40_TICKERS = [
     "AI.PA","AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
     "CA.PA","ACA.PA","BN.PA","DSY.PA","ENGI.PA","EL.PA","RMS.PA","KER.PA",
@@ -136,10 +122,24 @@ AEX_TICKERS = [
     "UMG.AS","UNA.AS","VPK.AS","WKL.AS",
 ]
 
-FULL_UNIVERSE = list(dict.fromkeys(CAC40_TICKERS + AEX_TICKERS))
+US_TICKERS = [
+    "AAPL","MSFT","NVDA","GOOGL","AMZN","META","TSLA","BRK-B","JPM","UNH",
+    "V","XOM","JNJ","WMT","MA","PG","LLY","HD","MRK","ABBV",
+    "AVGO","PEP","KO","COST","TMO","MCD","ACN","BAC","CRM","CSCO",
+    "ABT","NEE","TXN","DHR","QCOM","LIN","PM","RTX","HON","UPS",
+]
 
-# ─── Sector Mapping ──────────────────────────────────────────────────────────
+HK_TICKERS = [
+    "0700.HK","9988.HK","0941.HK","1299.HK","0005.HK",
+    "0388.HK","2318.HK","1398.HK","0939.HK","3690.HK",
+    "0883.HK","2628.HK","0011.HK","1810.HK","9999.HK",
+    "0002.HK","0003.HK","0016.HK","0017.HK","0027.HK",
+]
+
+FULL_UNIVERSE = list(dict.fromkeys(CAC40_TICKERS + AEX_TICKERS + US_TICKERS + HK_TICKERS))
+
 SECTOR_MAP = {
+    # EU (CAC40 / AEX)
     "AI.PA":"Materials","AIR.PA":"Industrials","ALO.PA":"Industrials",
     "MT.AS":"Materials","CS.PA":"Financials","BNP.PA":"Financials",
     "EN.PA":"Industrials","CAP.PA":"Technology","CA.PA":"Consumer Staples",
@@ -162,4 +162,40 @@ SECTOR_MAP = {
     "RAND.AS":"Industrials","REN.AS":"Industrials","SHELL.AS":"Energy",
     "UMG.AS":"Communication Services","UNA.AS":"Consumer Staples",
     "VPK.AS":"Materials","WKL.AS":"Technology",
+    # US (NYSE / Nasdaq)
+    "AAPL":"Technology","MSFT":"Technology","NVDA":"Technology",
+    "GOOGL":"Communication Services","AMZN":"Consumer Discretionary",
+    "META":"Communication Services","TSLA":"Consumer Discretionary",
+    "BRK-B":"Financials","JPM":"Financials","UNH":"Health Care",
+    "V":"Financials","XOM":"Energy","JNJ":"Health Care",
+    "WMT":"Consumer Staples","MA":"Financials","PG":"Consumer Staples",
+    "LLY":"Health Care","HD":"Consumer Discretionary","MRK":"Health Care",
+    "ABBV":"Health Care","AVGO":"Technology","PEP":"Consumer Staples",
+    "KO":"Consumer Staples","COST":"Consumer Staples","TMO":"Health Care",
+    "MCD":"Consumer Discretionary","ACN":"Technology","BAC":"Financials",
+    "CRM":"Technology","CSCO":"Technology","ABT":"Health Care",
+    "NEE":"Utilities","TXN":"Technology","DHR":"Health Care",
+    "QCOM":"Technology","LIN":"Materials","PM":"Consumer Staples",
+    "RTX":"Industrials","HON":"Industrials","UPS":"Industrials",
+    # HK (HKEX)
+    "0700.HK":"Communication Services",
+    "9988.HK":"Consumer Discretionary",
+    "0941.HK":"Communication Services",
+    "1299.HK":"Financials",
+    "0005.HK":"Financials",
+    "0388.HK":"Financials",
+    "2318.HK":"Financials",
+    "1398.HK":"Financials",
+    "0939.HK":"Financials",
+    "3690.HK":"Consumer Discretionary",
+    "0883.HK":"Energy",
+    "2628.HK":"Financials",
+    "0011.HK":"Financials",
+    "1810.HK":"Technology",
+    "9999.HK":"Communication Services",
+    "0002.HK":"Utilities",
+    "0003.HK":"Utilities",
+    "0016.HK":"Real Estate",
+    "0017.HK":"Real Estate",
+    "0027.HK":"Consumer Discretionary",
 }
