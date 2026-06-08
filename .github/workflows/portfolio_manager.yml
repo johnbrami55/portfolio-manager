@@ -7,6 +7,13 @@ on:
     - cron: "20 15 * * 1-5"  # 16h20 CET (avant clôture Paris)
   workflow_dispatch:
 
+concurrency:
+  group: portfolio-manager
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-portfolio-manager:
     runs-on: ubuntu-latest
