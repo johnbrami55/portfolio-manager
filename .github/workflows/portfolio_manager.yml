@@ -59,9 +59,9 @@ jobs:
 
       - name: Publish data to public dashboard
         env:
-          GH_PAT: ${{ secrets.GH_TOKEN }}
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git clone https://x-access-token:${GH_PAT}@github.com/johnbrami55/portfolio-dashboard.git /tmp/dashboard
+          git clone https://x-access-token:${GITHUB_PAT}@github.com/johnbrami55/portfolio-dashboard.git /tmp/dashboard
           cp portfolio_state.json /tmp/dashboard/
           cp scores_latest.json /tmp/dashboard/ 2>/dev/null || true
           cd /tmp/dashboard
