@@ -1,48 +1,48 @@
 {
   "current_regime": "NEUTRAL",
-  "last_run": "2026-06-07T19:01:46.236347",
+  "last_run": "2026-06-08T07:21:32.399683",
   "positions": {},
   "score_history": {
     "ML.PA": [
       {
         "score": 32.6,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 32.6,
         "date": "2026-06-07"
       },
       {
         "score": 32.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 32.6,
+        "date": "2026-06-08"
       }
     ],
     "CS.PA": [
       {
         "score": 29.0,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 29.0,
         "date": "2026-06-07"
       },
       {
         "score": 29.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.0,
+        "date": "2026-06-08"
       }
     ],
     "LR.PA": [
       {
-        "score": 28.8,
-        "date": "2026-06-06"
-      },
-      {
         "score": 25.8,
         "date": "2026-06-07"
       },
       {
         "score": 25.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 25.8,
+        "date": "2026-06-08"
       }
     ],
     "PUB.PA": [
@@ -58,127 +58,127 @@
     "AIR.PA": [
       {
         "score": 29.6,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 29.6,
         "date": "2026-06-07"
       },
       {
         "score": 29.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.6,
+        "date": "2026-06-08"
       }
     ],
     "EN.PA": [
       {
         "score": 26.4,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.4,
         "date": "2026-06-07"
       },
       {
         "score": 26.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.4,
+        "date": "2026-06-08"
       }
     ],
     "ENGI.PA": [
       {
         "score": 26.4,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.4,
         "date": "2026-06-07"
       },
       {
         "score": 26.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.4,
+        "date": "2026-06-08"
       }
     ],
     "BNP.PA": [
       {
         "score": 29.6,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 29.6,
         "date": "2026-06-07"
       },
       {
         "score": 29.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.6,
+        "date": "2026-06-08"
       }
     ],
     "CA.PA": [
       {
         "score": 30.200000000000003,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 30.200000000000003,
         "date": "2026-06-07"
       },
       {
         "score": 30.200000000000003,
         "date": "2026-06-07"
+      },
+      {
+        "score": 30.200000000000003,
+        "date": "2026-06-08"
       }
     ],
     "ACA.PA": [
       {
         "score": 26.0,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.0,
         "date": "2026-06-07"
       },
       {
         "score": 26.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.0,
+        "date": "2026-06-08"
       }
     ],
     "BN.PA": [
       {
         "score": 26.6,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.6,
         "date": "2026-06-07"
       },
       {
         "score": 26.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.6,
+        "date": "2026-06-08"
       }
     ],
     "EL.PA": [
       {
         "score": 25.2,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 25.2,
         "date": "2026-06-07"
       },
       {
         "score": 25.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 25.2,
+        "date": "2026-06-08"
       }
     ],
     "RMS.PA": [
       {
         "score": 26.6,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.6,
         "date": "2026-06-07"
       },
       {
         "score": 26.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.6,
+        "date": "2026-06-08"
       }
     ],
     "RI.PA": [
@@ -198,29 +198,29 @@
     "MC.PA": [
       {
         "score": 26.0,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 26.0,
         "date": "2026-06-07"
       },
       {
         "score": 26.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.0,
+        "date": "2026-06-08"
       }
     ],
     "ORA.PA": [
       {
         "score": 23.4,
-        "date": "2026-06-06"
-      },
-      {
-        "score": 23.4,
         "date": "2026-06-07"
       },
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.4,
+        "date": "2026-06-08"
       }
     ],
     "SAF.PA": [
@@ -305,6 +305,10 @@
       {
         "score": 45.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 45.2,
+        "date": "2026-06-08"
       }
     ],
     "AAPL": [
@@ -315,6 +319,10 @@
       {
         "score": 39.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 39.2,
+        "date": "2026-06-08"
       }
     ],
     "BRK-B": [
@@ -325,6 +333,10 @@
       {
         "score": 39.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 39.2,
+        "date": "2026-06-08"
       }
     ],
     "CSCO": [
@@ -335,6 +347,10 @@
       {
         "score": 39.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 39.2,
+        "date": "2026-06-08"
       }
     ],
     "MRK": [
@@ -345,6 +361,10 @@
       {
         "score": 38.599999999999994,
         "date": "2026-06-07"
+      },
+      {
+        "score": 38.599999999999994,
+        "date": "2026-06-08"
       }
     ],
     "0005.HK": [
@@ -355,6 +375,10 @@
       {
         "score": 36.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.0,
+        "date": "2026-06-08"
       }
     ],
     "KO": [
@@ -365,6 +389,10 @@
       {
         "score": 36.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 36.0,
+        "date": "2026-06-08"
       }
     ],
     "LIN": [
@@ -375,6 +403,10 @@
       {
         "score": 34.400000000000006,
         "date": "2026-06-07"
+      },
+      {
+        "score": 34.400000000000006,
+        "date": "2026-06-08"
       }
     ],
     "TXN": [
@@ -385,6 +417,10 @@
       {
         "score": 33.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 33.6,
+        "date": "2026-06-08"
       }
     ],
     "MSFT": [
@@ -395,6 +431,10 @@
       {
         "score": 33.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 33.0,
+        "date": "2026-06-08"
       }
     ],
     "PM": [
@@ -405,6 +445,10 @@
       {
         "score": 32.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 32.6,
+        "date": "2026-06-08"
       }
     ],
     "LLY": [
@@ -415,6 +459,10 @@
       {
         "score": 31.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 31.4,
+        "date": "2026-06-08"
       }
     ],
     "1299.HK": [
@@ -425,6 +473,10 @@
       {
         "score": 31.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.200000000000003,
+        "date": "2026-06-08"
       }
     ],
     "META": [
@@ -435,6 +487,10 @@
       {
         "score": 30.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 30.8,
+        "date": "2026-06-08"
       }
     ],
     "JNJ": [
@@ -445,6 +501,10 @@
       {
         "score": 30.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 30.8,
+        "date": "2026-06-08"
       }
     ],
     "HON": [
@@ -455,6 +515,10 @@
       {
         "score": 30.799999999999997,
         "date": "2026-06-07"
+      },
+      {
+        "score": 30.799999999999997,
+        "date": "2026-06-08"
       }
     ],
     "PEP": [
@@ -465,6 +529,10 @@
       {
         "score": 30.200000000000003,
         "date": "2026-06-07"
+      },
+      {
+        "score": 30.200000000000003,
+        "date": "2026-06-08"
       }
     ],
     "UPS": [
@@ -475,6 +543,10 @@
       {
         "score": 29.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.6,
+        "date": "2026-06-08"
       }
     ],
     "AMZN": [
@@ -485,6 +557,10 @@
       {
         "score": 29.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 29.4,
+        "date": "2026-06-08"
       }
     ],
     "GOOGL": [
@@ -495,6 +571,10 @@
       {
         "score": 28.400000000000002,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.400000000000002,
+        "date": "2026-06-08"
       }
     ],
     "MA": [
@@ -505,6 +585,10 @@
       {
         "score": 28.200000000000003,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.200000000000003,
+        "date": "2026-06-08"
       }
     ],
     "0700.HK": [
@@ -515,6 +599,10 @@
       {
         "score": 28.200000000000003,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.200000000000003,
+        "date": "2026-06-08"
       }
     ],
     "V": [
@@ -525,6 +613,10 @@
       {
         "score": 28.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.2,
+        "date": "2026-06-08"
       }
     ],
     "BAC": [
@@ -535,6 +627,10 @@
       {
         "score": 28.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 28.0,
+        "date": "2026-06-08"
       }
     ],
     "JPM": [
@@ -545,6 +641,10 @@
       {
         "score": 27.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 27.4,
+        "date": "2026-06-08"
       }
     ],
     "ABBV": [
@@ -555,6 +655,10 @@
       {
         "score": 26.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.8,
+        "date": "2026-06-08"
       }
     ],
     "PG": [
@@ -565,6 +669,10 @@
       {
         "score": 26.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.6,
+        "date": "2026-06-08"
       }
     ],
     "MCD": [
@@ -575,6 +683,10 @@
       {
         "score": 26.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.6,
+        "date": "2026-06-08"
       }
     ],
     "0941.HK": [
@@ -585,6 +697,10 @@
       {
         "score": 26.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 24.2,
+        "date": "2026-06-08"
       }
     ],
     "9999.HK": [
@@ -595,6 +711,10 @@
       {
         "score": 26.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 22.8,
+        "date": "2026-06-08"
       }
     ],
     "TMO": [
@@ -605,6 +725,10 @@
       {
         "score": 26.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.0,
+        "date": "2026-06-08"
       }
     ],
     "RTX": [
@@ -615,6 +739,10 @@
       {
         "score": 26.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.0,
+        "date": "2026-06-08"
       }
     ],
     "NEE": [
@@ -625,6 +753,10 @@
       {
         "score": 25.400000000000002,
         "date": "2026-06-07"
+      },
+      {
+        "score": 25.400000000000002,
+        "date": "2026-06-08"
       }
     ],
     "0388.HK": [
@@ -635,6 +767,10 @@
       {
         "score": 25.400000000000002,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.400000000000002,
+        "date": "2026-06-08"
       }
     ],
     "WMT": [
@@ -645,6 +781,10 @@
       {
         "score": 24.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 24.8,
+        "date": "2026-06-08"
       }
     ],
     "2318.HK": [
@@ -655,6 +795,10 @@
       {
         "score": 24.8,
         "date": "2026-06-07"
+      },
+      {
+        "score": 24.8,
+        "date": "2026-06-08"
       }
     ],
     "COST": [
@@ -665,6 +809,10 @@
       {
         "score": 24.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 24.2,
+        "date": "2026-06-08"
       }
     ],
     "0027.HK": [
@@ -675,6 +823,10 @@
       {
         "score": 24.2,
         "date": "2026-06-07"
+      },
+      {
+        "score": 21.0,
+        "date": "2026-06-08"
       }
     ],
     "DHR": [
@@ -685,6 +837,10 @@
       {
         "score": 23.6,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.6,
+        "date": "2026-06-08"
       }
     ],
     "XOM": [
@@ -695,6 +851,10 @@
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.4,
+        "date": "2026-06-08"
       }
     ],
     "1398.HK": [
@@ -705,6 +865,10 @@
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 26.6,
+        "date": "2026-06-08"
       }
     ],
     "0939.HK": [
@@ -715,6 +879,10 @@
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.4,
+        "date": "2026-06-08"
       }
     ],
     "0003.HK": [
@@ -725,6 +893,10 @@
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 25.8,
+        "date": "2026-06-08"
       }
     ],
     "0016.HK": [
@@ -735,6 +907,10 @@
       {
         "score": 23.4,
         "date": "2026-06-07"
+      },
+      {
+        "score": 25.8,
+        "date": "2026-06-08"
       }
     ],
     "HD": [
@@ -745,6 +921,10 @@
       {
         "score": 23.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.0,
+        "date": "2026-06-08"
       }
     ],
     "ABT": [
@@ -755,6 +935,10 @@
       {
         "score": 22.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 22.0,
+        "date": "2026-06-08"
       }
     ],
     "0002.HK": [
@@ -765,6 +949,10 @@
       {
         "score": 21.0,
         "date": "2026-06-07"
+      },
+      {
+        "score": 23.4,
+        "date": "2026-06-08"
       }
     ]
   },
@@ -942,39 +1130,6 @@
         "stoch_rsi": 4.800000000000001
       },
       "last_close": 120.79000091552734
-    },
-    {
-      "ticker": "0005.HK",
-      "score": 36.2,
-      "tech_score": 21.2,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 55.5 ideal",
-        "Volume 2.2x avg",
-        "MACD above zero",
-        "Insufficient history",
-        "Bollinger mid (%B=0.43)",
-        "StochRSI neutral (K=35)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0203,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 8,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 141.8000030517578
     },
     {
       "ticker": "KO",
@@ -1206,39 +1361,6 @@
         "stoch_rsi": 1.7999999999999998
       },
       "last_close": 1131.4200439453125
-    },
-    {
-      "ticker": "1299.HK",
-      "score": 31.4,
-      "tech_score": 16.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 14.0 oversold bonus",
-        "Volume 4.2x avg",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=-0.27)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0302,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 8,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 74.0
     },
     {
       "ticker": "META",
@@ -1571,6 +1693,39 @@
       "last_close": 39.52
     },
     {
+      "ticker": "0005.HK",
+      "score": 29.0,
+      "tech_score": 14.0,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 57.8 ideal",
+        "Volume 0.9x avg (weak)",
+        "MACD above zero",
+        "Insufficient history",
+        "Bollinger near lower/bounce (%B=0.39)",
+        "StochRSI neutral (K=45)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0205,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 6,
+        "volume": 0.0,
+        "macd": 3.0,
+        "momentum": 0.0,
+        "bollinger": 3.2,
+        "stoch_rsi": 1.7999999999999998
+      },
+      "last_close": 141.39999389648438
+    },
+    {
       "ticker": "GOOGL",
       "score": 28.400000000000002,
       "tech_score": 13.400000000000002,
@@ -1646,17 +1801,17 @@
       "signals_tech": [
         "Insufficient history",
         "RSI 48.9 ideal",
-        "Volume 0.9x avg (weak)",
+        "Volume 0.7x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger mid (%B=0.55)",
+        "Bollinger mid (%B=0.43)",
         "StochRSI bullish zone (K=66)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0364,
+      "atr_pct": 0.0374,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -1667,7 +1822,40 @@
         "bollinger": 2.4,
         "stoch_rsi": 4.800000000000001
       },
-      "last_close": 453.20001220703125
+      "last_close": 446.0
+    },
+    {
+      "ticker": "1299.HK",
+      "score": 28.200000000000003,
+      "tech_score": 13.200000000000001,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 13.5 oversold bonus",
+        "Volume 1.5x avg",
+        "MACD bearish",
+        "Insufficient history",
+        "Bollinger below lower band (%B=-0.18)",
+        "StochRSI oversold (K=0)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0312,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 4.800000000000001,
+        "volume": 4.8,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 0.0,
+        "stoch_rsi": 3.5999999999999996
+      },
+      "last_close": 72.3499984741211
     },
     {
       "ticker": "V",
@@ -1934,37 +2122,70 @@
       "last_close": 279.8399963378906
     },
     {
-      "ticker": "0941.HK",
+      "ticker": "1398.HK",
       "score": 26.6,
-      "tech_score": 11.600000000000001,
+      "tech_score": 11.6,
       "fund_score": 15.0,
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 37.6 partial",
+        "RSI 53.5 ideal",
         "Volume 0.9x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger near lower/bounce (%B=0.16)",
-        "StochRSI oversold reversal (K=16, D=12)"
+        "Bollinger upper zone (%B=0.67)",
+        "StochRSI overbought (K=100)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0125,
+      "atr_pct": 0.0201,
       "error": null,
       "breakdown": {
         "trend": 0.0,
-        "rsi": 2.4000000000000004,
+        "rsi": 6,
         "volume": 0.0,
         "macd": 0.0,
         "momentum": 0.0,
-        "bollinger": 3.2,
-        "stoch_rsi": 6
+        "bollinger": 5.6,
+        "stoch_rsi": 0.0
       },
-      "last_close": 82.4000015258789
+      "last_close": 6.920000076293945
+    },
+    {
+      "ticker": "0388.HK",
+      "score": 26.400000000000002,
+      "tech_score": 11.400000000000002,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 29.2 oversold bonus",
+        "Volume 1.5x avg",
+        "MACD bearish",
+        "Insufficient history",
+        "Bollinger below lower band (%B=-0.05)",
+        "StochRSI neutral (K=44)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0198,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 4.800000000000001,
+        "volume": 4.8,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 0.0,
+        "stoch_rsi": 1.7999999999999998
+      },
+      "last_close": 385.3999938964844
     },
     {
       "ticker": "EN.PA",
@@ -2031,39 +2252,6 @@
         "stoch_rsi": 0.0
       },
       "last_close": 26.94
-    },
-    {
-      "ticker": "9999.HK",
-      "score": 26.4,
-      "tech_score": 11.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 58.2 ideal",
-        "Volume 1.1x avg (weak)",
-        "MACD above zero",
-        "Insufficient history",
-        "Bollinger mid (%B=0.57)",
-        "StochRSI overbought (K=83)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0384,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 188.39999389648438
     },
     {
       "ticker": "ACA.PA",
@@ -2231,6 +2419,72 @@
       "last_close": 144.0
     },
     {
+      "ticker": "0003.HK",
+      "score": 25.8,
+      "tech_score": 10.8,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 16.5 oversold bonus",
+        "Volume 0.7x avg (weak)",
+        "MACD bearish",
+        "Insufficient history",
+        "Bollinger below lower band (%B=0.09)",
+        "StochRSI oversold reversal (K=5, D=3)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0142,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 4.800000000000001,
+        "volume": 0.0,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 0.0,
+        "stoch_rsi": 6
+      },
+      "last_close": 6.809999942779541
+    },
+    {
+      "ticker": "0016.HK",
+      "score": 25.8,
+      "tech_score": 10.8,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 14.9 oversold bonus",
+        "Volume 0.8x avg (weak)",
+        "MACD bearish",
+        "Insufficient history",
+        "Bollinger below lower band (%B=-0.03)",
+        "StochRSI oversold reversal (K=4, D=2)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0314,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 4.800000000000001,
+        "volume": 0.0,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 0.0,
+        "stoch_rsi": 6
+      },
+      "last_close": 117.9000015258789
+    },
+    {
       "ticker": "NEE",
       "score": 25.400000000000002,
       "tech_score": 10.400000000000002,
@@ -2262,39 +2516,6 @@
         "stoch_rsi": 4.800000000000001
       },
       "last_close": 85.83999633789062
-    },
-    {
-      "ticker": "0388.HK",
-      "score": 25.400000000000002,
-      "tech_score": 10.400000000000002,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 31.6 partial",
-        "Volume 1.4x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger near lower/bounce (%B=0.13)",
-        "StochRSI bullish zone (K=50)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0182,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 3.2,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 396.3999938964844
     },
     {
       "ticker": "EL.PA",
@@ -2371,18 +2592,18 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 18.8 oversold bonus",
-        "Volume 0.8x avg (weak)",
+        "RSI 19.7 oversold bonus",
+        "Volume 0.7x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger near lower/bounce (%B=0.16)",
-        "StochRSI neutral (K=33)"
+        "Bollinger near lower/bounce (%B=0.15)",
+        "StochRSI neutral (K=35)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0212,
+      "atr_pct": 0.0214,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2393,7 +2614,7 @@
         "bollinger": 3.2,
         "stoch_rsi": 1.7999999999999998
       },
-      "last_close": 56.900001525878906
+      "last_close": 56.599998474121094
     },
     {
       "ticker": "COST",
@@ -2429,7 +2650,7 @@
       "last_close": 971.8699951171875
     },
     {
-      "ticker": "0027.HK",
+      "ticker": "0941.HK",
       "score": 24.2,
       "tech_score": 9.2,
       "fund_score": 15.0,
@@ -2437,18 +2658,18 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 38.9 partial",
-        "Volume 1.2x avg (weak)",
+        "RSI 33.6 partial",
+        "Volume 0.6x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger near lower/bounce (%B=0.15)",
-        "StochRSI oversold (K=6)"
+        "Bollinger near lower/bounce (%B=0.12)",
+        "StochRSI oversold (K=4)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0263,
+      "atr_pct": 0.0126,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2459,7 +2680,7 @@
         "bollinger": 3.2,
         "stoch_rsi": 3.5999999999999996
       },
-      "last_close": 31.200000762939453
+      "last_close": 82.19999694824219
     },
     {
       "ticker": "DHR",
@@ -2561,39 +2782,6 @@
       "last_close": 149.9199981689453
     },
     {
-      "ticker": "1398.HK",
-      "score": 23.4,
-      "tech_score": 8.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 46.9 ideal",
-        "Volume 1.1x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger mid (%B=0.50)",
-        "StochRSI overbought (K=94)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0197,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 6.829999923706055
-    },
-    {
       "ticker": "0939.HK",
       "score": 23.4,
       "tech_score": 8.4,
@@ -2602,18 +2790,18 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 47.3 ideal",
+        "RSI 49.5 ideal",
         "Volume 0.8x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger mid (%B=0.53)",
-        "StochRSI overbought (K=95)"
+        "Bollinger mid (%B=0.58)",
+        "StochRSI overbought (K=100)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0167,
+      "atr_pct": 0.0183,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2624,10 +2812,10 @@
         "bollinger": 2.4,
         "stoch_rsi": 0.0
       },
-      "last_close": 8.720000267028809
+      "last_close": 8.75
     },
     {
-      "ticker": "0003.HK",
+      "ticker": "0002.HK",
       "score": 23.4,
       "tech_score": 8.4,
       "fund_score": 15.0,
@@ -2635,62 +2823,29 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 15.9 oversold bonus",
-        "Volume 1.5x avg (weak)",
+        "RSI 33.2 partial",
+        "Volume 0.7x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger below lower band (%B=0.05)",
-        "StochRSI oversold (K=3)"
+        "Bollinger below lower band (%B=0.01)",
+        "StochRSI oversold reversal (K=15, D=9)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0133,
+      "atr_pct": 0.0161,
       "error": null,
       "breakdown": {
         "trend": 0.0,
-        "rsi": 4.800000000000001,
+        "rsi": 2.4000000000000004,
         "volume": 0.0,
         "macd": 0.0,
         "momentum": 0.0,
         "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
+        "stoch_rsi": 6
       },
-      "last_close": 6.820000171661377
-    },
-    {
-      "ticker": "0016.HK",
-      "score": 23.4,
-      "tech_score": 8.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 13.5 oversold bonus",
-        "Volume 1.2x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=-0.02)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0318,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 120.9000015258789
+      "last_close": 72.94999694824219
     },
     {
       "ticker": "HD",
@@ -2726,6 +2881,39 @@
       "last_close": 310.7799987792969
     },
     {
+      "ticker": "9999.HK",
+      "score": 22.8,
+      "tech_score": 7.800000000000001,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 61.2 partial",
+        "Volume 0.8x avg (weak)",
+        "MACD above zero",
+        "Insufficient history",
+        "Bollinger mid (%B=0.53)",
+        "StochRSI overbought (K=98)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0388,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 2.4000000000000004,
+        "volume": 0.0,
+        "macd": 3.0,
+        "momentum": 0.0,
+        "bollinger": 2.4,
+        "stoch_rsi": 0.0
+      },
+      "last_close": 187.39999389648438
+    },
+    {
       "ticker": "ABT",
       "score": 22.0,
       "tech_score": 7.0,
@@ -2759,7 +2947,7 @@
       "last_close": 91.06999969482422
     },
     {
-      "ticker": "0002.HK",
+      "ticker": "0027.HK",
       "score": 21.0,
       "tech_score": 6.0,
       "fund_score": 15.0,
@@ -2767,18 +2955,18 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 31.9 partial",
-        "Volume 0.8x avg (weak)",
+        "RSI 33.1 partial",
+        "Volume 0.9x avg (weak)",
         "MACD bearish",
         "Insufficient history",
-        "Bollinger below lower band (%B=0.04)",
-        "StochRSI oversold (K=11)"
+        "Bollinger below lower band (%B=-0.00)",
+        "StochRSI oversold (K=0)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0174,
+      "atr_pct": 0.0272,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2789,7 +2977,7 @@
         "bollinger": 0.0,
         "stoch_rsi": 3.5999999999999996
       },
-      "last_close": 73.3499984741211
+      "last_close": 30.700000762939453
     }
   ]
 }
