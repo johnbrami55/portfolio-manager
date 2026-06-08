@@ -1,27 +1,35 @@
 import logging
 import time
 
-import yfinance as yf
+import requests
 
 from config import CAC40_TICKER, STOXX600_TICKER, MA_SHORT, MA_LONG
 
 logger = logging.getLogger(__name__)
 
+_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept": "application/json",
+}
+
 
 def fetch_closes(ticker):
     yf_ticker = "MC.PA" if ticker == CAC40_TICKER else "ASML.AS"
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{yf_ticker}"
+    params = {"range": "1y", "interval": "1d"}
     for attempt in range(3):
         try:
-            df = yf.Ticker(yf_ticker).history(period="1y")
-            if df.empty:
-                logger.warning(f"Empty data for {yf_ticker}, attempt {attempt + 1}")
-                time.sleep(10 * (attempt + 1))
-                continue
-            closes = df["Close"].dropna().iloc[::-1].tolist()
-            return [float(c) for c in closes]
+            r = requests.get(url, headers=_HEADERS, params=params, timeout=15)
+            r.raise_for_status()
+            result = r.json()["chart"]["result"][0]
+            closes = result["indicators"]["quote"][0]["close"]
+            closes = [float(c) for c in reversed(closes) if c is not None]
+            if not closes:
+                raise ValueError("empty close list")
+            return closes
         except Exception as e:
-            logger.error(f"Failed to fetch {ticker} (attempt {attempt + 1}): {e}")
-            time.sleep(10 * (attempt + 1))
+            logger.error(f"Failed to fetch {yf_ticker} (attempt {attempt + 1}): {e}")
+            time.sleep(5 * (attempt + 1))
     return []
 
 
