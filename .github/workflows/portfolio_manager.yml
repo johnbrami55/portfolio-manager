@@ -2,9 +2,9 @@ name: Portfolio Manager
 
 on:
   schedule:
-    - cron: "10 8 * * 1-5"   # 09h10 CET
-    - cron: "40 14 * * 1-5"  # 15h40 CET (ouverture USA)
-    - cron: "20 15 * * 1-5"  # 16h20 CET (avant clôture Paris)
+    - cron: "10 7 * * 1-5"   # 09h10 Paris (10min après ouverture EU)
+    - cron: "40 13 * * 1-5"  # 15h40 Paris (10min après ouverture NYSE)
+    - cron: "0 15 * * 1-5"   # 17h00 Paris (30min avant clôture Paris)
   workflow_dispatch:
 
 concurrency:
