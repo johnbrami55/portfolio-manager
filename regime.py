@@ -1,4 +1,5 @@
 import logging
+import time
 
 import yfinance as yf
 
@@ -9,21 +10,24 @@ logger = logging.getLogger(__name__)
 
 def fetch_closes(ticker):
     yf_ticker = "MC.PA" if ticker == CAC40_TICKER else "ASML.AS"
-    try:
-        df = yf.download(yf_ticker, period="1y", progress=False, auto_adjust=True)
-        if df.empty:
-            logger.error(f"No data for {yf_ticker}")
-            return []
-        closes = df["Close"].dropna().iloc[::-1].tolist()
-        return [float(c) for c in closes]
-    except Exception as e:
-        logger.error(f"Failed to fetch {ticker}: {e}")
-        return []
+    for attempt in range(3):
+        try:
+            df = yf.Ticker(yf_ticker).history(period="1y")
+            if df.empty:
+                logger.warning(f"Empty data for {yf_ticker}, attempt {attempt + 1}")
+                time.sleep(10 * (attempt + 1))
+                continue
+            closes = df["Close"].dropna().iloc[::-1].tolist()
+            return [float(c) for c in closes]
+        except Exception as e:
+            logger.error(f"Failed to fetch {ticker} (attempt {attempt + 1}): {e}")
+            time.sleep(10 * (attempt + 1))
+    return []
 
 
 def compute_regime(closes):
     if len(closes) < MA_LONG:
-        logger.warning("Insufficient data – defaulting to NEUTRAL")
+        logger.warning("Insufficient data - defaulting to NEUTRAL")
         return {"regime": "NEUTRAL", "ma50": None, "ma200": None, "last_close": None, "detail": "Insufficient data"}
 
     ma50  = sum(closes[:MA_SHORT]) / MA_SHORT
