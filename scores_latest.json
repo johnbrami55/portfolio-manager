@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-09T17:15:05.307391",
+  "generated_at": "2026-06-09T17:53:30.048283",
   "regime": "BEAR",
   "tickers": [
     {
@@ -23,6 +23,38 @@
       ],
       "beta": 1.0,
       "atr_pct": 0.0189,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 6,
+        "volume": 0.0,
+        "macd": 0.0,
+        "momentum": 3.0,
+        "bollinger": 4.8,
+        "stoch_rsi": 4.800000000000001
+      }
+    },
+    {
+      "ticker": "ENGI.PA",
+      "score": 33.6,
+      "tech_score": 18.6,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 44.7 ideal",
+        "Volume 0.6x avg (weak)",
+        "MACD bearish",
+        "3M 1.6% above median",
+        "Bollinger near lower/defensive (%B=0.30)",
+        "StochRSI bullish zone (K=63)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0157,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -191,38 +223,6 @@
         "macd": 3.0,
         "momentum": 0.0,
         "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      }
-    },
-    {
-      "ticker": "ENGI.PA",
-      "score": 30.6,
-      "tech_score": 15.600000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 44.7 ideal",
-        "Volume 0.6x avg (weak)",
-        "MACD bearish",
-        "3M 1.6% below median",
-        "Bollinger near lower/defensive (%B=0.30)",
-        "StochRSI bullish zone (K=63)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0157,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
         "stoch_rsi": 4.800000000000001
       }
     },
@@ -448,6 +448,38 @@
         "momentum": 0.0,
         "bollinger": 5.6,
         "stoch_rsi": 0.0
+      }
+    },
+    {
+      "ticker": "AI.PA",
+      "score": 22.8,
+      "tech_score": 7.8,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 38.3 ideal",
+        "Volume 0.9x avg (weak)",
+        "MACD bearish",
+        "3M 0.0% below median",
+        "Bollinger below lower band (%B=0.06)",
+        "StochRSI neutral (K=25)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0248,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 6,
+        "volume": 0.0,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 0.0,
+        "stoch_rsi": 1.7999999999999998
       }
     }
   ]
