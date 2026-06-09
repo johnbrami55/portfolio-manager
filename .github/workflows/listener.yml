@@ -2,7 +2,7 @@ name: Listener
 
 on:
   schedule:
-    - cron: "0,10,20,30,40,50 7-22 * * *"  # 8h-23h CET, every 10min
+    - cron: "0 * * * *"  # 8h-23h CET
   workflow_dispatch:
 
 concurrency:
