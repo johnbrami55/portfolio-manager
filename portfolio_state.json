@@ -1,6 +1,6 @@
 {
   "current_regime": "BEAR",
-  "last_run": "2026-06-09T10:43:16.186202",
+  "last_run": "2026-06-09T14:04:57.310260",
   "positions": {},
   "score_history": {
     "ML.PA": [
@@ -10,10 +10,10 @@
       },
       {
         "score": 29.0,
-        "date": "2026-06-08"
+        "date": "2026-06-09"
       },
       {
-        "score": 29.0,
+        "score": 32.0,
         "date": "2026-06-09"
       }
     ],
@@ -23,8 +23,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 30.6,
-        "date": "2026-06-08"
+        "score": 33.0,
+        "date": "2026-06-09"
       },
       {
         "score": 33.0,
@@ -33,12 +33,12 @@
     ],
     "LR.PA": [
       {
-        "score": 25.8,
+        "score": 28.8,
         "date": "2026-06-08"
       },
       {
-        "score": 28.8,
-        "date": "2026-06-08"
+        "score": 25.8,
+        "date": "2026-06-09"
       },
       {
         "score": 25.8,
@@ -57,15 +57,15 @@
     ],
     "AIR.PA": [
       {
-        "score": 26.0,
-        "date": "2026-06-08"
-      },
-      {
         "score": 23.0,
         "date": "2026-06-08"
       },
       {
         "score": 26.0,
+        "date": "2026-06-09"
+      },
+      {
+        "score": 23.0,
         "date": "2026-06-09"
       }
     ],
@@ -75,8 +75,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 26.4,
-        "date": "2026-06-08"
+        "score": 33.6,
+        "date": "2026-06-09"
       },
       {
         "score": 33.6,
@@ -89,11 +89,11 @@
         "date": "2026-06-08"
       },
       {
-        "score": 26.4,
-        "date": "2026-06-08"
+        "score": 33.6,
+        "date": "2026-06-09"
       },
       {
-        "score": 33.6,
+        "score": 30.6,
         "date": "2026-06-09"
       }
     ],
@@ -104,7 +104,7 @@
       },
       {
         "score": 29.6,
-        "date": "2026-06-08"
+        "date": "2026-06-09"
       },
       {
         "score": 29.6,
@@ -122,7 +122,7 @@
       },
       {
         "score": 31.799999999999997,
-        "date": "2026-06-08"
+        "date": "2026-06-09"
       }
     ],
     "ACA.PA": [
@@ -132,7 +132,7 @@
       },
       {
         "score": 27.6,
-        "date": "2026-06-08"
+        "date": "2026-06-09"
       },
       {
         "score": 27.6,
@@ -145,8 +145,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 23.0,
-        "date": "2026-06-08"
+        "score": 31.4,
+        "date": "2026-06-09"
       },
       {
         "score": 31.4,
@@ -159,8 +159,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 25.2,
-        "date": "2026-06-08"
+        "score": 30.0,
+        "date": "2026-06-09"
       },
       {
         "score": 30.0,
@@ -173,8 +173,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 23.0,
-        "date": "2026-06-08"
+        "score": 26.0,
+        "date": "2026-06-09"
       },
       {
         "score": 26.0,
@@ -201,8 +201,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 26.0,
-        "date": "2026-06-08"
+        "score": 30.8,
+        "date": "2026-06-09"
       },
       {
         "score": 30.8,
@@ -215,8 +215,8 @@
         "date": "2026-06-08"
       },
       {
-        "score": 21.0,
-        "date": "2026-06-08"
+        "score": 28.799999999999997,
+        "date": "2026-06-09"
       },
       {
         "score": 28.799999999999997,
@@ -967,171 +967,6 @@
   "cash_eur": 1890,
   "last_scores": [
     {
-      "ticker": "AAPL",
-      "score": 43.2,
-      "tech_score": 28.200000000000003,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 54.0 ideal",
-        "Volume 1.6x avg",
-        "MACD above zero",
-        "3M 15.7% top quartile",
-        "Bollinger near lower/defensive (%B=0.38)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0215,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 4.8,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 301.5400085449219
-    },
-    {
-      "ticker": "LIN",
-      "score": 38.4,
-      "tech_score": 23.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 43.6 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "3M 5.7% top quartile",
-        "Bollinger near lower/defensive (%B=0.35)",
-        "StochRSI oversold (K=1)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0186,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 501.9200134277344
-    },
-    {
-      "ticker": "CSCO",
-      "score": 35.6,
-      "tech_score": 20.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 56.5 partial",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "3M 60.6% top quartile",
-        "Bollinger upper zone (%B=0.70)",
-        "StochRSI oversold (K=7)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.037,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 5.6,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 124.1500015258789
-    },
-    {
-      "ticker": "MSFT",
-      "score": 35.4,
-      "tech_score": 20.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 45.3 ideal",
-        "Volume 0.9x avg (weak)",
-        "MACD above zero",
-        "3M 1.7% above median",
-        "Bollinger near lower/defensive (%B=0.31)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0322,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 3.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 411.739990234375
-    },
-    {
-      "ticker": "PM",
-      "score": 34.2,
-      "tech_score": 19.200000000000003,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 25.0 oversold bonus",
-        "Volume 0.7x avg (weak)",
-        "MACD above zero",
-        "3M 2.8% above median",
-        "Bollinger near lower/defensive (%B=0.23)",
-        "StochRSI oversold (K=5)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0277,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 3.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 176.05999755859375
-    },
-    {
       "ticker": "EN.PA",
       "score": 33.6,
       "tech_score": 18.6,
@@ -1163,39 +998,6 @@
         "stoch_rsi": 4.800000000000001
       },
       "last_close": 49.2
-    },
-    {
-      "ticker": "ENGI.PA",
-      "score": 33.6,
-      "tech_score": 18.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 44.7 ideal",
-        "Volume 0.6x avg (weak)",
-        "MACD bearish",
-        "3M 1.6% above median",
-        "Bollinger near lower/defensive (%B=0.30)",
-        "StochRSI bullish zone (K=63)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0157,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 3.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 26.72
     },
     {
       "ticker": "CS.PA",
@@ -1231,40 +1033,7 @@
       "last_close": 39.7
     },
     {
-      "ticker": "HON",
-      "score": 32.4,
-      "tech_score": 17.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 44.2 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "3M -11.5% below median",
-        "Bollinger near lower/defensive (%B=0.17)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0319,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 211.8000030517578
-    },
-    {
-      "ticker": "JPM",
+      "ticker": "ML.PA",
       "score": 32.0,
       "tech_score": 17.0,
       "fund_score": 15.0,
@@ -1272,18 +1041,18 @@
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 60.7 partial",
-        "Volume 0.8x avg (weak)",
+        "RSI 60.2 partial",
+        "Volume 0.7x avg (weak)",
         "MACD above zero",
-        "3M 8.3% top quartile",
-        "Bollinger upper zone (%B=0.96)",
-        "StochRSI overbought (K=87)"
+        "3M 5.6% top quartile",
+        "Bollinger upper zone (%B=0.75)",
+        "StochRSI overbought (K=100)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0204,
+      "atr_pct": 0.0213,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -1294,7 +1063,40 @@
         "bollinger": 5.6,
         "stoch_rsi": 0.0
       },
-      "last_close": 311.1099853515625
+      "last_close": 31.79
+    },
+    {
+      "ticker": "CA.PA",
+      "score": 31.799999999999997,
+      "tech_score": 16.799999999999997,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Insufficient history",
+        "RSI 30.7 partial",
+        "Volume 0.9x avg (weak)",
+        "MACD bearish",
+        "3M 6.7% top quartile",
+        "Bollinger near lower/defensive (%B=0.30)",
+        "StochRSI oversold (K=18)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0211,
+      "error": null,
+      "breakdown": {
+        "trend": 0.0,
+        "rsi": 2.4000000000000004,
+        "volume": 0.0,
+        "macd": 0.0,
+        "momentum": 6,
+        "bollinger": 4.8,
+        "stoch_rsi": 3.5999999999999996
+      },
+      "last_close": 16.15
     },
     {
       "ticker": "BN.PA",
@@ -1330,72 +1132,6 @@
       "last_close": 64.18
     },
     {
-      "ticker": "BRK-B",
-      "score": 31.4,
-      "tech_score": 16.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 48.6 ideal",
-        "Volume 1.0x avg (weak)",
-        "MACD above zero",
-        "3M -1.4% below median",
-        "Bollinger upper zone (%B=0.79)",
-        "StochRSI neutral (K=41)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0142,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 487.0
-    },
-    {
-      "ticker": "MCD",
-      "score": 31.4,
-      "tech_score": 16.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 46.0 ideal",
-        "Volume 0.9x avg (weak)",
-        "MACD bearish",
-        "3M -14.7% below median",
-        "Bollinger upper zone (%B=0.60)",
-        "StochRSI bullish zone (K=60)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0169,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 277.7799987792969
-    },
-    {
       "ticker": "MC.PA",
       "score": 30.8,
       "tech_score": 15.8,
@@ -1429,169 +1165,37 @@
       "last_close": 482.45
     },
     {
-      "ticker": "JNJ",
-      "score": 30.8,
-      "tech_score": 15.8,
+      "ticker": "ENGI.PA",
+      "score": 30.6,
+      "tech_score": 15.600000000000001,
       "fund_score": 15.0,
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 57.7 partial",
-        "Volume 1.0x avg (weak)",
-        "MACD above zero",
-        "3M -4.2% below median",
-        "Bollinger upper zone (%B=0.80)",
-        "StochRSI bullish zone (K=65)"
+        "RSI 44.7 ideal",
+        "Volume 0.6x avg (weak)",
+        "MACD bearish",
+        "3M 1.6% below median",
+        "Bollinger near lower/defensive (%B=0.30)",
+        "StochRSI bullish zone (K=63)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0183,
+      "atr_pct": 0.0157,
       "error": null,
       "breakdown": {
         "trend": 0.0,
-        "rsi": 2.4000000000000004,
+        "rsi": 6,
         "volume": 0.0,
-        "macd": 3.0,
+        "macd": 0.0,
         "momentum": 0.0,
-        "bollinger": 5.6,
+        "bollinger": 4.8,
         "stoch_rsi": 4.800000000000001
       },
-      "last_close": 232.16000366210938
-    },
-    {
-      "ticker": "MRK",
-      "score": 30.8,
-      "tech_score": 15.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 61.8 partial",
-        "Volume 1.3x avg (weak)",
-        "MACD above zero",
-        "3M 2.8% above median",
-        "Bollinger upper zone (%B=0.74)",
-        "StochRSI neutral (K=46)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0292,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 3.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 119.5199966430664
-    },
-    {
-      "ticker": "TMO",
-      "score": 30.8,
-      "tech_score": 15.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 63.8 partial",
-        "Volume 0.7x avg (weak)",
-        "MACD above zero",
-        "3M -6.0% below median",
-        "Bollinger upper zone (%B=0.61)",
-        "StochRSI bullish zone (K=78)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0306,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 469.6300048828125
-    },
-    {
-      "ticker": "ABT",
-      "score": 30.8,
-      "tech_score": 15.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 59.9 partial",
-        "Volume 1.1x avg (weak)",
-        "MACD above zero",
-        "3M -17.6% below median",
-        "Bollinger upper zone (%B=0.89)",
-        "StochRSI bullish zone (K=61)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.021,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 90.5
-    },
-    {
-      "ticker": "RTX",
-      "score": 30.8,
-      "tech_score": 15.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 55.7 partial",
-        "Volume 0.9x avg (weak)",
-        "MACD above zero",
-        "3M -13.3% below median",
-        "Bollinger upper zone (%B=0.71)",
-        "StochRSI bullish zone (K=56)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0225,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 178.66000366210938
+      "last_close": 26.72
     },
     {
       "ticker": "EL.PA",
@@ -1627,39 +1231,6 @@
       "last_close": 173.15
     },
     {
-      "ticker": "XOM",
-      "score": 30.0,
-      "tech_score": 15.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 35.9 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M 3.1% above median",
-        "Bollinger mid (%B=0.48)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0263,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 3.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 151.75
-    },
-    {
       "ticker": "BNP.PA",
       "score": 29.6,
       "tech_score": 14.6,
@@ -1691,237 +1262,6 @@
         "stoch_rsi": 0.0
       },
       "last_close": 93.15
-    },
-    {
-      "ticker": "LLY",
-      "score": 29.6,
-      "tech_score": 14.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 77.6 overbought penalty",
-        "Volume 1.4x avg (weak)",
-        "MACD above zero",
-        "3M 15.0% top quartile",
-        "Bollinger upper zone (%B=0.94)",
-        "StochRSI overbought (K=83)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.034,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 0.0,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 1149.1500244140625
-    },
-    {
-      "ticker": "BAC",
-      "score": 29.6,
-      "tech_score": 14.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 73.2 overbought penalty",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "3M 11.0% top quartile",
-        "Bollinger upper zone (%B=0.95)",
-        "StochRSI overbought (K=88)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0203,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 0.0,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 53.630001068115234
-    },
-    {
-      "ticker": "UPS",
-      "score": 29.6,
-      "tech_score": 14.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 81.8 overbought penalty",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "3M 8.5% top quartile",
-        "Bollinger upper zone (%B=0.75)",
-        "StochRSI overbought (K=93)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0245,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 0.0,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 107.69999694824219
-    },
-    {
-      "ticker": "2318.HK",
-      "score": 29.400000000000002,
-      "tech_score": 14.400000000000002,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 23.2 oversold bonus",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger near lower/defensive (%B=0.20)",
-        "StochRSI bullish zone (K=63)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.021,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 56.900001525878906
-    },
-    {
-      "ticker": "MA",
-      "score": 29.4,
-      "tech_score": 14.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 35.5 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M -5.5% below median",
-        "Bollinger near lower/defensive (%B=0.28)",
-        "StochRSI oversold (K=14)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0222,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 485.6700134277344
-    },
-    {
-      "ticker": "0027.HK",
-      "score": 29.4,
-      "tech_score": 14.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 36.3 ideal",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger near lower/defensive (%B=0.11)",
-        "StochRSI oversold (K=9)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0278,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 30.940000534057617
-    },
-    {
-      "ticker": "ML.PA",
-      "score": 29.0,
-      "tech_score": 14.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 60.2 partial",
-        "Volume 0.7x avg (weak)",
-        "MACD above zero",
-        "3M 5.6% above median",
-        "Bollinger upper zone (%B=0.75)",
-        "StochRSI overbought (K=100)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0213,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 3.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 31.79
     },
     {
       "ticker": "ORA.PA",
@@ -1957,303 +1297,6 @@
       "last_close": 17.8
     },
     {
-      "ticker": "V",
-      "score": 28.799999999999997,
-      "tech_score": 13.799999999999999,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 34.9 partial",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "3M 1.9% above median",
-        "Bollinger near lower/defensive (%B=0.25)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0214,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 3.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 319.6700134277344
-    },
-    {
-      "ticker": "ABBV",
-      "score": 28.4,
-      "tech_score": 13.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 66.5 overbought penalty",
-        "Volume 0.9x avg (weak)",
-        "MACD above zero",
-        "3M -0.9% below median",
-        "Bollinger upper zone (%B=0.87)",
-        "StochRSI bullish zone (K=56)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0258,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 0.0,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 223.07000732421875
-    },
-    {
-      "ticker": "COST",
-      "score": 28.200000000000003,
-      "tech_score": 13.200000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 24.2 oversold bonus",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M -2.1% below median",
-        "Bollinger near lower/defensive (%B=0.29)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0258,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 974.75
-    },
-    {
-      "ticker": "0700.HK",
-      "score": 28.200000000000003,
-      "tech_score": 13.200000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 47.5 ideal",
-        "Volume 1.0x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger mid (%B=0.57)",
-        "StochRSI bullish zone (K=63)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0376,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 453.20001220703125
-    },
-    {
-      "ticker": "1299.HK",
-      "score": 28.200000000000003,
-      "tech_score": 13.200000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 13.0 oversold bonus",
-        "Volume 1.8x avg",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=-0.11)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0321,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 4.8,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 71.0
-    },
-    {
-      "ticker": "0939.HK",
-      "score": 28.200000000000003,
-      "tech_score": 13.200000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 42.7 ideal",
-        "Volume 1.0x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger mid (%B=0.48)",
-        "StochRSI bullish zone (K=63)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0182,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 8.6899995803833
-    },
-    {
-      "ticker": "KO",
-      "score": 28.2,
-      "tech_score": 13.2,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 43.2 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M 2.8% above median",
-        "Bollinger mid (%B=0.41)",
-        "StochRSI neutral (K=25)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.019,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 3.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 79.54000091552734
-    },
-    {
-      "ticker": "0005.HK",
-      "score": 28.2,
-      "tech_score": 13.2,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 54.7 ideal",
-        "Volume 0.8x avg (weak)",
-        "MACD above zero",
-        "Insufficient history",
-        "Bollinger mid (%B=0.44)",
-        "StochRSI neutral (K=32)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0205,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 142.10000610351562
-    },
-    {
-      "ticker": "PG",
-      "score": 27.8,
-      "tech_score": 12.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 55.1 partial",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M -6.3% below median",
-        "Bollinger upper zone (%B=0.75)",
-        "StochRSI bullish zone (K=80)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0225,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 145.10000610351562
-    },
-    {
       "ticker": "ACA.PA",
       "score": 27.6,
       "tech_score": 12.600000000000001,
@@ -2285,171 +1328,6 @@
         "stoch_rsi": 1.7999999999999998
       },
       "last_close": 16.5
-    },
-    {
-      "ticker": "AMZN",
-      "score": 27.0,
-      "tech_score": 12.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 34.4 partial",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M 14.4% top quartile",
-        "Bollinger below lower band (%B=-0.04)",
-        "StochRSI oversold (K=9)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0299,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 6,
-        "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 245.22000122070312
-    },
-    {
-      "ticker": "PEP",
-      "score": 27.0,
-      "tech_score": 12.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 34.1 partial",
-        "Volume 1.1x avg (weak)",
-        "MACD bearish",
-        "3M -11.6% below median",
-        "Bollinger near lower/defensive (%B=0.16)",
-        "StochRSI bullish zone (K=54)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.022,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 140.67999267578125
-    },
-    {
-      "ticker": "1398.HK",
-      "score": 26.6,
-      "tech_score": 11.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 50.0 ideal",
-        "Volume 1.3x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger upper zone (%B=0.70)",
-        "StochRSI overbought (K=84)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0204,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 6.929999828338623
-    },
-    {
-      "ticker": "UNH",
-      "score": 26.4,
-      "tech_score": 11.4,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 61.0 partial",
-        "Volume 0.9x avg (weak)",
-        "MACD above zero",
-        "3M 44.0% top quartile",
-        "Bollinger overbought in BEAR (%B=1.01)",
-        "StochRSI overbought (K=89)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.025,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 6,
-        "bollinger": 0.0,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 406.57000732421875
-    },
-    {
-      "ticker": "AIR.PA",
-      "score": 26.0,
-      "tech_score": 11.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 57.6 partial",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M 0.9% above median",
-        "Bollinger upper zone (%B=0.77)",
-        "StochRSI overbought (K=95)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0333,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 3.0,
-        "bollinger": 5.6,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 176.96
     },
     {
       "ticker": "RMS.PA",
@@ -2518,433 +1396,37 @@
       "last_close": 140.1
     },
     {
-      "ticker": "WMT",
-      "score": 25.8,
-      "tech_score": 10.8,
+      "ticker": "AIR.PA",
+      "score": 23.0,
+      "tech_score": 8.0,
       "fund_score": 15.0,
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
         "Insufficient history",
-        "RSI 27.1 partial",
+        "RSI 57.6 partial",
         "Volume 0.8x avg (weak)",
         "MACD bearish",
-        "3M -3.8% below median",
-        "Bollinger near lower/defensive (%B=0.38)",
-        "StochRSI oversold (K=17)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0286,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 119.83000183105469
-    },
-    {
-      "ticker": "NEE",
-      "score": 25.8,
-      "tech_score": 10.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 37.1 ideal",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "3M -7.6% below median",
-        "Bollinger near lower/defensive (%B=0.21)",
-        "StochRSI overbought (K=86)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0234,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 84.01000213623047
-    },
-    {
-      "ticker": "0941.HK",
-      "score": 25.8,
-      "tech_score": 10.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 28.6 partial",
-        "Volume 0.5x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger near lower/defensive (%B=0.18)",
-        "StochRSI oversold (K=0)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0118,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 82.30000305175781
-    },
-    {
-      "ticker": "0003.HK",
-      "score": 25.8,
-      "tech_score": 10.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 19.9 oversold bonus",
-        "Volume 0.9x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=0.09)",
-        "StochRSI oversold reversal (K=13, D=11)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0145,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 6
-      },
-      "last_close": 6.789999961853027
-    },
-    {
-      "ticker": "0016.HK",
-      "score": 25.8,
-      "tech_score": 10.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 15.0 oversold bonus",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=0.01)",
-        "StochRSI oversold reversal (K=4, D=3)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0314,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 4.800000000000001,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 6
-      },
-      "last_close": 117.19999694824219
-    },
-    {
-      "ticker": "GOOGL",
-      "score": 25.2,
-      "tech_score": 10.2,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 28.2 partial",
-        "Volume 0.9x avg (weak)",
-        "MACD bearish",
-        "3M 18.4% top quartile",
-        "Bollinger below lower band (%B=0.10)",
-        "StochRSI neutral (K=26)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0266,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 6,
-        "bollinger": 0.0,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 363.30999755859375
-    },
-    {
-      "ticker": "DHR",
-      "score": 23.6,
-      "tech_score": 8.6,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 73.6 overbought penalty",
-        "Volume 0.7x avg (weak)",
-        "MACD above zero",
-        "3M -5.8% below median",
-        "Bollinger upper zone (%B=0.84)",
+        "3M 0.9% below median",
+        "Bollinger upper zone (%B=0.77)",
         "StochRSI overbought (K=95)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0304,
+      "atr_pct": 0.0333,
       "error": null,
       "breakdown": {
         "trend": 0.0,
-        "rsi": 0.0,
+        "rsi": 2.4000000000000004,
         "volume": 0.0,
-        "macd": 3.0,
+        "macd": 0.0,
         "momentum": 0.0,
         "bollinger": 5.6,
         "stoch_rsi": 0.0
       },
-      "last_close": 183.52999877929688
-    },
-    {
-      "ticker": "AI.PA",
-      "score": 22.8,
-      "tech_score": 7.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 38.3 ideal",
-        "Volume 0.9x avg (weak)",
-        "MACD bearish",
-        "3M 0.0% below median",
-        "Bollinger below lower band (%B=0.06)",
-        "StochRSI neutral (K=25)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0248,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 165.38
-    },
-    {
-      "ticker": "META",
-      "score": 22.8,
-      "tech_score": 7.8,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 41.5 ideal",
-        "Volume 1.1x avg (weak)",
-        "MACD bearish",
-        "3M -10.4% below median",
-        "Bollinger below lower band (%B=0.02)",
-        "StochRSI neutral (K=42)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0324,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 585.3900146484375
-    },
-    {
-      "ticker": "9999.HK",
-      "score": 22.8,
-      "tech_score": 7.800000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 58.8 partial",
-        "Volume 0.7x avg (weak)",
-        "MACD above zero",
-        "Insufficient history",
-        "Bollinger mid (%B=0.52)",
-        "StochRSI overbought (K=86)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0383,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 3.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 187.3000030517578
-    },
-    {
-      "ticker": "0388.HK",
-      "score": 22.200000000000003,
-      "tech_score": 7.200000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 28.5 partial",
-        "Volume 1.0x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=-0.02)",
-        "StochRSI bullish zone (K=54)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0198,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 384.0
-    },
-    {
-      "ticker": "0002.HK",
-      "score": 21.0,
-      "tech_score": 6.0,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 33.4 partial",
-        "Volume 0.7x avg (weak)",
-        "MACD bearish",
-        "Insufficient history",
-        "Bollinger below lower band (%B=0.02)",
-        "StochRSI oversold (K=16)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0159,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 0.0,
-        "stoch_rsi": 3.5999999999999996
-      },
-      "last_close": 72.75
-    },
-    {
-      "ticker": "HD",
-      "score": 19.8,
-      "tech_score": 4.800000000000001,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Insufficient history",
-        "RSI 64.1 partial",
-        "Volume 0.8x avg (weak)",
-        "MACD bearish",
-        "3M -12.0% below median",
-        "Bollinger mid (%B=0.57)",
-        "StochRSI overbought (K=90)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0266,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 2.4000000000000004,
-        "volume": 0.0,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 2.4,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 309.7099914550781
+      "last_close": 176.96
     }
   ]
 }
