@@ -38,14 +38,14 @@ REGIME_PARAMS = {
     },
     "NEUTRAL": {
         "beta_target_min": 1.0, "beta_target_max": 1.3,
-        "max_beta_per_stock": 1.5, "score_threshold": 65, "max_lines": 6,
+        "max_beta_per_stock": 1.5, "score_threshold": 58, "max_lines": 6,
         "cash_pct_min": 0.10, "cash_pct_max": 0.15,
         "stop_loss_pct": -0.08, "take_profit_pct": 0.18,
         "trailing_stop_pct": None, "trailing_stop_trigger": None,
     },
     "BEAR": {
         "beta_target_min": 0.7, "beta_target_max": 1.0,
-        "max_beta_per_stock": 1.2, "score_threshold": 72, "max_lines": 5,
+        "max_beta_per_stock": 1.2, "score_threshold": 60, "max_lines": 5,
         "cash_pct_min": 0.20, "cash_pct_max": 0.30,
         "stop_loss_pct": -0.06, "take_profit_pct": 0.14,
         "trailing_stop_pct": None, "trailing_stop_trigger": None,
@@ -81,8 +81,8 @@ RSI_THRESHOLDS = {
     "BEAR":    {"min": 35, "max": 55, "oversold": 25, "overbought": 65},
 }
 
-VOLUME_HIGH_MULT = 2.0
-VOLUME_MED_MULT  = 1.5
+VOLUME_HIGH_MULT = 1.5
+VOLUME_MED_MULT  = 1.2
 MOMENTUM_LOOKBACK_MONTHS = 3
 EPS_REVISION_LOOKBACK_DAYS = 30
 PEG_GOOD_BULL = 1.5

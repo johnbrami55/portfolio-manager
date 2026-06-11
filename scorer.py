@@ -12,8 +12,14 @@ from config import (
 
 logger = logging.getLogger(__name__)
 
+# In BEAR regime, trend and momentum are structurally depressed (short history,
+# uniformly negative 3M returns). Reduce their weight by 30% so they don't
+# systematically crush every score in the universe.
+BEAR_TREND_FACTOR    = 0.7
+BEAR_MOMENTUM_FACTOR = 0.7
 
-# ─── Technical Indicators ─────────────────────────────────────────────────────
+
+# ─── Technical Indicators ─────────────────────────────────────────────────────────────────────
 
 def _rsi_series(closes, period=14):
     """Return RSI value for each point in closes (most recent first)."""
@@ -199,7 +205,7 @@ def compute_atr(highs, lows, closes, period=14):
     return round(atr / closes[0], 4) if closes[0] > 0 else None
 
 
-# ─── Main Scoring Entry Point ─────────────────────────────────────────────────
+# ─── Main Scoring Entry Point ───────────────────────────────────────────────────────────────────
 
 def score_universe_from_cache(liquid_items, regime, betas):
     """Score tickers using data already downloaded by universe.py — zero extra API calls."""
@@ -234,6 +240,11 @@ def score_universe_from_cache(liquid_items, regime, betas):
         t5, s5 = score_momentum(closes, universe_returns)
         t6, s6 = score_bollinger(closes, regime)
         t7, s7 = score_stoch_rsi(closes, regime)
+
+        if regime == "BEAR":
+            t1 *= BEAR_TREND_FACTOR
+            t5 *= BEAR_MOMENTUM_FACTOR
+
         tech   = t1 + t2 + t3 + t4 + t5 + t6 + t7
 
         fund = (SCORE_FUND_EPS_REVISIONS_MAX + SCORE_FUND_VALUATION_MAX +
