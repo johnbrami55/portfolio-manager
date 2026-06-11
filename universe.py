@@ -48,7 +48,7 @@ def _fetch_av(ticker: str) -> dict | None:
                 "function": "TIME_SERIES_DAILY",
                 "symbol": av_ticker,
                 "apikey": AV_KEY,
-                "outputsize": "compact",
+                "outputsize": "full",
             },
             timeout=15,
         )
@@ -57,7 +57,7 @@ def _fetch_av(ticker: str) -> dict | None:
         if not ts:
             logger.warning(f"AV no data for {ticker}: {list(data.keys())}")
             return None
-        dates   = sorted(ts.keys(), reverse=True)[:250]
+        dates   = sorted(ts.keys(), reverse=True)[:252]
         closes  = [float(ts[d]["4. close"])  for d in dates]
         highs   = [float(ts[d]["2. high"])   for d in dates]
         lows    = [float(ts[d]["3. low"])    for d in dates]
@@ -72,7 +72,7 @@ def _fetch_yf_direct(ticker: str) -> dict | None:
     """Fetch daily OHLCV directly from Yahoo Finance API with browser headers."""
     try:
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        params = {"interval": "1d", "range": "3mo"}
+        params = {"interval": "1d", "range": "1y"}
         r = requests.get(url, headers=YF_HEADERS, params=params, timeout=10)
         if r.status_code != 200:
             logger.debug(f"{ticker}: YF status {r.status_code}")
