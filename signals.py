@@ -6,7 +6,11 @@ Evaluates all open positions for sell triggers each run.
 import logging
 import yfinance as yf
 from datetime import datetime
-from config import REGIME_PARAMS, SCORE_DEGRADATION_CONSECUTIVE, BEAR_SELL_BETA_THRESHOLD
+from config import (
+    REGIME_PARAMS, SCORE_DEGRADATION_CONSECUTIVE, BEAR_SELL_BETA_THRESHOLD,
+    MOMENTUM_SIGNAL_MIN_GAIN_PER_RUN, MOMENTUM_SIGNAL_HISTORY_RUNS,
+    MOMENTUM_SIGNAL_MAX_PTS_FROM_THRESHOLD, MOMENTUM_SIGNAL_POSITION_FACTOR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -230,3 +234,78 @@ def generate_buy_signals(
         })
 
     return buy_signals
+
+
+def generate_momentum_signals(
+    scored: list[dict],
+    score_history: dict,
+    regime: str,
+    current_positions: dict,
+) -> list[dict]:
+    """
+    Generate anticipatory BUY signals based on score trajectory.
+    Qualifies when score is within MOMENTUM_SIGNAL_MAX_PTS_FROM_THRESHOLD of the regime
+    threshold AND the last MOMENTUM_SIGNAL_HISTORY_RUNS data points (2 prior + current)
+    each show a gain >= MOMENTUM_SIGNAL_MIN_GAIN_PER_RUN.
+    """
+    params    = REGIME_PARAMS[regime]
+    threshold = params["score_threshold"]
+    signals   = []
+
+    for s in scored:
+        ticker = s["ticker"]
+        if ticker in current_positions:
+            continue
+
+        score = s["score"]
+
+        # Classic BUY handles score >= threshold
+        if score >= threshold:
+            continue
+
+        # Score must be within momentum window [threshold-8, threshold)
+        if score < threshold - MOMENTUM_SIGNAL_MAX_PTS_FROM_THRESHOLD:
+            continue
+
+        # Need HISTORY_RUNS-1 prior runs in score_history, plus current = HISTORY_RUNS total
+        history = score_history.get(ticker, [])
+        if len(history) < MOMENTUM_SIGNAL_HISTORY_RUNS - 1:
+            continue
+
+        recent     = history[-(MOMENTUM_SIGNAL_HISTORY_RUNS - 1):]
+        all_scores = [h["score"] for h in recent] + [score]
+        gains      = [all_scores[i + 1] - all_scores[i] for i in range(len(all_scores) - 1)]
+
+        if not all(g >= MOMENTUM_SIGNAL_MIN_GAIN_PER_RUN for g in gains):
+            continue
+
+        price = s.get("last_close") or 0.0
+        if price <= 0:
+            logger.warning(f"No price for {ticker}, skipping momentum signal")
+            continue
+
+        stop_price = price * (1 + params["stop_loss_pct"])
+        tp_price   = price * (1 + params["take_profit_pct"])
+
+        signals.append({
+            "ticker":             ticker,
+            "score":              score,
+            "tech_score":         s.get("tech_score", 0),
+            "fund_score":         s.get("fund_score", 0),
+            "beta":               s.get("beta", 1.0),
+            "model_price":        price,
+            "stop_loss":          round(stop_price, 2),
+            "take_profit":        round(tp_price, 2),
+            "position_factor":    MOMENTUM_SIGNAL_POSITION_FACTOR,
+            "score_history":      all_scores,
+            "score_gains":        gains,
+            "threshold":          threshold,
+            "pts_from_threshold": threshold - score,
+            "signals_tech":       s.get("signals_tech", []),
+        })
+        logger.info(
+            f"Momentum signal: {ticker} score={score:.1f} "
+            f"({threshold - score:.1f} below threshold), gains={gains}"
+        )
+
+    return signals

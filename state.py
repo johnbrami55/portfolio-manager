@@ -7,7 +7,7 @@ import json
 import logging
 import os
 from datetime import datetime
-from config import STATE_FILE, INITIAL_CAPITAL
+from config import STATE_FILE, INITIAL_CAPITAL, SCORE_HISTORY_FILE, SCORE_HISTORY_MAX_RUNS
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ def record_sell(
 
 
 def update_score_history(state: dict, scores: list[dict]) -> None:
-    """Update rolling score history (keep last 3 runs per ticker)."""
+    """Update rolling score history in state (keep last 3 runs per ticker)."""
     today = datetime.utcnow().isoformat()[:10]
     history = state.setdefault("score_history", {})
 
@@ -178,5 +178,39 @@ def update_score_history(state: dict, scores: list[dict]) -> None:
         if ticker not in history:
             history[ticker] = []
         history[ticker].append(entry)
-        # Keep only last 3
         history[ticker] = history[ticker][-3:]
+
+
+def load_score_history() -> dict:
+    """Load per-ticker score history from score_history.json. Returns empty dict if not found."""
+    if not os.path.exists(SCORE_HISTORY_FILE):
+        return {}
+    try:
+        with open(SCORE_HISTORY_FILE, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load {SCORE_HISTORY_FILE}: {e}")
+        return {}
+
+
+def save_score_history(history: dict) -> None:
+    """Persist score history to score_history.json."""
+    try:
+        with open(SCORE_HISTORY_FILE, "w") as f:
+            json.dump(history, f, indent=2)
+        logger.info(f"Score history saved to {SCORE_HISTORY_FILE}")
+    except Exception as e:
+        logger.error(f"Failed to save score history: {e}")
+
+
+def append_to_score_history(history: dict, scores: list[dict]) -> dict:
+    """Add current run scores to history, keeping last SCORE_HISTORY_MAX_RUNS per ticker."""
+    today = datetime.utcnow().isoformat()[:10]
+    for s in scores:
+        ticker = s["ticker"]
+        entry  = {"score": s["score"], "date": today}
+        if ticker not in history:
+            history[ticker] = []
+        history[ticker].append(entry)
+        history[ticker] = history[ticker][-SCORE_HISTORY_MAX_RUNS:]
+    return history

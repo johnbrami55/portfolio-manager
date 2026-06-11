@@ -45,7 +45,7 @@ REGIME_PARAMS = {
     },
     "BEAR": {
         "beta_target_min": 0.7, "beta_target_max": 1.0,
-        "max_beta_per_stock": 1.2, "score_threshold": 60, "max_lines": 5,
+        "max_beta_per_stock": 1.2, "score_threshold": 52, "max_lines": 5,
         "cash_pct_min": 0.20, "cash_pct_max": 0.30,
         "stop_loss_pct": -0.06, "take_profit_pct": 0.14,
         "trailing_stop_pct": None, "trailing_stop_trigger": None,
@@ -106,6 +106,15 @@ INDEX_BY_MARKET = {
 STATE_FILE = "portfolio_state.json"
 LOG_LEVEL  = "INFO"
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+
+# Score momentum detection
+SCORE_SAFETY_BUY_THRESHOLD          = 55    # kept for reference; threshold=52 already covers it
+MOMENTUM_SIGNAL_MIN_GAIN_PER_RUN    = 3.0   # minimum pts gain per run to count as momentum
+MOMENTUM_SIGNAL_HISTORY_RUNS        = 3     # data points needed (2 prior + current run)
+MOMENTUM_SIGNAL_MAX_PTS_FROM_THRESHOLD = 8  # score must be within this many pts of threshold
+MOMENTUM_SIGNAL_POSITION_FACTOR     = 0.70  # 30% size reduction for momentum signals
+SCORE_HISTORY_FILE                  = "score_history.json"
+SCORE_HISTORY_MAX_RUNS              = 5     # keep last 5 runs per ticker
 
 CAC40_TICKERS = [
     "AI.PA","AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
