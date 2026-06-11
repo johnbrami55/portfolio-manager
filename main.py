@@ -6,13 +6,13 @@ import config
 from regime import detect_regime
 from universe import get_liquid_universe
 from portfolio import build_portfolio
-from signals import evaluate_sells, generate_buy_signals, check_regime_change_sells
-from state import load_state, save_state, update_score_history
+from signals import evaluate_sells, generate_buy_signals, check_regime_change_sells, generate_momentum_signals
+from state import load_state, save_state, update_score_history, load_score_history, save_score_history, append_to_score_history
 from utils import compute_betas, portfolio_beta
 from report import generate_report
 from telegram_bot import (
     send_message, send_buy_alert, send_sell_alert,
-    send_regime_change_alert, send_weekly_summary,
+    send_regime_change_alert, send_weekly_summary, send_momentum_alert,
 )
 
 logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
@@ -56,8 +56,9 @@ def run():
     logger.info(f"Timestamp: {datetime.utcnow().isoformat()}")
     logger.info("=" * 60)
 
-    state = load_state()
-    prev_regime = state.get("current_regime", "NEUTRAL")
+    state        = load_state()
+    score_history = load_score_history()
+    prev_regime  = state.get("current_regime", "NEUTRAL")
 
     regime_info = detect_regime()
     regime      = regime_info["regime"]
@@ -116,9 +117,10 @@ def run():
         s["last_close"] = liquid[idx]["metrics"].get("last_close")
         s["beta"] = betas.get(s["ticker"], 1.0)
 
-    portfolio_result = build_portfolio(scored, state, regime, betas)
-    buy_signals      = generate_buy_signals(portfolio_result, state.get("positions", {}), regime)
-    logger.info(f"Buy signals: {len(buy_signals)}")
+    portfolio_result  = build_portfolio(scored, state, regime, betas)
+    buy_signals       = generate_buy_signals(portfolio_result, state.get("positions", {}), regime)
+    momentum_signals  = generate_momentum_signals(scored, score_history, regime, state.get("positions", {}))
+    logger.info(f"Buy signals: {len(buy_signals)} | Momentum signals: {len(momentum_signals)}")
 
     paused = state.get("signals_paused", False)
     if paused:
@@ -141,6 +143,11 @@ def run():
                 send_buy_alert(sig, state, regime)
             except Exception as e:
                 logger.error(f"Buy alert error: {e}")
+        for sig in momentum_signals:
+            try:
+                send_momentum_alert(sig, state, regime)
+            except Exception as e:
+                logger.error(f"Momentum alert error: {e}")
 
     if is_monday():
         try:
@@ -150,6 +157,9 @@ def run():
 
     pb = portfolio_beta(state.get("positions", {}))
     logger.info(f"Portfolio beta: {pb:.2f} | Positions: {len(state.get('positions', {}))}")
+
+    append_to_score_history(score_history, scored)
+    save_score_history(score_history)
     save_state(state)
 
     try:
@@ -160,7 +170,7 @@ def run():
 
     send_message(
         f"Run terminé | Régime: {regime} | Tickers: {len(tickers)} | "
-        f"Scores: {len(scored)} | Buys: {len(buy_signals)}"
+        f"Scores: {len(scored)} | Buys: {len(buy_signals)} | Momentum: {len(momentum_signals)}"
         + (" | ⏸ Paused" if paused else "")
     )
     logger.info("Run complete.")

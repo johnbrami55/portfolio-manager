@@ -112,6 +112,33 @@ def send_buy_alert(signal: dict, portfolio: dict, regime: str) -> None:
     send_message(text)
 
 
+def send_momentum_alert(signal: dict, portfolio: dict, regime: str) -> None:
+    t         = signal
+    params    = REGIME_PARAMS[regime]
+    positions = portfolio.get("positions", {})
+    n_pos     = len(positions)
+
+    history_str = " → ".join(f"{s:.0f}" for s in t.get("score_history", []))
+    gains_str   = ", ".join(f"+{g:.1f}" for g in t.get("score_gains", []))
+
+    text = (
+        f"\U0001f535 *SIGNAL ANTICIPÉ (momentum) — {regime} REGIME*\n"
+        f"\U0001f4c8 *{t['ticker']}* — Trajectoire haussière\n"
+        f"Score actuel: {t['score']:.1f} | Seuil: {t['threshold']:.0f} "
+        f"(−{t['pts_from_threshold']:.1f} pts)\n"
+        f"Trajectoire: {history_str}\n"
+        f"Gains/run: {gains_str}\n"
+        f"\n⚠️ *Position réduite −30%*\n"
+        f"Taille: ×{t['position_factor']:.0%} vs signal classique\n"
+        f"Prix indicatif: ~{t['model_price']:.2f} EUR\n"
+        f"Stop-loss: {t['stop_loss']:.2f} EUR ({params['stop_loss_pct']:.0%})\n"
+        f"Take-profit: {t['take_profit']:.2f} EUR (+{params['take_profit_pct']:.0%})\n"
+        f"\nPositions actives: {n_pos}/{params['max_lines']}\n"
+        f"\n_Signal anticipé — attendre confirmation ou franchissement du seuil._"
+    )
+    send_message(text)
+
+
 def send_sell_alert(signal: dict) -> None:
     text = (
         f"\U0001f534 *SIGNAL SELL*\n"
@@ -186,7 +213,7 @@ def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0
     )
 
 
-# ─── Command Handler (called by telegram_listener) ──────────────────────────
+# ─── Command Handler (called by telegram_listener) ─────────────────────────────────────────
 
 def handle_command(text: str) -> str:
     parts = text.strip().split()
