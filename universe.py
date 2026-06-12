@@ -70,7 +70,29 @@ def _fetch_av(ticker: str) -> dict | None:
     except Exception as e:
         logger.warning(f"AV fetch error {ticker}: {e}")
         return None
-
+def fetch_live_price(ticker: str) -> float | None:
+    """Fetch current live price via Alpha Vantage GLOBAL_QUOTE (1 API call)."""
+    av_ticker = _convert_av(ticker)
+    try:
+        r = requests.get(
+            "https://www.alphavantage.co/query",
+            params={
+                "function": "GLOBAL_QUOTE",
+                "symbol": av_ticker,
+                "apikey": AV_KEY,
+            },
+            timeout=15,
+        )
+        data = r.json()
+        quote = data.get("Global Quote", {})
+        price = quote.get("05. price")
+        if price:
+            return float(price)
+        logger.warning(f"Live price unavailable for {ticker}: {data}")
+        return None
+    except Exception as e:
+        logger.warning(f"Live price fetch error {ticker}: {e}")
+        return None
 
 def _fetch_yf_direct(ticker: str) -> dict | None:
     """Fetch daily OHLCV directly from Yahoo Finance API with browser headers."""
