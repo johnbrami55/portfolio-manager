@@ -238,36 +238,16 @@ SECTOR_MAP = {
     "NEE":"Utilities","TXN":"Technology","DHR":"Health Care",
     "QCOM":"Technology","LIN":"Materials","PM":"Consumer Staples",
     "RTX":"Industrials","HON":"Industrials","UPS":"Industrials",
-    "PFE",   # Pfizer ~25$
-"F",     # Ford ~12$
-"T",     # AT&T ~20$
-"INTC",  # Intel ~30$
-"VZ",    # Verizon ~40$
-"WBA",   # Walgreens ~10$
-"KHC",   # Kraft Heinz ~30$
-"PARA",  # Paramount ~12$
-"DAL",   # Delta ~45$
-"UAL",   # United Airlines ~50$
-"CCL",   # Carnival ~18$
-"NCLH",  # Norwegian Cruise ~20$
-"SNAP",  # Snap ~12$
-"PLTR",  # Palantir ~25$
-"SOFI",  # SoFi ~10$
-"NIO",   # NIO ~6$
-"LCID",  # Lucid ~3$
-"PYPL",  # PayPal ~70$
-"DIS",   # Disney ~95$
-"NKE",   # Nike ~75$
-"SBUX",  # Starbucks ~85$
-"GM",    # General Motors ~45$
-"MO",    # Altria ~50$
-"CVS",   # CVS Health ~60$
-"GE",    # General Electric ~85$ (proche limite)
-"AAL",   # American Airlines ~12$
-"BBY",   # Best Buy ~75$
-"GAP",   # Gap ~20$
-"X",     # US Steel ~40$
-"BB",    # BlackBerry ~3$
+    "PFE":"Healthcare","F":"Consumer Discretionary","T":"Communication Services",
+    "INTC":"Technology","VZ":"Communication Services","WBA":"Healthcare",
+    "KHC":"Consumer Staples","PARA":"Communication Services","DAL":"Industrials",
+    "UAL":"Industrials","CCL":"Consumer Discretionary","NCLH":"Consumer Discretionary",
+    "SNAP":"Communication Services","PLTR":"Technology","SOFI":"Financials",
+    "NIO":"Consumer Discretionary","LCID":"Consumer Discretionary","PYPL":"Financials",
+    "DIS":"Communication Services","NKE":"Consumer Discretionary","SBUX":"Consumer Discretionary",
+    "GM":"Consumer Discretionary","MO":"Consumer Staples","CVS":"Healthcare",
+    "GE":"Industrials","AAL":"Industrials","BBY":"Consumer Discretionary",
+    "GAP":"Consumer Discretionary","X":"Materials","BB":"Technology",
     # HK (HKEX)
     "0700.HK":"Communication Services",
     "9988.HK":"Consumer Discretionary",
@@ -287,21 +267,21 @@ SECTOR_MAP = {
     "0002.HK":"Utilities",
     "0003.HK":"Utilities",
     "0016.HK":"Real Estate",
-    "1928.HK",  # Sands China
-    "0175.HK",  # Geely Auto
-    "0001.HK",  # CK Hutchison
-    "0006.HK",  # Power Assets
-    "0012.HK",  # Henderson Land
-    "0066.HK",  # MTR Corp
-    "0101.HK",  # Hang Lung
-    "0151.HK",  # Want Want China
-    "0285.HK",  # BYD Electronic
-    "0386.HK",  # Sinopec
-    "0762.HK",  # China Unicom
-    "0857.HK",  # PetroChina
-    "1088.HK",  # China Shenhua
-    "2007.HK",  # Country Garden
-    "6098.HK",  # CG Services
-        "0017.HK":"Real Estate",
-        "0027.HK":"Consumer Discretionary",
+    "1928.HK":"Consumer Discretionary",
+    "0175.HK":"Consumer Discretionary",
+    "0001.HK":"Industrials",
+    "0006.HK":"Utilities",
+    "0012.HK":"Real Estate",
+    "0066.HK":"Industrials",
+    "0101.HK":"Real Estate",
+    "0151.HK":"Consumer Staples",
+    "0285.HK":"Technology",
+    "0386.HK":"Energy",
+    "0762.HK":"Communication Services",
+    "0857.HK":"Energy",
+    "1088.HK":"Energy",
+    "2007.HK":"Real Estate",
+    "6098.HK":"Industrials",
+    "0017.HK":"Real Estate",
+    "0027.HK":"Consumer Discretionary",
 }
