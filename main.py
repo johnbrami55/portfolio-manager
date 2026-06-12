@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 import time as _time
 from datetime import datetime
@@ -18,6 +19,8 @@ from telegram_bot import (
 
 logging.basicConfig(level=config.LOG_LEVEL, format=config.LOG_FORMAT)
 logger = logging.getLogger(__name__)
+
+LIVE_MODE = os.environ.get("LIVE_MODE", "false").lower() == "true"
 
 
 def is_monday():
@@ -99,10 +102,25 @@ def _recheck_buys_live(buy_signals, state, logger):
     return confirmed
 
 
+def _live_check_all_eu_candidates(scored, logger):
+    """LIVE_MODE: refresh live price for ALL EU tickers close to the buy threshold,
+    not just held positions or already-triggered signals."""
+    threshold = config.SCORE_THRESHOLDS.get("BEAR", 52) if hasattr(config, "SCORE_THRESHOLDS") else 52
+    for s in scored:
+        ticker = s.get("ticker", "")
+        if ticker.endswith((".PA", ".AS", ".MI")) and s.get("score", 0) >= threshold - 8:
+            live = fetch_live_price(ticker)
+            _time.sleep(1)
+            if live:
+                logger.info(f"{ticker}: LIVE_MODE price refresh -> {live}")
+                s["last_close"] = live
+
+
 def run():
     logger.info("=" * 60)
     logger.info("Portfolio Manager — starting run")
     logger.info(f"Timestamp: {datetime.utcnow().isoformat()}")
+    logger.info(f"LIVE_MODE: {LIVE_MODE}")
     logger.info("=" * 60)
 
     state        = load_state()
@@ -141,6 +159,9 @@ def run():
     from scorer import score_universe_from_cache
     scored = score_universe_from_cache(liquid, regime, betas)
     logger.info(f"Scored {len(scored)} tickers")
+
+    if LIVE_MODE:
+        _live_check_all_eu_candidates(scored, logger)
 
     update_score_history(state, scored)
     state["last_scores"] = scored
