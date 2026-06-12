@@ -138,6 +138,36 @@ US_TICKERS = [
     "V","XOM","JNJ","WMT","MA","PG","LLY","HD","MRK","ABBV",
     "AVGO","PEP","KO","COST","TMO","MCD","ACN","BAC","CRM","CSCO",
     "ABT","NEE","TXN","DHR","QCOM","LIN","PM","RTX","HON","UPS",
+    "PFE",   # Pfizer ~25$
+"F",     # Ford ~12$
+"T",     # AT&T ~20$
+"INTC",  # Intel ~30$
+"VZ",    # Verizon ~40$
+"WBA",   # Walgreens ~10$
+"KHC",   # Kraft Heinz ~30$
+"PARA",  # Paramount ~12$
+"DAL",   # Delta ~45$
+"UAL",   # United Airlines ~50$
+"CCL",   # Carnival ~18$
+"NCLH",  # Norwegian Cruise ~20$
+"SNAP",  # Snap ~12$
+"PLTR",  # Palantir ~25$
+"SOFI",  # SoFi ~10$
+"NIO",   # NIO ~6$
+"LCID",  # Lucid ~3$
+"PYPL",  # PayPal ~70$
+"DIS",   # Disney ~95$
+"NKE",   # Nike ~75$
+"SBUX",  # Starbucks ~85$
+"GM",    # General Motors ~45$
+"MO",    # Altria ~50$
+"CVS",   # CVS Health ~60$
+"GE",    # General Electric ~85$ (proche limite)
+"AAL",   # American Airlines ~12$
+"BBY",   # Best Buy ~75$
+"GAP",   # Gap ~20$
+"X",     # US Steel ~40$
+"BB",    # BlackBerry ~3$
 ]
 
 HK_TICKERS = [
@@ -145,6 +175,21 @@ HK_TICKERS = [
     "0388.HK","2318.HK","1398.HK","0939.HK","3690.HK",
     "0883.HK","2628.HK","0011.HK","1810.HK","9999.HK",
     "0002.HK","0003.HK","0016.HK","0017.HK","0027.HK",
+    "1928.HK",  # Sands China
+"0175.HK",  # Geely Auto
+"0001.HK",  # CK Hutchison
+"0006.HK",  # Power Assets
+"0012.HK",  # Henderson Land
+"0066.HK",  # MTR Corp
+"0101.HK",  # Hang Lung
+"0151.HK",  # Want Want China
+"0285.HK",  # BYD Electronic
+"0386.HK",  # Sinopec
+"0762.HK",  # China Unicom
+"0857.HK",  # PetroChina
+"1088.HK",  # China Shenhua
+"2007.HK",  # Country Garden
+"6098.HK",  # CG Services
 ]
 
 FULL_UNIVERSE = list(dict.fromkeys(CAC40_TICKERS + AEX_TICKERS + US_TICKERS + HK_TICKERS))
@@ -193,6 +238,36 @@ SECTOR_MAP = {
     "NEE":"Utilities","TXN":"Technology","DHR":"Health Care",
     "QCOM":"Technology","LIN":"Materials","PM":"Consumer Staples",
     "RTX":"Industrials","HON":"Industrials","UPS":"Industrials",
+    "PFE",   # Pfizer ~25$
+"F",     # Ford ~12$
+"T",     # AT&T ~20$
+"INTC",  # Intel ~30$
+"VZ",    # Verizon ~40$
+"WBA",   # Walgreens ~10$
+"KHC",   # Kraft Heinz ~30$
+"PARA",  # Paramount ~12$
+"DAL",   # Delta ~45$
+"UAL",   # United Airlines ~50$
+"CCL",   # Carnival ~18$
+"NCLH",  # Norwegian Cruise ~20$
+"SNAP",  # Snap ~12$
+"PLTR",  # Palantir ~25$
+"SOFI",  # SoFi ~10$
+"NIO",   # NIO ~6$
+"LCID",  # Lucid ~3$
+"PYPL",  # PayPal ~70$
+"DIS",   # Disney ~95$
+"NKE",   # Nike ~75$
+"SBUX",  # Starbucks ~85$
+"GM",    # General Motors ~45$
+"MO",    # Altria ~50$
+"CVS",   # CVS Health ~60$
+"GE",    # General Electric ~85$ (proche limite)
+"AAL",   # American Airlines ~12$
+"BBY",   # Best Buy ~75$
+"GAP",   # Gap ~20$
+"X",     # US Steel ~40$
+"BB",    # BlackBerry ~3$
     # HK (HKEX)
     "0700.HK":"Communication Services",
     "9988.HK":"Consumer Discretionary",
@@ -212,6 +287,21 @@ SECTOR_MAP = {
     "0002.HK":"Utilities",
     "0003.HK":"Utilities",
     "0016.HK":"Real Estate",
-    "0017.HK":"Real Estate",
-    "0027.HK":"Consumer Discretionary",
+    "1928.HK",  # Sands China
+    "0175.HK",  # Geely Auto
+    "0001.HK",  # CK Hutchison
+    "0006.HK",  # Power Assets
+    "0012.HK",  # Henderson Land
+    "0066.HK",  # MTR Corp
+    "0101.HK",  # Hang Lung
+    "0151.HK",  # Want Want China
+    "0285.HK",  # BYD Electronic
+    "0386.HK",  # Sinopec
+    "0762.HK",  # China Unicom
+    "0857.HK",  # PetroChina
+    "1088.HK",  # China Shenhua
+    "2007.HK",  # Country Garden
+    "6098.HK",  # CG Services
+        "0017.HK":"Real Estate",
+        "0027.HK":"Consumer Discretionary",
 }
