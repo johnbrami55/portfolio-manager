@@ -119,11 +119,11 @@ SCORE_HISTORY_FILE                  = "score_history.json"
 SCORE_HISTORY_MAX_RUNS              = 5     # keep last 5 runs per ticker
 
 CAC40_TICKERS = [
-    "AI.PA","AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
-    "CA.PA","ACA.PA","BN.PA","DSY.PA","ENGI.PA","EL.PA","RMS.PA","KER.PA",
-    "LR.PA","MC.PA","ML.PA","ORA.PA","RI.PA","PUB.PA","RNO.PA","SAF.PA",
+    "AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
+    "CA.PA","ACA.PA","BN.PA","DSY.PA","ENGI.PA",
+    "LR.PA","ML.PA","ORA.PA","RI.PA","PUB.PA","RNO.PA","SAF.PA",
     "SGO.PA","SAN.PA","SU.PA","GLE.PA","STLAM.MI","STLAP.PA","STM.PA","TEP.PA",
-    "HO.PA","TTE.PA","URW.AS","VIE.PA","DG.PA","VIV.PA","WLN.PA","TFI.PA",
+    "HO.PA","TTE.PA","URW.AS","VIE.PA","DG.PA","VIV.PA","WLN.PA","TFI.PA","STLAP.PA","TFI.PA","GLE.PA",
 ]
 
 AEX_TICKERS = [
@@ -151,12 +151,15 @@ FULL_UNIVERSE = list(dict.fromkeys(CAC40_TICKERS + AEX_TICKERS + US_TICKERS + HK
 
 SECTOR_MAP = {
     # EU (CAC40 / AEX)
-    "AI.PA":"Materials","AIR.PA":"Industrials","ALO.PA":"Industrials",
+    "STLAP.PA": "Automobile",
+    "TFI.PA": "Media",
+    "GLE.PA": "Banks",
+    "AIR.PA":"Industrials","ALO.PA":"Industrials",
     "MT.AS":"Materials","CS.PA":"Financials","BNP.PA":"Financials",
     "EN.PA":"Industrials","CAP.PA":"Technology","CA.PA":"Consumer Staples",
     "ACA.PA":"Financials","BN.PA":"Consumer Staples","DSY.PA":"Technology",
-    "ENGI.PA":"Utilities","EL.PA":"Consumer Discretionary","RMS.PA":"Consumer Discretionary",
-    "KER.PA":"Consumer Discretionary","LR.PA":"Industrials","MC.PA":"Consumer Discretionary",
+    "ENGI.PA":"Utilities",
+    "LR.PA":"Industrials",
     "ML.PA":"Consumer Discretionary","ORA.PA":"Communication Services",
     "RI.PA":"Consumer Staples","PUB.PA":"Communication Services",
     "RNO.PA":"Consumer Discretionary","SAF.PA":"Industrials","SGO.PA":"Industrials",
