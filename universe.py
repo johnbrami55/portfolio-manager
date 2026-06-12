@@ -14,6 +14,7 @@ from config import (
     LIQUIDITY_MIN_VOLUME_EUR, LIQUIDITY_MIN_MARKET_CAP_EUR,
     LIQUIDITY_MAX_SPREAD_PCT, LIQUIDITY_LOOKBACK_DAYS,
     BEAR_MIN_VOLUME_EUR, BEAR_MIN_MARKET_CAP_EUR,
+    MAX_PRICE_EUR, MAX_PRICE_HKD,
 )
 
 logger = logging.getLogger(__name__)
@@ -136,7 +137,7 @@ def get_liquid_universe(regime: str) -> list:
     # Fetch US/HK via direct Yahoo Finance API
     yf_hist = _fetch_us_hk(us_hk_tickers)
 
-    # Merge and apply liquidity filters
+    # Merge and apply liquidity + price filters
     all_hist = {**eu_hist, **yf_hist}
     passed   = []
 
@@ -150,7 +151,17 @@ def get_liquid_universe(regime: str) -> list:
             if len(closes) < 5:
                 continue
 
-            last_close     = closes[0]
+            last_close = closes[0]
+
+            # Price filter: exclude stocks above accessibility threshold
+            if ticker.endswith(".HK"):
+                if last_close > MAX_PRICE_HKD:
+                    logger.debug(f"{ticker}: excluded (price {last_close:.0f} HKD > {MAX_PRICE_HKD:.0f})")
+                    continue
+            elif last_close > MAX_PRICE_EUR:
+                logger.debug(f"{ticker}: excluded (price {last_close:.2f} > {MAX_PRICE_EUR:.0f})")
+                continue
+
             avg_volume_eur = sum(v * c for v, c in zip(volumes, closes)) / len(closes)
             avg_spread     = sum((h - l) / c for h, l, c in zip(highs, lows, closes)) / len(closes)
 
@@ -172,7 +183,7 @@ def get_liquid_universe(regime: str) -> list:
                     "last_close":     last_close,
                 }
             })
-            logger.info(f"{ticker}: OK (vol={avg_volume_eur:.0f} EUR)")
+            logger.info(f"{ticker}: OK (vol={avg_volume_eur:.0f} EUR, price={last_close:.2f})")
 
         except Exception as e:
             logger.warning(f"{ticker} liquidity check error: {e}")

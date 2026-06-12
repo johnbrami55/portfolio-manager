@@ -62,6 +62,8 @@ LIQUIDITY_MAX_SPREAD_PCT = 0.03
 LIQUIDITY_LOOKBACK_DAYS = 20
 BEAR_MIN_VOLUME_EUR = 500_000
 BEAR_MIN_MARKET_CAP_EUR = 500_000_000
+MAX_PRICE_EUR = 100.0   # max entry price for EU (.PA/.AS/.MI) and US (USD) tickers
+MAX_PRICE_HKD = 800.0   # max entry price for .HK tickers (approx 100 USD equivalent)
 
 SCORE_TECH_TREND_MAX = 10
 SCORE_TECH_RSI_MAX = 6
@@ -120,8 +122,8 @@ CAC40_TICKERS = [
     "AI.PA","AIR.PA","ALO.PA","MT.AS","CS.PA","BNP.PA","EN.PA","CAP.PA",
     "CA.PA","ACA.PA","BN.PA","DSY.PA","ENGI.PA","EL.PA","RMS.PA","KER.PA",
     "LR.PA","MC.PA","ML.PA","ORA.PA","RI.PA","PUB.PA","RNO.PA","SAF.PA",
-    "SGO.PA","SAN.PA","SU.PA","GLE.PA","STLAM.MI","STM.PA","TEP.PA","HO.PA",
-    "TTE.PA","URW.AS","VIE.PA","DG.PA","VIV.PA","WLN.PA",
+    "SGO.PA","SAN.PA","SU.PA","GLE.PA","STLAM.MI","STLAP.PA","STM.PA","TEP.PA",
+    "HO.PA","TTE.PA","URW.AS","VIE.PA","DG.PA","VIV.PA","WLN.PA","TFI.PA",
 ]
 
 AEX_TICKERS = [
@@ -159,10 +161,12 @@ SECTOR_MAP = {
     "RI.PA":"Consumer Staples","PUB.PA":"Communication Services",
     "RNO.PA":"Consumer Discretionary","SAF.PA":"Industrials","SGO.PA":"Industrials",
     "SAN.PA":"Health Care","SU.PA":"Industrials","GLE.PA":"Financials",
-    "STLAM.MI":"Consumer Discretionary","STM.PA":"Technology","TEP.PA":"Technology",
+    "STLAM.MI":"Consumer Discretionary","STLAP.PA":"Consumer Discretionary",
+    "STM.PA":"Technology","TEP.PA":"Technology",
     "HO.PA":"Industrials","TTE.PA":"Energy","URW.AS":"Real Estate",
     "VIE.PA":"Utilities","DG.PA":"Industrials","VIV.PA":"Communication Services",
-    "WLN.PA":"Technology","ADYEN.AS":"Technology","AGN.AS":"Financials",
+    "WLN.PA":"Technology","TFI.PA":"Communication Services",
+    "ADYEN.AS":"Technology","AGN.AS":"Financials",
     "AD.AS":"Consumer Staples","AKZA.AS":"Materials","ASM.AS":"Technology",
     "ASML.AS":"Technology","ASRNL.AS":"Financials","BESI.AS":"Technology",
     "EXOR.AS":"Financials","HEIA.AS":"Consumer Staples","IMCD.AS":"Materials",
