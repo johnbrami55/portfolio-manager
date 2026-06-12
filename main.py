@@ -1,10 +1,11 @@
 import logging
 import sys
+import time as _time
 from datetime import datetime
 
 import config
 from regime import detect_regime
-from universe import get_liquid_universe
+from universe import get_liquid_universe, fetch_live_price
 from portfolio import build_portfolio
 from signals import evaluate_sells, generate_buy_signals, check_regime_change_sells, generate_momentum_signals
 from state import load_state, save_state, update_score_history, load_score_history, save_score_history, append_to_score_history
@@ -49,6 +50,54 @@ def check_price_alerts(state, liquid):
             )
         except Exception as e:
             logger.error(f"Price alert send failed: {e}")
+
+
+def _recheck_sells_live(sell_signals, logger):
+    """Re-validate EU sell signals against a live GLOBAL_QUOTE price."""
+    confirmed = []
+    for sig in sell_signals:
+        ticker = sig["ticker"]
+        if ticker.endswith((".PA", ".AS", ".MI")):
+            live = fetch_live_price(ticker)
+            _time.sleep(1)
+            if live:
+                cached = sig.get("current_price", sig.get("last_close"))
+                if cached and abs(live - cached) / cached > 0.015:
+                    logger.info(f"{ticker}: live price {live} vs cached {cached} — recalculating")
+                    sig["current_price"] = live
+                    entry = sig.get("entry_price")
+                    if entry:
+                        sig["pnl_pct"] = (live - entry) / entry * 100
+                    stop   = sig.get("stop_loss")
+                    target = sig.get("take_profit")
+                    if sig.get("reason") == "stop_loss" and stop and live > stop:
+                        logger.info(f"{ticker}: live price no longer triggers stop_loss — cancelling sell")
+                        continue
+                    if sig.get("reason") == "take_profit" and target and live < target:
+                        logger.info(f"{ticker}: live price no longer triggers take_profit — cancelling sell")
+                        continue
+        confirmed.append(sig)
+    return confirmed
+
+
+def _recheck_buys_live(buy_signals, state, logger):
+    """Re-validate EU buy signals against a live GLOBAL_QUOTE price."""
+    confirmed = []
+    for sig in buy_signals:
+        ticker = sig["ticker"]
+        if ticker.endswith((".PA", ".AS", ".MI")):
+            live = fetch_live_price(ticker)
+            _time.sleep(1)
+            if live:
+                cached = sig.get("model_price")
+                if cached and abs(live - cached) / cached > 0.015:
+                    logger.info(f"{ticker}: live price {live} vs model {cached} — recalculating")
+                    sig["model_price"] = live
+                    weight_eur = sig["weight"] * state.get("cash", 0)
+                    sig["nb_shares"] = max(1, int(weight_eur / live))
+        confirmed.append(sig)
+    return confirmed
+
 
 def run():
     logger.info("=" * 60)
@@ -126,6 +175,10 @@ def run():
     if paused:
         logger.info("Signals paused — skipping buy/sell alerts")
     else:
+        # Live price re-check for EU tickers before acting on signals
+        sell_signals = _recheck_sells_live(sell_signals, logger)
+        buy_signals  = _recheck_buys_live(buy_signals, state, logger)
+
         for sig in sell_signals:
             try:
                 send_sell_alert(sig)
