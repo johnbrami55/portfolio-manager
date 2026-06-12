@@ -1,51 +1,47 @@
 name: Portfolio Manager
-
 on:
   schedule:
     - cron: "40 1 * * 1-5"   # 03h40 CET — 10min après ouverture Hong Kong
     - cron: "10 7 * * 1-5"   # 09h10 CET — 10min après ouverture Paris
     - cron: "30 10 * * 1-5"  # 12h30 CET — mi-journée Europe
     - cron: "40 13 * * 1-5"  # 15h40 CET — 10min après ouverture NYSE
-    - cron: "20 14 * * 1-5"  # 16h20 CET — avant clôture Paris
+    - cron: "20 14 * * 1-5"  # 16h20 CET — avant clôture Paris — LIVE
   workflow_dispatch:
-
+    inputs:
+      live_mode:
+        description: 'Forcer le mode LIVE (prix temps réel)'
+        type: boolean
+        default: false
 concurrency:
   group: portfolio-manager
   cancel-in-progress: false
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   run-portfolio-manager:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Test API
         env:
           RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
         run: |
            python test_api.py
-
       - name: Run portfolio manager
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -54,9 +50,9 @@ jobs:
           RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
           GITHUB_PAT: ${{ secrets.GH_PAT }}
+          LIVE_MODE: ${{ (github.event.schedule == '20 14 * * 1-5' || github.event.inputs.live_mode == 'true') && 'true' || 'false' }}
         run: |
           python main.py
-
       - name: Commit state file
         run: |
           git config --global user.name "portfolio-bot"
@@ -64,18 +60,4 @@ jobs:
           git pull --rebase --autostash origin main
           git add portfolio_state.json portfolio_report.xlsx dashboard.html scores_latest.json eu_cache.json score_history.json
           git diff --staged --quiet || git commit -m "chore: update state + report [skip ci]"
-          git push
-
-      - name: Publish data to public dashboard
-        env:
-          GITHUB_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          git clone https://x-access-token:${GITHUB_PAT}@github.com/johnbrami55/portfolio-dashboard.git /tmp/dashboard
-          cp portfolio_state.json /tmp/dashboard/
-          cp scores_latest.json /tmp/dashboard/ 2>/dev/null || true
-          cd /tmp/dashboard
-          git config user.name "portfolio-bot"
-          git config user.email "portfolio-bot@github-actions"
-          git add portfolio_state.json scores_latest.json
-          git diff --staged --quiet || git commit -m "data: update [skip ci]"
-          git push
+          git pus
