@@ -1,12 +1,14 @@
 """
 universe.py -- Fetch OHLCV data and filter liquid stocks.
-EU tickers (.PA / .AS / .MI): Alpha Vantage (max 20 calls/run, 12s delay).
+EU tickers (.PA / .AS / .MI): Alpha Vantage (max 20 calls/run, 12s delay), cached daily.
 US / HK tickers            : Direct Yahoo Finance API with browser headers.
 """
 
 import logging
 import time
 import os
+import json
+from datetime import date
 import requests
 import pandas as pd
 from config import (
@@ -20,6 +22,7 @@ from config import (
 logger = logging.getLogger(__name__)
 AV_KEY = os.environ.get("ALPHA_VANTAGE_KEY", "")
 MAX_AV_CALLS_PER_RUN = 20
+EU_CACHE_FILE = "eu_cache.json"
 
 YF_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -89,7 +92,6 @@ def _fetch_yf_direct(ticker: str) -> dict | None:
         volumes = [v for v in quote.get("volume", []) if v is not None]
         if len(closes) < 5:
             return None
-        # Reverse to newest-first
         return {
             "closes":  closes[::-1],
             "highs":   highs[::-1],
@@ -113,6 +115,40 @@ def _fetch_us_hk(tickers: list) -> dict:
     return result
 
 
+def _fetch_eu_cached(eu_tickers: list) -> dict:
+    """Fetch EU tickers via Alpha Vantage, cached once per day to respect 25 calls/day quota."""
+    today = str(date.today())
+
+    # Try loading today's cache
+    try:
+        with open(EU_CACHE_FILE, "r") as f:
+            cache = json.load(f)
+        if cache.get("date") == today:
+            eu_hist = cache.get("data", {})
+            logger.info(f"Using cached EU data from {today} ({len(eu_hist)} tickers)")
+            return eu_hist
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+
+    # No valid cache -- fetch fresh (limited by daily quota)
+    eu_batch = eu_tickers[:MAX_AV_CALLS_PER_RUN]
+    if len(eu_tickers) > MAX_AV_CALLS_PER_RUN:
+        logger.warning(f"AV quota: only fetching first {MAX_AV_CALLS_PER_RUN}/{len(eu_tickers)} EU tickers")
+
+    eu_hist = {}
+    for ticker in eu_batch:
+        hist = _fetch_av(ticker)
+        if hist:
+            eu_hist[ticker] = hist
+        time.sleep(12)
+
+    with open(EU_CACHE_FILE, "w") as f:
+        json.dump({"date": today, "data": eu_hist}, f)
+    logger.info(f"EU cache saved for {today} ({len(eu_hist)} tickers)")
+
+    return eu_hist
+
+
 def get_liquid_universe(regime: str) -> list:
     logger.info(f"Scanning {len(FULL_UNIVERSE)} tickers (regime={regime})...")
 
@@ -122,17 +158,8 @@ def get_liquid_universe(regime: str) -> list:
     eu_tickers    = [t for t in FULL_UNIVERSE if _market_of(t) == "EU"]
     us_hk_tickers = [t for t in FULL_UNIVERSE if _market_of(t) != "EU"]
 
-    eu_batch = eu_tickers[:MAX_AV_CALLS_PER_RUN]
-    if len(eu_tickers) > MAX_AV_CALLS_PER_RUN:
-        logger.warning(f"AV quota: only fetching first {MAX_AV_CALLS_PER_RUN}/{len(eu_tickers)} EU tickers")
-
-    # Fetch EU via Alpha Vantage
-    eu_hist = {}
-    for ticker in eu_batch:
-        hist = _fetch_av(ticker)
-        if hist:
-            eu_hist[ticker] = hist
-        time.sleep(12)
+    # Fetch EU via Alpha Vantage (cached daily)
+    eu_hist = _fetch_eu_cached(eu_tickers)
 
     # Fetch US/HK via direct Yahoo Finance API
     yf_hist = _fetch_us_hk(us_hk_tickers)
@@ -153,7 +180,6 @@ def get_liquid_universe(regime: str) -> list:
 
             last_close = closes[0]
 
-            # Price filter: exclude stocks above accessibility threshold
             if ticker.endswith(".HK"):
                 if last_close > MAX_PRICE_HKD:
                     logger.debug(f"{ticker}: excluded (price {last_close:.0f} HKD > {MAX_PRICE_HKD:.0f})")
