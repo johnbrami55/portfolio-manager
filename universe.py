@@ -116,7 +116,8 @@ def _fetch_us_hk(tickers: list) -> dict:
 
 
 def _fetch_eu_cached(eu_tickers: list) -> dict:
-    """Fetch EU tickers via Alpha Vantage, cached once per day to respect 25 calls/day quota."""
+    """Fetch EU tickers via Alpha Vantage, cached once per day to respect 25 calls/day quota.
+    Always includes currently-held EU positions; rotates the rest across days."""
     today = str(date.today())
 
     # Try loading today's cache
@@ -130,10 +131,35 @@ def _fetch_eu_cached(eu_tickers: list) -> dict:
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    # No valid cache -- fetch fresh (limited by daily quota)
-    eu_batch = eu_tickers[:MAX_AV_CALLS_PER_RUN]
+    # Load currently held EU tickers from portfolio_state.json (priority)
+    held_eu = []
+    try:
+        with open("portfolio_state.json", "r") as f:
+            state = json.load(f)
+        for pos in state.get("positions", {}).keys():
+            if _market_of(pos) == "EU" and pos in eu_tickers:
+                held_eu.append(pos)
+    except (FileNotFoundError, json.JSONDecodeError, AttributeError):
+        pass
+
+    # Remaining tickers (not held), rotated by day-of-year
+    remaining = [t for t in eu_tickers if t not in held_eu]
+    slots_left = max(0, MAX_AV_CALLS_PER_RUN - len(held_eu))
+
+    if remaining and slots_left > 0:
+        n_groups = max(1, -(-len(remaining) // slots_left))  # ceil division
+        day_idx = date.today().timetuple().tm_yday % n_groups
+        rotated = remaining[day_idx::n_groups][:slots_left]
+    else:
+        rotated = []
+
+    eu_batch = held_eu + rotated
+
     if len(eu_tickers) > MAX_AV_CALLS_PER_RUN:
-        logger.warning(f"AV quota: only fetching first {MAX_AV_CALLS_PER_RUN}/{len(eu_tickers)} EU tickers")
+        logger.warning(
+            f"AV quota: fetching {len(eu_batch)}/{len(eu_tickers)} EU tickers "
+            f"({len(held_eu)} held + {len(rotated)} rotated)"
+        )
 
     eu_hist = {}
     for ticker in eu_batch:
