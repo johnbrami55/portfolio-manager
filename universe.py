@@ -52,7 +52,7 @@ def _fetch_av(ticker: str) -> dict | None:
                 "function": "TIME_SERIES_DAILY",
                 "symbol": av_ticker,
                 "apikey": AV_KEY,
-                "outputsize": "full",
+                "outputsize": "compact",
             },
             timeout=15,
         )
@@ -61,7 +61,7 @@ def _fetch_av(ticker: str) -> dict | None:
         if not ts:
             logger.warning(f"AV no data for {ticker}: {list(data.keys())}")
             return None
-        dates   = sorted(ts.keys(), reverse=True)[:252]
+        dates   = sorted(ts.keys(), reverse=True)[:100]
         closes  = [float(ts[d]["4. close"])  for d in dates]
         highs   = [float(ts[d]["2. high"])   for d in dates]
         lows    = [float(ts[d]["3. low"])    for d in dates]
