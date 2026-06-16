@@ -24,6 +24,18 @@
     "regime": "BULL"
   },
   {
+    "ticker": "UPRO",
+    "entry_date": "2020-10-30",
+    "exit_date": "2020-11-11",
+    "entry_price": 25.585,
+    "exit_price": 33.19,
+    "pnl_pct": 29.72,
+    "reason": "take_profit",
+    "days_held": 12,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
     "ticker": "SPXL",
     "entry_date": "2020-10-30",
     "exit_date": "2020-11-11",
@@ -32,18 +44,6 @@
     "pnl_pct": 29.64,
     "reason": "take_profit",
     "days_held": 12,
-    "layer": "SATELLITE",
-    "regime": "BULL"
-  },
-  {
-    "ticker": "SMCI",
-    "entry_date": "2020-11-03",
-    "exit_date": "2020-11-19",
-    "entry_price": 2.321,
-    "exit_price": 2.996,
-    "pnl_pct": 29.08,
-    "reason": "take_profit",
-    "days_held": 16,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -72,18 +72,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "HUT",
-    "entry_date": "2020-11-20",
-    "exit_date": "2020-11-25",
-    "entry_price": 4.885,
-    "exit_price": 6.33,
-    "pnl_pct": 29.58,
-    "reason": "take_profit",
-    "days_held": 5,
-    "layer": "SATELLITE",
-    "regime": "BULL"
-  },
-  {
     "ticker": "DKNG",
     "entry_date": "2020-11-11",
     "exit_date": "2020-12-01",
@@ -96,14 +84,26 @@
     "regime": "BULL"
   },
   {
-    "ticker": "CLSK",
-    "entry_date": "2020-11-19",
-    "exit_date": "2020-12-09",
-    "entry_price": 10.59,
-    "exit_price": 13.09,
-    "pnl_pct": 23.61,
+    "ticker": "ASTS",
+    "entry_date": "2020-11-11",
+    "exit_date": "2020-12-01",
+    "entry_price": 10.07,
+    "exit_price": 10.21,
+    "pnl_pct": 1.39,
     "reason": "timeout",
     "days_held": 20,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
+    "ticker": "CLSK",
+    "entry_date": "2020-11-20",
+    "exit_date": "2020-12-09",
+    "entry_price": 10.15,
+    "exit_price": 13.09,
+    "pnl_pct": 28.97,
+    "reason": "take_profit",
+    "days_held": 19,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -130,28 +130,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "NOW",
-    "entry_date": "2020-10-30",
-    "exit_date": "2020-12-11",
-    "entry_price": 99.514,
-    "exit_price": 107.472,
-    "pnl_pct": 8.0,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "AAPL",
-    "entry_date": "2020-10-30",
-    "exit_date": "2020-12-11",
-    "entry_price": 108.86,
-    "exit_price": 122.41,
-    "pnl_pct": 12.45,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
     "ticker": "MARA",
     "entry_date": "2020-12-11",
     "exit_date": "2020-12-15",
@@ -164,14 +142,14 @@
     "regime": "BULL"
   },
   {
-    "ticker": "ASTS",
-    "entry_date": "2020-11-27",
-    "exit_date": "2020-12-17",
-    "entry_price": 10.12,
-    "exit_price": 11.0,
-    "pnl_pct": 8.7,
-    "reason": "timeout",
-    "days_held": 20,
+    "ticker": "HUT",
+    "entry_date": "2020-12-11",
+    "exit_date": "2020-12-16",
+    "entry_price": 5.8,
+    "exit_price": 8.05,
+    "pnl_pct": 38.79,
+    "reason": "take_profit",
+    "days_held": 5,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -282,17 +260,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "SNPS",
-    "entry_date": "2020-10-30",
-    "exit_date": "2021-01-22",
-    "entry_price": 213.86,
-    "exit_price": 270.14,
-    "pnl_pct": 26.32,
-    "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
     "ticker": "HD",
     "entry_date": "2020-12-11",
     "exit_date": "2021-01-22",
@@ -304,34 +271,12 @@
     "layer": "CORE"
   },
   {
-    "ticker": "XLB",
-    "entry_date": "2020-12-11",
-    "exit_date": "2021-01-22",
-    "entry_price": 35.45,
-    "exit_price": 37.19,
-    "pnl_pct": 4.91,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
     "ticker": "MS",
     "entry_date": "2021-01-22",
     "exit_date": "2021-01-27",
     "entry_price": 74.13,
     "exit_price": 68.42,
     "pnl_pct": -7.7,
-    "reason": "stop_loss",
-    "days_held": 5,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "PANW",
-    "entry_date": "2021-01-22",
-    "exit_date": "2021-01-27",
-    "entry_price": 60.77,
-    "exit_price": 55.8617,
-    "pnl_pct": -8.08,
     "reason": "stop_loss",
     "days_held": 5,
     "layer": "CORE"
@@ -444,17 +389,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "NOW",
-    "entry_date": "2021-01-22",
-    "exit_date": "2021-03-04",
-    "entry_price": 108.218,
-    "exit_price": 98.126,
-    "pnl_pct": -9.33,
-    "reason": "stop_loss",
-    "days_held": 41,
-    "layer": "CORE"
-  },
-  {
     "ticker": "TSLA",
     "entry_date": "2021-02-22",
     "exit_date": "2021-03-04",
@@ -465,6 +399,28 @@
     "days_held": 10,
     "layer": "SATELLITE",
     "regime": "BULL"
+  },
+  {
+    "ticker": "AVGO",
+    "entry_date": "2020-12-11",
+    "exit_date": "2021-03-05",
+    "entry_price": 40.582,
+    "exit_price": 45.014,
+    "pnl_pct": 10.92,
+    "reason": "rotation",
+    "days_held": 84,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "XLK",
+    "entry_date": "2021-01-22",
+    "exit_date": "2021-03-05",
+    "entry_price": 66.415,
+    "exit_price": 64.475,
+    "pnl_pct": -2.92,
+    "reason": "rotation",
+    "days_held": 42,
+    "layer": "CORE"
   },
   {
     "ticker": "PLTR",
@@ -563,25 +519,14 @@
     "regime": "BULL"
   },
   {
-    "ticker": "QQQ",
-    "entry_date": "2020-12-11",
+    "ticker": "TSLA",
+    "entry_date": "2020-10-30",
     "exit_date": "2021-04-16",
-    "entry_price": 301.85,
-    "exit_price": 342.01,
-    "pnl_pct": 13.3,
+    "entry_price": 129.3467,
+    "exit_price": 246.5933,
+    "pnl_pct": 90.65,
     "reason": "rotation",
-    "days_held": 126,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLK",
-    "entry_date": "2021-01-22",
-    "exit_date": "2021-04-16",
-    "entry_price": 66.415,
-    "exit_price": 71.65,
-    "pnl_pct": 7.88,
-    "reason": "rotation",
-    "days_held": 84,
+    "days_held": 168,
     "layer": "CORE"
   },
   {
@@ -591,6 +536,17 @@
     "entry_price": 121.42,
     "exit_price": 134.16,
     "pnl_pct": 10.49,
+    "reason": "rotation",
+    "days_held": 42,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "QQQ",
+    "entry_date": "2021-03-05",
+    "exit_date": "2021-04-16",
+    "entry_price": 308.68,
+    "exit_price": 342.01,
+    "pnl_pct": 10.8,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -613,17 +569,6 @@
     "entry_price": 55.7883,
     "exit_price": 61.1083,
     "pnl_pct": 9.54,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GOOGL",
-    "entry_date": "2021-03-05",
-    "exit_date": "2021-04-16",
-    "entry_price": 104.8535,
-    "exit_price": 114.1375,
-    "pnl_pct": 8.85,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -735,28 +680,6 @@
     "days_held": 14,
     "layer": "SATELLITE",
     "regime": "BULL"
-  },
-  {
-    "ticker": "TSLA",
-    "entry_date": "2020-10-30",
-    "exit_date": "2021-05-28",
-    "entry_price": 129.3467,
-    "exit_price": 208.4067,
-    "pnl_pct": 61.12,
-    "reason": "rotation",
-    "days_held": 210,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "AVGO",
-    "entry_date": "2020-12-11",
-    "exit_date": "2021-05-28",
-    "entry_price": 40.582,
-    "exit_price": 47.233,
-    "pnl_pct": 16.39,
-    "reason": "rotation",
-    "days_held": 168,
-    "layer": "CORE"
   },
   {
     "ticker": "ARKK",
@@ -891,23 +814,23 @@
     "regime": "BULL"
   },
   {
+    "ticker": "XLF",
+    "entry_date": "2021-04-16",
+    "exit_date": "2021-07-09",
+    "entry_price": 35.4,
+    "exit_price": 36.71,
+    "pnl_pct": 3.7,
+    "reason": "rotation",
+    "days_held": 84,
+    "layer": "CORE"
+  },
+  {
     "ticker": "XLI",
     "entry_date": "2021-04-16",
     "exit_date": "2021-07-09",
     "entry_price": 101.14,
     "exit_price": 103.49,
     "pnl_pct": 2.32,
-    "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLB",
-    "entry_date": "2021-04-16",
-    "exit_date": "2021-07-09",
-    "entry_price": 41.33,
-    "exit_price": 41.49,
-    "pnl_pct": 0.39,
     "reason": "rotation",
     "days_held": 84,
     "layer": "CORE"
@@ -937,17 +860,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "XLE",
-    "entry_date": "2021-07-09",
-    "exit_date": "2021-07-16",
-    "entry_price": 26.425,
-    "exit_price": 24.34,
-    "pnl_pct": -7.89,
-    "reason": "stop_loss",
-    "days_held": 7,
-    "layer": "CORE"
-  },
-  {
     "ticker": "HIMS",
     "entry_date": "2021-06-30",
     "exit_date": "2021-07-16",
@@ -958,17 +870,6 @@
     "days_held": 16,
     "layer": "SATELLITE",
     "regime": "BULL"
-  },
-  {
-    "ticker": "RTX",
-    "entry_date": "2021-05-28",
-    "exit_date": "2021-07-19",
-    "entry_price": 88.71,
-    "exit_price": 81.05,
-    "pnl_pct": -8.63,
-    "reason": "stop_loss",
-    "days_held": 52,
-    "layer": "CORE"
   },
   {
     "ticker": "XOM",
@@ -1089,17 +990,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "XLF",
-    "entry_date": "2021-04-16",
-    "exit_date": "2021-08-20",
-    "entry_price": 35.4,
-    "exit_price": 37.69,
-    "pnl_pct": 6.47,
-    "reason": "rotation",
-    "days_held": 126,
-    "layer": "CORE"
-  },
-  {
     "ticker": "TNA",
     "entry_date": "2021-08-05",
     "exit_date": "2021-08-25",
@@ -1146,17 +1036,6 @@
     "days_held": 21,
     "layer": "SATELLITE",
     "regime": "BULL"
-  },
-  {
-    "ticker": "LLY",
-    "entry_date": "2021-08-20",
-    "exit_date": "2021-09-09",
-    "entry_price": 270.91,
-    "exit_price": 240.0,
-    "pnl_pct": -11.41,
-    "reason": "stop_loss",
-    "days_held": 20,
-    "layer": "CORE"
   },
   {
     "ticker": "SMCI",
@@ -1219,14 +1098,25 @@
     "regime": "BULL"
   },
   {
-    "ticker": "MSFT",
+    "ticker": "MS",
+    "entry_date": "2021-04-16",
+    "exit_date": "2021-10-01",
+    "entry_price": 78.59,
+    "exit_price": 99.05,
+    "pnl_pct": 26.03,
+    "reason": "rotation",
+    "days_held": 168,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "ORCL",
     "entry_date": "2021-08-20",
-    "exit_date": "2021-09-30",
-    "entry_price": 304.36,
-    "exit_price": 281.92,
-    "pnl_pct": -7.37,
-    "reason": "stop_loss",
-    "days_held": 41,
+    "exit_date": "2021-10-01",
+    "entry_price": 88.94,
+    "exit_price": 89.74,
+    "pnl_pct": 0.9,
+    "reason": "rotation",
+    "days_held": 42,
     "layer": "CORE"
   },
   {
@@ -1236,17 +1126,6 @@
     "entry_price": 367.73,
     "exit_price": 360.18,
     "pnl_pct": -2.05,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLK",
-    "entry_date": "2021-08-20",
-    "exit_date": "2021-10-01",
-    "entry_price": 77.87,
-    "exit_price": 75.785,
-    "pnl_pct": -2.68,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -1395,6 +1274,17 @@
     "layer": "CORE"
   },
   {
+    "ticker": "GOOGL",
+    "entry_date": "2021-07-09",
+    "exit_date": "2021-11-12",
+    "entry_price": 125.5185,
+    "exit_price": 148.678,
+    "pnl_pct": 18.45,
+    "reason": "rotation",
+    "days_held": 126,
+    "layer": "CORE"
+  },
+  {
     "ticker": "LLY",
     "entry_date": "2021-10-01",
     "exit_date": "2021-11-12",
@@ -1412,17 +1302,6 @@
     "entry_price": 289.1,
     "exit_price": 336.72,
     "pnl_pct": 16.47,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "NVDA",
-    "entry_date": "2021-10-01",
-    "exit_date": "2021-11-12",
-    "entry_price": 20.742,
-    "exit_price": 30.39,
-    "pnl_pct": 46.51,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -1548,28 +1427,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "MS",
-    "entry_date": "2021-04-16",
-    "exit_date": "2021-12-27",
-    "entry_price": 78.59,
-    "exit_price": 100.4,
-    "pnl_pct": 27.75,
-    "reason": "rotation",
-    "days_held": 255,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ORCL",
-    "entry_date": "2021-08-20",
-    "exit_date": "2021-12-27",
-    "entry_price": 88.94,
-    "exit_price": 89.54,
-    "pnl_pct": 0.67,
-    "reason": "rotation",
-    "days_held": 129,
-    "layer": "CORE"
-  },
-  {
     "ticker": "GD",
     "entry_date": "2021-10-01",
     "exit_date": "2021-12-27",
@@ -1581,6 +1438,28 @@
     "layer": "CORE"
   },
   {
+    "ticker": "ORCL",
+    "entry_date": "2021-11-12",
+    "exit_date": "2021-12-27",
+    "entry_price": 93.54,
+    "exit_price": 89.54,
+    "pnl_pct": -4.28,
+    "reason": "rotation",
+    "days_held": 45,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "HD",
+    "entry_date": "2021-11-12",
+    "exit_date": "2021-12-27",
+    "entry_price": 372.63,
+    "exit_price": 404.09,
+    "pnl_pct": 8.44,
+    "reason": "rotation",
+    "days_held": 45,
+    "layer": "CORE"
+  },
+  {
     "ticker": "NOC",
     "entry_date": "2021-11-12",
     "exit_date": "2021-12-27",
@@ -1589,28 +1468,6 @@
     "pnl_pct": 6.83,
     "reason": "rotation",
     "days_held": 45,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLF",
-    "entry_date": "2021-11-12",
-    "exit_date": "2021-12-27",
-    "entry_price": 40.15,
-    "exit_price": 39.22,
-    "pnl_pct": -2.32,
-    "reason": "rotation",
-    "days_held": 45,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "DXCM",
-    "entry_date": "2021-12-27",
-    "exit_date": "2021-12-28",
-    "entry_price": 142.47,
-    "exit_price": 132.375,
-    "pnl_pct": -7.09,
-    "reason": "stop_loss",
-    "days_held": 1,
     "layer": "CORE"
   },
   {
@@ -1716,28 +1573,6 @@
     "days_held": 15,
     "layer": "SATELLITE",
     "regime": "BULL"
-  },
-  {
-    "ticker": "GOOGL",
-    "entry_date": "2021-05-28",
-    "exit_date": "2022-01-21",
-    "entry_price": 117.8425,
-    "exit_price": 130.3515,
-    "pnl_pct": 10.62,
-    "reason": "bear_exit",
-    "days_held": 238,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "HD",
-    "entry_date": "2021-11-12",
-    "exit_date": "2022-01-21",
-    "entry_price": 372.63,
-    "exit_price": 349.1,
-    "pnl_pct": -6.31,
-    "reason": "bear_exit",
-    "days_held": 70,
-    "layer": "CORE"
   },
   {
     "ticker": "COST",
@@ -1902,45 +1737,24 @@
     "layer": "CORE"
   },
   {
-    "ticker": "CVX",
-    "entry_date": "2022-03-22",
-    "exit_date": "2022-03-23",
-    "entry_price": 164.09,
-    "exit_price": 165.86,
-    "pnl_pct": 1.08,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "AVGO",
-    "entry_date": "2022-03-22",
-    "exit_date": "2022-03-23",
-    "entry_price": 61.134,
-    "exit_price": 59.938,
-    "pnl_pct": -1.96,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLP",
-    "entry_date": "2022-03-22",
-    "exit_date": "2022-03-23",
-    "entry_price": 74.5,
-    "exit_price": 73.9,
-    "pnl_pct": -0.81,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
     "ticker": "TECL",
     "entry_date": "2022-03-22",
     "exit_date": "2022-04-11",
     "entry_price": 59.07,
     "exit_price": 49.65,
     "pnl_pct": -15.95,
+    "reason": "timeout",
+    "days_held": 20,
+    "layer": "SATELLITE",
+    "regime": "BEAR"
+  },
+  {
+    "ticker": "UPRO",
+    "entry_date": "2022-03-22",
+    "exit_date": "2022-04-11",
+    "entry_price": 62.93,
+    "exit_price": 58.63,
+    "pnl_pct": -6.83,
     "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
@@ -1966,18 +1780,6 @@
     "exit_price": 60.73,
     "pnl_pct": -14.92,
     "reason": "stop_loss",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "UPST",
-    "entry_date": "2022-03-22",
-    "exit_date": "2022-04-11",
-    "entry_price": 127.23,
-    "exit_price": 89.73,
-    "pnl_pct": -29.47,
-    "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
     "regime": "BEAR"
@@ -2038,87 +1840,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "LMT",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-05",
-    "entry_price": 485.19,
-    "exit_price": 490.67,
-    "pnl_pct": 1.13,
-    "reason": "bear_exit",
-    "days_held": 5,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "DXCM",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-05",
-    "entry_price": 116.28,
-    "exit_price": 116.56,
-    "pnl_pct": 0.24,
-    "reason": "bear_exit",
-    "days_held": 5,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GD",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-05",
-    "entry_price": 252.39,
-    "exit_price": 250.91,
-    "pnl_pct": -0.59,
-    "reason": "bear_exit",
-    "days_held": 5,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "RIVN",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-12",
-    "entry_price": 32.04,
-    "exit_price": 25.61,
-    "pnl_pct": -20.07,
-    "reason": "stop_loss",
-    "days_held": 12,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "MARA",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-15",
-    "entry_price": 6.32,
-    "exit_price": 4.34,
-    "pnl_pct": -31.33,
-    "reason": "stop_loss",
-    "days_held": 15,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "SOUN",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-20",
-    "entry_price": 1.28,
-    "exit_price": 1.1,
-    "pnl_pct": -14.06,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "HOOD",
-    "entry_date": "2022-11-30",
-    "exit_date": "2022-12-20",
-    "entry_price": 9.59,
-    "exit_price": 8.1,
-    "pnl_pct": -15.54,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
     "ticker": "LLY",
     "entry_date": "2023-01-17",
     "exit_date": "2023-01-18",
@@ -2169,39 +1890,6 @@
     "entry_price": 327.53,
     "exit_price": 323.69,
     "pnl_pct": -1.17,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "CDNS",
-    "entry_date": "2023-01-17",
-    "exit_date": "2023-01-18",
-    "entry_price": 172.97,
-    "exit_price": 172.46,
-    "pnl_pct": -0.29,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLE",
-    "entry_date": "2023-01-17",
-    "exit_date": "2023-01-18",
-    "entry_price": 45.07,
-    "exit_price": 44.245,
-    "pnl_pct": -1.83,
-    "reason": "bear_exit",
-    "days_held": 1,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "JPM",
-    "entry_date": "2023-01-17",
-    "exit_date": "2023-01-18",
-    "entry_price": 140.8,
-    "exit_price": 136.57,
-    "pnl_pct": -3.0,
     "reason": "bear_exit",
     "days_held": 1,
     "layer": "CORE"
@@ -2360,56 +2048,23 @@
     "layer": "CORE"
   },
   {
+    "ticker": "WMT",
+    "entry_date": "2023-03-01",
+    "exit_date": "2023-03-09",
+    "entry_price": 46.7167,
+    "exit_price": 45.7233,
+    "pnl_pct": -2.13,
+    "reason": "bear_exit",
+    "days_held": 8,
+    "layer": "CORE"
+  },
+  {
     "ticker": "CDNS",
     "entry_date": "2023-03-01",
     "exit_date": "2023-03-09",
     "entry_price": 191.43,
     "exit_price": 196.4,
     "pnl_pct": 2.6,
-    "reason": "bear_exit",
-    "days_held": 8,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MS",
-    "entry_date": "2023-03-01",
-    "exit_date": "2023-03-09",
-    "entry_price": 96.19,
-    "exit_price": 92.2,
-    "pnl_pct": -4.15,
-    "reason": "bear_exit",
-    "days_held": 8,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "V",
-    "entry_date": "2023-03-01",
-    "exit_date": "2023-03-09",
-    "entry_price": 218.36,
-    "exit_price": 220.01,
-    "pnl_pct": 0.76,
-    "reason": "bear_exit",
-    "days_held": 8,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GS",
-    "entry_date": "2023-03-01",
-    "exit_date": "2023-03-09",
-    "entry_price": 346.23,
-    "exit_price": 342.09,
-    "pnl_pct": -1.2,
-    "reason": "bear_exit",
-    "days_held": 8,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "JPM",
-    "entry_date": "2023-03-01",
-    "exit_date": "2023-03-09",
-    "entry_price": 142.55,
-    "exit_price": 130.34,
-    "pnl_pct": -8.57,
     "reason": "bear_exit",
     "days_held": 8,
     "layer": "CORE"
@@ -2582,17 +2237,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "XOM",
-    "entry_date": "2023-04-20",
-    "exit_date": "2023-05-04",
-    "entry_price": 115.64,
-    "exit_price": 106.04,
-    "pnl_pct": -8.3,
-    "reason": "stop_loss",
-    "days_held": 14,
-    "layer": "CORE"
-  },
-  {
     "ticker": "SOXL",
     "entry_date": "2023-04-25",
     "exit_date": "2023-05-15",
@@ -2675,23 +2319,23 @@
     "layer": "CORE"
   },
   {
+    "ticker": "ORCL",
+    "entry_date": "2023-04-20",
+    "exit_date": "2023-06-01",
+    "entry_price": 94.83,
+    "exit_price": 105.99,
+    "pnl_pct": 11.77,
+    "reason": "rotation",
+    "days_held": 42,
+    "layer": "CORE"
+  },
+  {
     "ticker": "CDNS",
     "entry_date": "2023-04-20",
     "exit_date": "2023-06-01",
     "entry_price": 213.73,
     "exit_price": 232.39,
     "pnl_pct": 8.73,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLI",
-    "entry_date": "2023-04-20",
-    "exit_date": "2023-06-01",
-    "entry_price": 100.84,
-    "exit_price": 98.09,
-    "pnl_pct": -2.73,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -2817,6 +2461,17 @@
     "regime": "BULL"
   },
   {
+    "ticker": "ISRG",
+    "entry_date": "2023-06-01",
+    "exit_date": "2023-07-13",
+    "entry_price": 310.54,
+    "exit_price": 346.97,
+    "pnl_pct": 11.73,
+    "reason": "rotation",
+    "days_held": 42,
+    "layer": "CORE"
+  },
+  {
     "ticker": "DXCM",
     "entry_date": "2023-06-01",
     "exit_date": "2023-07-13",
@@ -2834,28 +2489,6 @@
     "entry_price": 436.49,
     "exit_price": 434.7,
     "pnl_pct": -0.41,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MA",
-    "entry_date": "2023-06-01",
-    "exit_date": "2023-07-13",
-    "entry_price": 370.88,
-    "exit_price": 400.56,
-    "pnl_pct": 8.0,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "PG",
-    "entry_date": "2023-06-01",
-    "exit_date": "2023-07-13",
-    "entry_price": 143.96,
-    "exit_price": 148.95,
-    "pnl_pct": 3.47,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -2991,25 +2624,14 @@
     "layer": "CORE"
   },
   {
-    "ticker": "ISRG",
-    "entry_date": "2023-06-01",
-    "exit_date": "2023-08-18",
-    "entry_price": 310.54,
-    "exit_price": 285.95,
-    "pnl_pct": -7.92,
-    "reason": "stop_loss",
-    "days_held": 78,
-    "layer": "CORE"
-  },
-  {
     "ticker": "ORCL",
-    "entry_date": "2023-04-20",
+    "entry_date": "2023-07-13",
     "exit_date": "2023-08-24",
-    "entry_price": 94.83,
+    "entry_price": 117.45,
     "exit_price": 112.91,
-    "pnl_pct": 19.07,
+    "pnl_pct": -3.87,
     "reason": "rotation",
-    "days_held": 126,
+    "days_held": 42,
     "layer": "CORE"
   },
   {
@@ -3146,33 +2768,11 @@
   },
   {
     "ticker": "XLK",
-    "entry_date": "2023-07-13",
-    "exit_date": "2023-09-26",
-    "entry_price": 88.125,
-    "exit_price": 80.985,
-    "pnl_pct": -8.1,
-    "reason": "stop_loss",
-    "days_held": 75,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "AVGO",
     "entry_date": "2023-08-24",
     "exit_date": "2023-10-05",
-    "entry_price": 85.446,
-    "exit_price": 82.386,
-    "pnl_pct": -3.58,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "NOW",
-    "entry_date": "2023-08-24",
-    "exit_date": "2023-10-05",
-    "entry_price": 109.908,
-    "exit_price": 109.434,
-    "pnl_pct": -0.43,
+    "entry_price": 83.505,
+    "exit_price": 82.565,
+    "pnl_pct": -1.13,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -3238,13 +2838,13 @@
   },
   {
     "ticker": "NVDA",
-    "entry_date": "2023-04-20",
+    "entry_date": "2023-06-01",
     "exit_date": "2023-10-20",
-    "entry_price": 27.104,
+    "entry_price": 39.77,
     "exit_price": 41.387,
-    "pnl_pct": 52.7,
+    "pnl_pct": 4.07,
     "reason": "bear_exit",
-    "days_held": 183,
+    "days_held": 141,
     "layer": "CORE"
   },
   {
@@ -3259,58 +2859,25 @@
     "layer": "CORE"
   },
   {
+    "ticker": "CRM",
+    "entry_date": "2023-08-24",
+    "exit_date": "2023-10-20",
+    "entry_price": 205.51,
+    "exit_price": 203.73,
+    "pnl_pct": -0.87,
+    "reason": "bear_exit",
+    "days_held": 57,
+    "layer": "CORE"
+  },
+  {
     "ticker": "QQQ",
-    "entry_date": "2023-07-13",
+    "entry_date": "2023-08-24",
     "exit_date": "2023-10-20",
-    "entry_price": 379.15,
+    "entry_price": 361.22,
     "exit_price": 354.6,
-    "pnl_pct": -6.48,
-    "reason": "bear_exit",
-    "days_held": 99,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ADBE",
-    "entry_date": "2023-08-24",
-    "exit_date": "2023-10-20",
-    "entry_price": 512.43,
-    "exit_price": 540.96,
-    "pnl_pct": 5.57,
+    "pnl_pct": -1.83,
     "reason": "bear_exit",
     "days_held": 57,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "CDNS",
-    "entry_date": "2023-08-24",
-    "exit_date": "2023-10-20",
-    "entry_price": 228.04,
-    "exit_price": 238.64,
-    "pnl_pct": 4.65,
-    "reason": "bear_exit",
-    "days_held": 57,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLK",
-    "entry_date": "2023-10-05",
-    "exit_date": "2023-10-20",
-    "entry_price": 82.565,
-    "exit_price": 81.97,
-    "pnl_pct": -0.72,
-    "reason": "bear_exit",
-    "days_held": 15,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "AAPL",
-    "entry_date": "2023-10-05",
-    "exit_date": "2023-10-20",
-    "entry_price": 174.91,
-    "exit_price": 172.88,
-    "pnl_pct": -1.16,
-    "reason": "bear_exit",
-    "days_held": 15,
     "layer": "CORE"
   },
   {
@@ -3552,28 +3119,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "AMZN",
-    "entry_date": "2023-12-01",
-    "exit_date": "2024-01-12",
-    "entry_price": 147.03,
-    "exit_price": 154.62,
-    "pnl_pct": 5.16,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GOOGL",
-    "entry_date": "2023-12-01",
-    "exit_date": "2024-01-12",
-    "entry_price": 131.86,
-    "exit_price": 142.65,
-    "pnl_pct": 8.18,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
     "ticker": "IONQ",
     "entry_date": "2023-12-26",
     "exit_date": "2024-01-16",
@@ -3728,25 +3273,14 @@
     "layer": "CORE"
   },
   {
-    "ticker": "SNPS",
-    "entry_date": "2024-01-12",
+    "ticker": "LLY",
+    "entry_date": "2023-12-01",
     "exit_date": "2024-02-23",
-    "entry_price": 494.4,
-    "exit_price": 575.65,
-    "pnl_pct": 16.43,
+    "entry_price": 584.04,
+    "exit_price": 769.54,
+    "pnl_pct": 31.76,
     "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLK",
-    "entry_date": "2024-01-12",
-    "exit_date": "2024-02-23",
-    "entry_price": 96.12,
-    "exit_price": 102.645,
-    "pnl_pct": 6.79,
-    "reason": "rotation",
-    "days_held": 42,
+    "days_held": 84,
     "layer": "CORE"
   },
   {
@@ -3869,17 +3403,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "NOW",
-    "entry_date": "2023-12-01",
-    "exit_date": "2024-04-05",
-    "entry_price": 138.158,
-    "exit_price": 156.7,
-    "pnl_pct": 13.42,
-    "reason": "rotation",
-    "days_held": 126,
-    "layer": "CORE"
-  },
-  {
     "ticker": "AVGO",
     "entry_date": "2024-01-12",
     "exit_date": "2024-04-05",
@@ -3891,12 +3414,12 @@
     "layer": "CORE"
   },
   {
-    "ticker": "QQQ",
+    "ticker": "NOW",
     "entry_date": "2024-02-23",
     "exit_date": "2024-04-05",
-    "entry_price": 436.78,
-    "exit_price": 440.47,
-    "pnl_pct": 0.84,
+    "entry_price": 154.194,
+    "exit_price": 156.7,
+    "pnl_pct": 1.63,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -3926,6 +3449,17 @@
     "regime": "BULL"
   },
   {
+    "ticker": "JPM",
+    "entry_date": "2024-04-05",
+    "exit_date": "2024-04-12",
+    "entry_price": 197.45,
+    "exit_price": 182.79,
+    "pnl_pct": -7.42,
+    "reason": "stop_loss",
+    "days_held": 7,
+    "layer": "CORE"
+  },
+  {
     "ticker": "MRVL",
     "entry_date": "2024-03-25",
     "exit_date": "2024-04-15",
@@ -3950,14 +3484,14 @@
     "regime": "BULL"
   },
   {
-    "ticker": "AMD",
+    "ticker": "LLY",
     "entry_date": "2024-04-05",
-    "exit_date": "2024-04-17",
-    "entry_price": 170.42,
-    "exit_price": 154.02,
-    "pnl_pct": -9.62,
+    "exit_date": "2024-04-19",
+    "entry_price": 784.21,
+    "exit_price": 726.31,
+    "pnl_pct": -7.38,
     "reason": "stop_loss",
-    "days_held": 12,
+    "days_held": 14,
     "layer": "CORE"
   },
   {
@@ -4029,28 +3563,6 @@
     "pnl_pct": 7.84,
     "reason": "rotation",
     "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "JPM",
-    "entry_date": "2024-02-23",
-    "exit_date": "2024-05-17",
-    "entry_price": 183.99,
-    "exit_price": 204.79,
-    "pnl_pct": 11.3,
-    "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ABBV",
-    "entry_date": "2024-04-05",
-    "exit_date": "2024-05-17",
-    "entry_price": 170.0,
-    "exit_price": 166.42,
-    "pnl_pct": -2.11,
-    "reason": "rotation",
-    "days_held": 42,
     "layer": "CORE"
   },
   {
@@ -4160,6 +3672,17 @@
     "days_held": 21,
     "layer": "SATELLITE",
     "regime": "BULL"
+  },
+  {
+    "ticker": "XLF",
+    "entry_date": "2024-04-05",
+    "exit_date": "2024-06-28",
+    "entry_price": 41.57,
+    "exit_price": 41.11,
+    "pnl_pct": -1.11,
+    "reason": "rotation",
+    "days_held": 84,
+    "layer": "CORE"
   },
   {
     "ticker": "META",
@@ -4328,58 +3851,25 @@
     "regime": "BULL"
   },
   {
-    "ticker": "LLY",
-    "entry_date": "2023-12-01",
-    "exit_date": "2024-08-09",
-    "entry_price": 584.04,
-    "exit_price": 891.68,
-    "pnl_pct": 52.67,
-    "reason": "rotation",
-    "days_held": 252,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLF",
-    "entry_date": "2024-04-05",
-    "exit_date": "2024-08-09",
-    "entry_price": 41.57,
-    "exit_price": 42.4,
-    "pnl_pct": 2.0,
-    "reason": "rotation",
-    "days_held": 126,
-    "layer": "CORE"
-  },
-  {
     "ticker": "GD",
-    "entry_date": "2024-04-05",
+    "entry_date": "2024-05-17",
     "exit_date": "2024-08-09",
-    "entry_price": 295.18,
+    "entry_price": 299.02,
     "exit_price": 292.99,
-    "pnl_pct": -0.74,
+    "pnl_pct": -2.02,
     "reason": "rotation",
-    "days_held": 126,
+    "days_held": 84,
     "layer": "CORE"
   },
   {
     "ticker": "RTX",
-    "entry_date": "2024-05-17",
+    "entry_date": "2024-06-28",
     "exit_date": "2024-08-09",
-    "entry_price": 104.18,
+    "entry_price": 100.39,
     "exit_price": 116.15,
-    "pnl_pct": 11.49,
+    "pnl_pct": 15.7,
     "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MSFT",
-    "entry_date": "2024-05-17",
-    "exit_date": "2024-08-09",
-    "entry_price": 420.21,
-    "exit_price": 406.02,
-    "pnl_pct": -3.38,
-    "reason": "rotation",
-    "days_held": 84,
+    "days_held": 42,
     "layer": "CORE"
   },
   {
@@ -4455,17 +3945,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "GOOGL",
-    "entry_date": "2024-08-09",
-    "exit_date": "2024-09-06",
-    "entry_price": 163.67,
-    "exit_price": 150.92,
-    "pnl_pct": -7.79,
-    "reason": "stop_loss",
-    "days_held": 28,
-    "layer": "CORE"
-  },
-  {
     "ticker": "ARM",
     "entry_date": "2024-08-22",
     "exit_date": "2024-09-11",
@@ -4490,6 +3969,17 @@
     "regime": "BULL"
   },
   {
+    "ticker": "COST",
+    "entry_date": "2024-06-28",
+    "exit_date": "2024-09-20",
+    "entry_price": 849.99,
+    "exit_price": 906.98,
+    "pnl_pct": 6.7,
+    "reason": "rotation",
+    "days_held": 84,
+    "layer": "CORE"
+  },
+  {
     "ticker": "GS",
     "entry_date": "2024-06-28",
     "exit_date": "2024-09-20",
@@ -4507,17 +3997,6 @@
     "entry_price": 205.8,
     "exit_price": 211.09,
     "pnl_pct": 2.57,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MS",
-    "entry_date": "2024-08-09",
-    "exit_date": "2024-09-20",
-    "entry_price": 94.72,
-    "exit_price": 102.47,
-    "pnl_pct": 8.18,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -4641,28 +4120,6 @@
     "layer": "CORE"
   },
   {
-    "ticker": "META",
-    "entry_date": "2024-08-09",
-    "exit_date": "2024-11-01",
-    "entry_price": 517.77,
-    "exit_price": 567.16,
-    "pnl_pct": 9.54,
-    "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLP",
-    "entry_date": "2024-09-20",
-    "exit_date": "2024-11-01",
-    "entry_price": 83.05,
-    "exit_price": 80.15,
-    "pnl_pct": -3.49,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
     "ticker": "RBLX",
     "entry_date": "2024-10-14",
     "exit_date": "2024-11-04",
@@ -4723,17 +4180,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "LMT",
-    "entry_date": "2024-09-20",
-    "exit_date": "2024-11-18",
-    "entry_price": 571.92,
-    "exit_price": 530.96,
-    "pnl_pct": -7.16,
-    "reason": "stop_loss",
-    "days_held": 59,
-    "layer": "CORE"
-  },
-  {
     "ticker": "SMCI",
     "entry_date": "2024-11-04",
     "exit_date": "2024-11-25",
@@ -4782,34 +4228,23 @@
     "regime": "BULL"
   },
   {
+    "ticker": "LMT",
+    "entry_date": "2024-11-01",
+    "exit_date": "2024-12-11",
+    "entry_price": 545.35,
+    "exit_price": 504.24,
+    "pnl_pct": -7.54,
+    "reason": "stop_loss",
+    "days_held": 40,
+    "layer": "CORE"
+  },
+  {
     "ticker": "NOC",
     "entry_date": "2024-11-01",
     "exit_date": "2024-12-13",
     "entry_price": 506.95,
     "exit_price": 480.0,
     "pnl_pct": -5.32,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLI",
-    "entry_date": "2024-11-01",
-    "exit_date": "2024-12-13",
-    "entry_price": 134.01,
-    "exit_price": 137.43,
-    "pnl_pct": 2.55,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLF",
-    "entry_date": "2024-11-01",
-    "exit_date": "2024-12-13",
-    "entry_price": 46.64,
-    "exit_price": 49.54,
-    "pnl_pct": 6.22,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
@@ -4863,17 +4298,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "PANW",
-    "entry_date": "2024-12-13",
-    "exit_date": "2024-12-31",
-    "entry_price": 196.56,
-    "exit_price": 181.96,
-    "pnl_pct": -7.43,
-    "reason": "stop_loss",
-    "days_held": 18,
-    "layer": "CORE"
-  },
-  {
     "ticker": "DKNG",
     "entry_date": "2024-12-16",
     "exit_date": "2025-01-06",
@@ -4899,13 +4323,13 @@
   },
   {
     "ticker": "ORCL",
-    "entry_date": "2024-11-01",
+    "entry_date": "2024-12-13",
     "exit_date": "2025-01-10",
-    "entry_price": 170.02,
+    "entry_price": 173.39,
     "exit_price": 154.5,
-    "pnl_pct": -9.13,
+    "pnl_pct": -10.89,
     "reason": "stop_loss",
-    "days_held": 70,
+    "days_held": 28,
     "layer": "CORE"
   },
   {
@@ -4933,14 +4357,14 @@
     "regime": "BULL"
   },
   {
-    "ticker": "AAPL",
-    "entry_date": "2024-12-13",
-    "exit_date": "2025-01-16",
-    "entry_price": 248.13,
-    "exit_price": 228.26,
-    "pnl_pct": -8.01,
-    "reason": "stop_loss",
-    "days_held": 34,
+    "ticker": "NVDA",
+    "entry_date": "2023-12-01",
+    "exit_date": "2025-01-24",
+    "entry_price": 46.765,
+    "exit_price": 142.62,
+    "pnl_pct": 204.97,
+    "reason": "rotation",
+    "days_held": 420,
     "layer": "CORE"
   },
   {
@@ -4952,39 +4376,6 @@
     "pnl_pct": 6.06,
     "reason": "rotation",
     "days_held": 126,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GS",
-    "entry_date": "2024-12-13",
-    "exit_date": "2025-01-24",
-    "entry_price": 585.48,
-    "exit_price": 636.9,
-    "pnl_pct": 8.78,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MS",
-    "entry_date": "2024-12-13",
-    "exit_date": "2025-01-24",
-    "entry_price": 127.4,
-    "exit_price": 137.82,
-    "pnl_pct": 8.18,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ORCL",
-    "entry_date": "2025-01-24",
-    "exit_date": "2025-01-27",
-    "entry_price": 183.6,
-    "exit_price": 158.28,
-    "pnl_pct": -13.79,
-    "reason": "stop_loss",
-    "days_held": 3,
     "layer": "CORE"
   },
   {
@@ -5118,28 +4509,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "ISRG",
-    "entry_date": "2025-01-24",
-    "exit_date": "2025-03-06",
-    "entry_price": 584.05,
-    "exit_price": 538.57,
-    "pnl_pct": -7.79,
-    "reason": "stop_loss",
-    "days_held": 41,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "QQQ",
-    "entry_date": "2025-01-24",
-    "exit_date": "2025-03-06",
-    "entry_price": 529.63,
-    "exit_price": 488.2,
-    "pnl_pct": -7.82,
-    "reason": "stop_loss",
-    "days_held": 41,
-    "layer": "CORE"
-  },
-  {
     "ticker": "HUT",
     "entry_date": "2025-02-24",
     "exit_date": "2025-03-06",
@@ -5152,28 +4521,6 @@
     "regime": "NEUTRAL"
   },
   {
-    "ticker": "NVDA",
-    "entry_date": "2023-12-01",
-    "exit_date": "2025-03-07",
-    "entry_price": 46.765,
-    "exit_price": 112.69,
-    "pnl_pct": 140.97,
-    "reason": "rotation",
-    "days_held": 462,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "COST",
-    "entry_date": "2024-06-28",
-    "exit_date": "2025-03-07",
-    "entry_price": 849.99,
-    "exit_price": 964.31,
-    "pnl_pct": 13.45,
-    "reason": "rotation",
-    "days_held": 252,
-    "layer": "CORE"
-  },
-  {
     "ticker": "AAPL",
     "entry_date": "2025-01-24",
     "exit_date": "2025-03-07",
@@ -5182,6 +4529,39 @@
     "pnl_pct": 7.31,
     "reason": "rotation",
     "days_held": 42,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "COST",
+    "entry_date": "2025-01-24",
+    "exit_date": "2025-03-07",
+    "entry_price": 939.68,
+    "exit_price": 964.31,
+    "pnl_pct": 2.62,
+    "reason": "rotation",
+    "days_held": 42,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "WMT",
+    "entry_date": "2024-09-20",
+    "exit_date": "2025-03-10",
+    "entry_price": 79.06,
+    "exit_price": 87.82,
+    "pnl_pct": 11.08,
+    "reason": "bear_exit",
+    "days_held": 171,
+    "layer": "CORE"
+  },
+  {
+    "ticker": "CRM",
+    "entry_date": "2025-03-07",
+    "exit_date": "2025-03-10",
+    "entry_price": 282.89,
+    "exit_price": 272.9,
+    "pnl_pct": -3.53,
+    "reason": "bear_exit",
+    "days_held": 3,
     "layer": "CORE"
   },
   {
@@ -5213,61 +4593,6 @@
     "entry_price": 242.28,
     "exit_price": 232.22,
     "pnl_pct": -4.15,
-    "reason": "bear_exit",
-    "days_held": 3,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLF",
-    "entry_date": "2025-03-07",
-    "exit_date": "2025-03-10",
-    "entry_price": 49.12,
-    "exit_price": 48.02,
-    "pnl_pct": -2.24,
-    "reason": "bear_exit",
-    "days_held": 3,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ISRG",
-    "entry_date": "2025-03-07",
-    "exit_date": "2025-03-10",
-    "entry_price": 518.26,
-    "exit_price": 482.61,
-    "pnl_pct": -6.88,
-    "reason": "bear_exit",
-    "days_held": 3,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MA",
-    "entry_date": "2025-03-07",
-    "exit_date": "2025-03-10",
-    "entry_price": 546.77,
-    "exit_price": 537.12,
-    "pnl_pct": -1.76,
-    "reason": "bear_exit",
-    "days_held": 3,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GS",
-    "entry_date": "2025-03-07",
-    "exit_date": "2025-03-10",
-    "entry_price": 559.67,
-    "exit_price": 531.66,
-    "pnl_pct": -5.0,
-    "reason": "bear_exit",
-    "days_held": 3,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "MS",
-    "entry_date": "2025-03-07",
-    "exit_date": "2025-03-10",
-    "entry_price": 119.29,
-    "exit_price": 111.69,
-    "pnl_pct": -6.37,
     "reason": "bear_exit",
     "days_held": 3,
     "layer": "CORE"
@@ -5321,12 +4646,12 @@
     "regime": "NEUTRAL"
   },
   {
-    "ticker": "SPXL",
+    "ticker": "UPRO",
     "entry_date": "2025-03-24",
     "exit_date": "2025-04-03",
-    "entry_price": 152.92,
-    "exit_price": 123.82,
-    "pnl_pct": -19.03,
+    "entry_price": 80.47,
+    "exit_price": 65.13,
+    "pnl_pct": -19.06,
     "reason": "stop_loss",
     "days_held": 10,
     "layer": "SATELLITE",
@@ -5357,54 +4682,6 @@
     "regime": "BEAR"
   },
   {
-    "ticker": "UPST",
-    "entry_date": "2025-05-13",
-    "exit_date": "2025-05-21",
-    "entry_price": 53.68,
-    "exit_price": 43.92,
-    "pnl_pct": -18.18,
-    "reason": "stop_loss",
-    "days_held": 8,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "MRNA",
-    "entry_date": "2025-05-14",
-    "exit_date": "2025-06-03",
-    "entry_price": 24.02,
-    "exit_price": 27.81,
-    "pnl_pct": 15.78,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "ASTS",
-    "entry_date": "2025-05-14",
-    "exit_date": "2025-06-03",
-    "entry_price": 26.25,
-    "exit_price": 25.18,
-    "pnl_pct": -4.08,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "AFRM",
-    "entry_date": "2025-05-15",
-    "exit_date": "2025-06-04",
-    "entry_price": 51.75,
-    "exit_price": 54.33,
-    "pnl_pct": 4.99,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
     "ticker": "TSLA",
     "entry_date": "2025-05-12",
     "exit_date": "2025-06-05",
@@ -5414,30 +4691,6 @@
     "reason": "stop_loss",
     "days_held": 24,
     "layer": "CORE"
-  },
-  {
-    "ticker": "ASTS",
-    "entry_date": "2025-06-03",
-    "exit_date": "2025-06-09",
-    "entry_price": 25.18,
-    "exit_price": 34.82,
-    "pnl_pct": 38.28,
-    "reason": "take_profit",
-    "days_held": 6,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
-  },
-  {
-    "ticker": "FAS",
-    "entry_date": "2025-05-23",
-    "exit_date": "2025-06-12",
-    "entry_price": 148.6,
-    "exit_price": 156.11,
-    "pnl_pct": 5.05,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "BEAR"
   },
   {
     "ticker": "MA",
@@ -5451,71 +4704,25 @@
     "layer": "CORE"
   },
   {
-    "ticker": "XLF",
+    "ticker": "COST",
     "entry_date": "2025-05-12",
     "exit_date": "2025-06-23",
-    "entry_price": 50.87,
-    "exit_price": 50.82,
-    "pnl_pct": -0.1,
+    "entry_price": 1016.15,
+    "exit_price": 1004.48,
+    "pnl_pct": -1.15,
     "reason": "rotation",
     "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "RTX",
-    "entry_date": "2025-05-12",
-    "exit_date": "2025-06-23",
-    "entry_price": 130.56,
-    "exit_price": 145.81,
-    "pnl_pct": 11.68,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "TSLA",
-    "entry_date": "2025-06-05",
-    "exit_date": "2025-06-25",
-    "entry_price": 284.7,
-    "exit_price": 327.55,
-    "pnl_pct": 15.05,
-    "reason": "timeout",
-    "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "NEUTRAL"
-  },
-  {
-    "ticker": "TSLA",
-    "entry_date": "2025-06-23",
-    "exit_date": "2025-06-27",
-    "entry_price": 348.68,
-    "exit_price": 323.63,
-    "pnl_pct": -7.18,
-    "reason": "stop_loss",
-    "days_held": 4,
     "layer": "CORE"
   },
   {
     "ticker": "RIVN",
-    "entry_date": "2025-06-12",
-    "exit_date": "2025-07-02",
-    "entry_price": 13.91,
-    "exit_price": 12.87,
-    "pnl_pct": -7.48,
+    "entry_date": "2025-06-13",
+    "exit_date": "2025-07-03",
+    "entry_price": 13.42,
+    "exit_price": 13.07,
+    "pnl_pct": -2.61,
     "reason": "timeout",
     "days_held": 20,
-    "layer": "SATELLITE",
-    "regime": "NEUTRAL"
-  },
-  {
-    "ticker": "SOUN",
-    "entry_date": "2025-06-16",
-    "exit_date": "2025-07-07",
-    "entry_price": 9.72,
-    "exit_price": 11.38,
-    "pnl_pct": 17.08,
-    "reason": "timeout",
-    "days_held": 21,
     "layer": "SATELLITE",
     "regime": "NEUTRAL"
   },
@@ -5532,35 +4739,36 @@
     "regime": "NEUTRAL"
   },
   {
-    "ticker": "HIMS",
-    "entry_date": "2025-06-25",
-    "exit_date": "2025-07-15",
-    "entry_price": 41.41,
-    "exit_price": 50.46,
-    "pnl_pct": 21.85,
+    "ticker": "FAS",
+    "entry_date": "2025-06-17",
+    "exit_date": "2025-07-07",
+    "entry_price": 148.5,
+    "exit_price": 171.44,
+    "pnl_pct": 15.45,
     "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
-    "regime": "BULL"
+    "regime": "NEUTRAL"
   },
   {
-    "ticker": "COST",
-    "entry_date": "2025-05-12",
-    "exit_date": "2025-07-22",
-    "entry_price": 1016.15,
-    "exit_price": 941.61,
-    "pnl_pct": -7.34,
-    "reason": "stop_loss",
-    "days_held": 71,
-    "layer": "CORE"
+    "ticker": "SOUN",
+    "entry_date": "2025-06-17",
+    "exit_date": "2025-07-07",
+    "entry_price": 9.34,
+    "exit_price": 11.38,
+    "pnl_pct": 21.84,
+    "reason": "timeout",
+    "days_held": 20,
+    "layer": "SATELLITE",
+    "regime": "NEUTRAL"
   },
   {
     "ticker": "RIVN",
-    "entry_date": "2025-07-02",
-    "exit_date": "2025-07-22",
-    "entry_price": 12.87,
-    "exit_price": 14.12,
-    "pnl_pct": 9.71,
+    "entry_date": "2025-07-03",
+    "exit_date": "2025-07-23",
+    "entry_price": 13.07,
+    "exit_price": 14.02,
+    "pnl_pct": 7.27,
     "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
@@ -5579,6 +4787,18 @@
     "regime": "BULL"
   },
   {
+    "ticker": "HIMS",
+    "entry_date": "2025-07-07",
+    "exit_date": "2025-07-28",
+    "entry_price": 48.42,
+    "exit_price": 58.68,
+    "pnl_pct": 21.19,
+    "reason": "timeout",
+    "days_held": 21,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
     "ticker": "ARM",
     "entry_date": "2025-07-07",
     "exit_date": "2025-07-28",
@@ -5591,27 +4811,27 @@
     "regime": "BULL"
   },
   {
-    "ticker": "HIMS",
-    "entry_date": "2025-07-15",
-    "exit_date": "2025-07-30",
-    "entry_price": 50.46,
-    "exit_price": 65.53,
-    "pnl_pct": 29.87,
-    "reason": "take_profit",
-    "days_held": 15,
-    "layer": "SATELLITE",
-    "regime": "BULL"
-  },
-  {
-    "ticker": "MA",
+    "ticker": "MS",
     "entry_date": "2025-06-23",
     "exit_date": "2025-08-04",
-    "entry_price": 542.35,
-    "exit_price": 569.81,
-    "pnl_pct": 5.06,
+    "entry_price": 134.0,
+    "exit_price": 141.36,
+    "pnl_pct": 5.49,
     "reason": "rotation",
     "days_held": 42,
     "layer": "CORE"
+  },
+  {
+    "ticker": "RIVN",
+    "entry_date": "2025-07-28",
+    "exit_date": "2025-08-05",
+    "entry_price": 13.78,
+    "exit_price": 12.15,
+    "pnl_pct": -11.83,
+    "reason": "stop_loss",
+    "days_held": 8,
+    "layer": "SATELLITE",
+    "regime": "BULL"
   },
   {
     "ticker": "SOUN",
@@ -5650,12 +4870,12 @@
     "regime": "BULL"
   },
   {
-    "ticker": "RIVN",
-    "entry_date": "2025-07-30",
-    "exit_date": "2025-08-19",
-    "entry_price": 13.03,
-    "exit_price": 12.25,
-    "pnl_pct": -5.99,
+    "ticker": "COIN",
+    "entry_date": "2025-08-05",
+    "exit_date": "2025-08-25",
+    "entry_price": 297.99,
+    "exit_price": 306.0,
+    "pnl_pct": 2.69,
     "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
@@ -5686,17 +4906,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "MSFT",
-    "entry_date": "2025-08-04",
-    "exit_date": "2025-09-05",
-    "entry_price": 535.64,
-    "exit_price": 495.0,
-    "pnl_pct": -7.59,
-    "reason": "stop_loss",
-    "days_held": 32,
-    "layer": "CORE"
-  },
-  {
     "ticker": "HIMS",
     "entry_date": "2025-08-18",
     "exit_date": "2025-09-08",
@@ -5709,16 +4918,27 @@
     "regime": "BULL"
   },
   {
-    "ticker": "MSTR",
-    "entry_date": "2025-08-19",
-    "exit_date": "2025-09-08",
-    "entry_price": 336.57,
-    "exit_price": 329.9,
-    "pnl_pct": -1.98,
-    "reason": "timeout",
-    "days_held": 20,
+    "ticker": "BNTX",
+    "entry_date": "2025-08-25",
+    "exit_date": "2025-09-12",
+    "entry_price": 105.07,
+    "exit_price": 96.74,
+    "pnl_pct": -7.93,
+    "reason": "stop_loss",
+    "days_held": 18,
     "layer": "SATELLITE",
     "regime": "BULL"
+  },
+  {
+    "ticker": "WMT",
+    "entry_date": "2025-05-12",
+    "exit_date": "2025-09-15",
+    "entry_price": 96.75,
+    "exit_price": 103.69,
+    "pnl_pct": 7.17,
+    "reason": "rotation",
+    "days_held": 126,
+    "layer": "CORE"
   },
   {
     "ticker": "V",
@@ -5730,40 +4950,6 @@
     "reason": "rotation",
     "days_held": 126,
     "layer": "CORE"
-  },
-  {
-    "ticker": "MS",
-    "entry_date": "2025-06-23",
-    "exit_date": "2025-09-15",
-    "entry_price": 134.0,
-    "exit_price": 156.64,
-    "pnl_pct": 16.9,
-    "reason": "rotation",
-    "days_held": 84,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLF",
-    "entry_date": "2025-08-04",
-    "exit_date": "2025-09-15",
-    "entry_price": 51.91,
-    "exit_price": 53.68,
-    "pnl_pct": 3.41,
-    "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "CLSK",
-    "entry_date": "2025-09-08",
-    "exit_date": "2025-09-18",
-    "entry_price": 9.17,
-    "exit_price": 13.46,
-    "pnl_pct": 46.78,
-    "reason": "take_profit",
-    "days_held": 10,
-    "layer": "SATELLITE",
-    "regime": "BULL"
   },
   {
     "ticker": "SMCI",
@@ -5802,26 +4988,38 @@
     "regime": "BULL"
   },
   {
-    "ticker": "UPST",
+    "ticker": "DKNG",
     "entry_date": "2025-09-22",
-    "exit_date": "2025-09-29",
-    "entry_price": 64.9,
-    "exit_price": 52.74,
-    "pnl_pct": -18.74,
+    "exit_date": "2025-09-30",
+    "entry_price": 43.84,
+    "exit_price": 37.4,
+    "pnl_pct": -14.69,
+    "reason": "stop_loss",
+    "days_held": 8,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
+    "ticker": "UPST",
+    "entry_date": "2025-09-23",
+    "exit_date": "2025-09-30",
+    "entry_price": 62.38,
+    "exit_price": 50.8,
+    "pnl_pct": -18.56,
     "reason": "stop_loss",
     "days_held": 7,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
   {
-    "ticker": "DKNG",
-    "entry_date": "2025-09-18",
-    "exit_date": "2025-09-30",
-    "entry_price": 43.3,
-    "exit_price": 37.4,
-    "pnl_pct": -13.63,
-    "reason": "stop_loss",
-    "days_held": 12,
+    "ticker": "MRNA",
+    "entry_date": "2025-09-12",
+    "exit_date": "2025-10-02",
+    "entry_price": 23.51,
+    "exit_price": 28.37,
+    "pnl_pct": 20.67,
+    "reason": "timeout",
+    "days_held": 20,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -5850,60 +5048,49 @@
     "regime": "BULL"
   },
   {
-    "ticker": "BNTX",
-    "entry_date": "2025-09-23",
-    "exit_date": "2025-10-13",
-    "entry_price": 98.27,
-    "exit_price": 102.3,
-    "pnl_pct": 4.1,
+    "ticker": "UPST",
+    "entry_date": "2025-09-30",
+    "exit_date": "2025-10-20",
+    "entry_price": 50.8,
+    "exit_price": 50.22,
+    "pnl_pct": -1.14,
     "reason": "timeout",
     "days_held": 20,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
   {
-    "ticker": "UPST",
-    "entry_date": "2025-09-29",
-    "exit_date": "2025-10-20",
-    "entry_price": 52.74,
-    "exit_price": 50.22,
-    "pnl_pct": -4.78,
+    "ticker": "RIVN",
+    "entry_date": "2025-10-02",
+    "exit_date": "2025-10-22",
+    "entry_price": 13.53,
+    "exit_price": 12.92,
+    "pnl_pct": -4.51,
     "reason": "timeout",
-    "days_held": 21,
+    "days_held": 20,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
   {
     "ticker": "JPM",
-    "entry_date": "2025-05-12",
+    "entry_date": "2025-06-23",
     "exit_date": "2025-10-27",
-    "entry_price": 260.05,
+    "entry_price": 278.27,
     "exit_price": 304.15,
-    "pnl_pct": 16.96,
+    "pnl_pct": 9.3,
     "reason": "rotation",
-    "days_held": 168,
+    "days_held": 126,
     "layer": "CORE"
   },
   {
-    "ticker": "MSFT",
-    "entry_date": "2025-09-15",
+    "ticker": "GS",
+    "entry_date": "2025-08-04",
     "exit_date": "2025-10-27",
-    "entry_price": 515.36,
-    "exit_price": 531.52,
-    "pnl_pct": 3.14,
+    "entry_price": 726.03,
+    "exit_price": 789.99,
+    "pnl_pct": 8.81,
     "reason": "rotation",
-    "days_held": 42,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "QQQ",
-    "entry_date": "2025-09-15",
-    "exit_date": "2025-10-27",
-    "entry_price": 591.68,
-    "exit_price": 628.09,
-    "pnl_pct": 6.15,
-    "reason": "rotation",
-    "days_held": 42,
+    "days_held": 84,
     "layer": "CORE"
   },
   {
@@ -5919,29 +5106,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "ABBV",
-    "entry_date": "2025-10-27",
-    "exit_date": "2025-11-03",
-    "entry_price": 228.03,
-    "exit_price": 211.96,
-    "pnl_pct": -7.05,
-    "reason": "stop_loss",
-    "days_held": 7,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "RIVN",
-    "entry_date": "2025-10-13",
-    "exit_date": "2025-11-03",
-    "entry_price": 13.06,
-    "exit_price": 13.19,
-    "pnl_pct": 1.0,
-    "reason": "timeout",
-    "days_held": 21,
-    "layer": "SATELLITE",
-    "regime": "BULL"
-  },
-  {
     "ticker": "FAS",
     "entry_date": "2025-10-13",
     "exit_date": "2025-11-03",
@@ -5950,6 +5114,18 @@
     "pnl_pct": -4.16,
     "reason": "timeout",
     "days_held": 21,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
+    "ticker": "MSTR",
+    "entry_date": "2025-10-22",
+    "exit_date": "2025-11-06",
+    "entry_price": 280.81,
+    "exit_price": 237.2,
+    "pnl_pct": -15.53,
+    "reason": "stop_loss",
+    "days_held": 15,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -5990,16 +5166,15 @@
     "regime": "BULL"
   },
   {
-    "ticker": "IONQ",
-    "entry_date": "2025-11-03",
+    "ticker": "XLK",
+    "entry_date": "2025-10-27",
     "exit_date": "2025-11-20",
-    "entry_price": 58.4,
-    "exit_price": 41.0,
-    "pnl_pct": -29.79,
+    "entry_price": 149.5,
+    "exit_price": 136.075,
+    "pnl_pct": -8.98,
     "reason": "stop_loss",
-    "days_held": 17,
-    "layer": "SATELLITE",
-    "regime": "BULL"
+    "days_held": 24,
+    "layer": "CORE"
   },
   {
     "ticker": "RBLX",
@@ -6010,6 +5185,18 @@
     "pnl_pct": -17.1,
     "reason": "stop_loss",
     "days_held": 18,
+    "layer": "SATELLITE",
+    "regime": "BULL"
+  },
+  {
+    "ticker": "DKNG",
+    "entry_date": "2025-11-06",
+    "exit_date": "2025-11-26",
+    "entry_price": 27.98,
+    "exit_price": 32.2,
+    "pnl_pct": 15.08,
+    "reason": "timeout",
+    "days_held": 20,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -6026,17 +5213,6 @@
     "regime": "BULL"
   },
   {
-    "ticker": "NOC",
-    "entry_date": "2025-10-27",
-    "exit_date": "2025-12-01",
-    "entry_price": 595.95,
-    "exit_price": 545.51,
-    "pnl_pct": -8.46,
-    "reason": "stop_loss",
-    "days_held": 35,
-    "layer": "CORE"
-  },
-  {
     "ticker": "RIOT",
     "entry_date": "2025-11-13",
     "exit_date": "2025-12-03",
@@ -6049,35 +5225,12 @@
     "regime": "BULL"
   },
   {
-    "ticker": "TNA",
-    "entry_date": "2025-11-20",
-    "exit_date": "2025-12-04",
-    "entry_price": 37.15,
-    "exit_price": 48.77,
-    "pnl_pct": 31.28,
-    "reason": "take_profit",
-    "days_held": 14,
-    "layer": "SATELLITE",
-    "regime": "BULL"
-  },
-  {
     "ticker": "RTX",
-    "entry_date": "2025-08-04",
-    "exit_date": "2025-12-08",
-    "entry_price": 157.38,
-    "exit_price": 171.52,
-    "pnl_pct": 8.98,
-    "reason": "rotation",
-    "days_held": 126,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "XLK",
     "entry_date": "2025-09-15",
     "exit_date": "2025-12-08",
-    "entry_price": 136.66,
-    "exit_price": 147.63,
-    "pnl_pct": 8.03,
+    "entry_price": 158.37,
+    "exit_price": 171.52,
+    "pnl_pct": 8.3,
     "reason": "rotation",
     "days_held": 84,
     "layer": "CORE"
@@ -6118,25 +5271,26 @@
     "regime": "BULL"
   },
   {
-    "ticker": "AMD",
-    "entry_date": "2025-12-08",
-    "exit_date": "2025-12-17",
-    "entry_price": 221.11,
-    "exit_price": 198.11,
-    "pnl_pct": -10.4,
-    "reason": "stop_loss",
-    "days_held": 9,
-    "layer": "CORE"
+    "ticker": "SOUN",
+    "entry_date": "2025-11-26",
+    "exit_date": "2025-12-16",
+    "entry_price": 11.82,
+    "exit_price": 11.11,
+    "pnl_pct": -6.01,
+    "reason": "timeout",
+    "days_held": 20,
+    "layer": "SATELLITE",
+    "regime": "BULL"
   },
   {
     "ticker": "RBLX",
-    "entry_date": "2025-12-04",
+    "entry_date": "2025-12-11",
     "exit_date": "2025-12-18",
-    "entry_price": 95.21,
+    "entry_price": 94.34,
     "exit_price": 83.91,
-    "pnl_pct": -11.87,
+    "pnl_pct": -11.06,
     "reason": "stop_loss",
-    "days_held": 14,
+    "days_held": 7,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
@@ -6165,35 +5319,24 @@
     "regime": "BULL"
   },
   {
-    "ticker": "SOUN",
-    "entry_date": "2025-12-11",
-    "exit_date": "2025-12-30",
-    "entry_price": 12.03,
-    "exit_price": 10.04,
-    "pnl_pct": -16.54,
+    "ticker": "ARM",
+    "entry_date": "2025-12-16",
+    "exit_date": "2025-12-31",
+    "entry_price": 121.1,
+    "exit_price": 109.31,
+    "pnl_pct": -9.74,
     "reason": "stop_loss",
-    "days_held": 19,
+    "days_held": 15,
     "layer": "SATELLITE",
     "regime": "BULL"
   },
   {
     "ticker": "AVGO",
-    "entry_date": "2025-05-12",
-    "exit_date": "2025-12-31",
-    "entry_price": 221.58,
-    "exit_price": 346.1,
-    "pnl_pct": 56.2,
-    "reason": "end_of_backtest",
-    "days_held": 233,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "GS",
     "entry_date": "2025-06-23",
     "exit_date": "2025-12-31",
-    "entry_price": 646.88,
-    "exit_price": 879.0,
-    "pnl_pct": 35.88,
+    "entry_price": 253.77,
+    "exit_price": 346.1,
+    "pnl_pct": 36.38,
     "reason": "end_of_backtest",
     "days_held": 191,
     "layer": "CORE"
@@ -6221,6 +5364,17 @@
     "layer": "CORE"
   },
   {
+    "ticker": "GS",
+    "entry_date": "2025-12-08",
+    "exit_date": "2025-12-31",
+    "entry_price": 866.69,
+    "exit_price": 879.0,
+    "pnl_pct": 1.42,
+    "reason": "end_of_backtest",
+    "days_held": 23,
+    "layer": "CORE"
+  },
+  {
     "ticker": "MS",
     "entry_date": "2025-12-08",
     "exit_date": "2025-12-31",
@@ -6232,34 +5386,12 @@
     "layer": "CORE"
   },
   {
-    "ticker": "TSLA",
-    "entry_date": "2025-12-08",
-    "exit_date": "2025-12-31",
-    "entry_price": 439.58,
-    "exit_price": 449.72,
-    "pnl_pct": 2.31,
-    "reason": "end_of_backtest",
-    "days_held": 23,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "JPM",
-    "entry_date": "2025-12-08",
-    "exit_date": "2025-12-31",
-    "entry_price": 315.21,
-    "exit_price": 322.22,
-    "pnl_pct": 2.22,
-    "reason": "end_of_backtest",
-    "days_held": 23,
-    "layer": "CORE"
-  },
-  {
-    "ticker": "ARM",
+    "ticker": "RIOT",
     "entry_date": "2025-12-18",
     "exit_date": "2025-12-31",
-    "entry_price": 113.51,
-    "exit_price": 109.31,
-    "pnl_pct": -3.7,
+    "entry_price": 13.38,
+    "exit_price": 12.67,
+    "pnl_pct": -5.31,
     "reason": "end_of_backtest",
     "days_held": 13,
     "layer": "SATELLITE"
@@ -6276,25 +5408,25 @@
     "layer": "SATELLITE"
   },
   {
-    "ticker": "RBLX",
+    "ticker": "SOUN",
     "entry_date": "2025-12-26",
     "exit_date": "2025-12-31",
-    "entry_price": 82.22,
-    "exit_price": 81.03,
-    "pnl_pct": -1.45,
+    "entry_price": 10.7,
+    "exit_price": 9.97,
+    "pnl_pct": -6.82,
     "reason": "end_of_backtest",
     "days_held": 5,
     "layer": "SATELLITE"
   },
   {
-    "ticker": "RIOT",
-    "entry_date": "2025-12-30",
+    "ticker": "SMCI",
+    "entry_date": "2025-12-31",
     "exit_date": "2025-12-31",
-    "entry_price": 12.7,
-    "exit_price": 12.67,
-    "pnl_pct": -0.24,
+    "entry_price": 29.27,
+    "exit_price": 29.27,
+    "pnl_pct": 0.0,
     "reason": "end_of_backtest",
-    "days_held": 1,
+    "days_held": 0,
     "layer": "SATELLITE"
   }
 ]
