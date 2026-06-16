@@ -43,20 +43,24 @@ CORE_UNIVERSE = [
 ]
 
 SATELLITE_OFFENSIVE = [
-    "TQQQ", "SOXL", "UPRO", "TECL",
-    "COIN", "MSTR", "RIOT", "MARA",
-    "PLTR", "SMCI", "IONQ", "RBLX",
-    "MRNA", "BNTX", "DKNG", "SOFI",
-    "NVDA", "AMD", "TSLA",
+    # Leveraged ETFs
+    "TQQQ", "SOXL", "UPRO", "TECL", "LABU", "FAS", "TNA", "SPXL",
+    # Crypto-adjacent
+    "COIN", "MSTR", "RIOT", "MARA", "CLSK", "HUT", "BITF",
+    # High beta tech
+    "PLTR", "SMCI", "IONQ", "RBLX", "HOOD", "SOFI", "AFRM",
+    "UPST", "HIMS", "SOUN",
+    # AI plays
+    "NVDA", "AMD", "ARM", "MRVL",
+    # Biotech
+    "MRNA", "BNTX",
+    # High momentum / space
+    "DKNG", "RKLB", "ASTS", "TSLA", "RIVN",
+    # ETFs volatils
+    "XBI", "ARKK",
 ]
 
-SATELLITE_DEFENSIVE = [
-    "XLE", "XLP", "XLV", "XLU", "GLD",
-    "LMT", "NOC", "GD", "RTX",
-    "WMT", "COST", "PG", "KO",
-    "ABBV", "JNJ", "MRK",
-    "V", "MA",
-]
+SATELLITE_DEFENSIVE = []
 
 ALL_TICKERS = list(set(
     CORE_UNIVERSE + SATELLITE_OFFENSIVE + SATELLITE_DEFENSIVE
@@ -453,7 +457,7 @@ def run_single(all_data, bench_df, all_dates, params):
                 del sat_holdings[ticker]
 
         # ── SATELLITE: Daily entries ──────────────────────────────────────
-        sat_universe = SATELLITE_DEFENSIVE if in_bear else SATELLITE_OFFENSIVE
+        sat_universe = SATELLITE_OFFENSIVE if not in_bear else []
 
         max_sat = 4
         if len(sat_holdings) < max_sat and sat_cash > 0:
