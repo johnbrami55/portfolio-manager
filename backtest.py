@@ -548,6 +548,8 @@ def run_single(all_data, bench_df, all_dates, params):
     dr     = eq_s.pct_change().dropna()
     sharpe = float((dr.mean() / dr.std() * np.sqrt(252))) if dr.std() > 0 else 0
 
+    annual = calc_annual_perf(trades, all_dates, equity)
+    
     return {
         "params":        params,
         "total_return":  round(total_ret, 1),
@@ -561,7 +563,7 @@ def run_single(all_data, bench_df, all_dates, params):
         "n_trades":      len(trades),
         "equity":        [round(e, 2) for e in equity],
         "trades":        trades,
-    annual = calc_annual_perf(trades, all_dates, equity)
+    
     }
 def calc_annual_perf(trades, all_dates, equity):
     """Calculate performance year by year."""
