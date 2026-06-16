@@ -65,7 +65,7 @@ SECTOR_MAP = {
 }
 
 PARAM_GRID = {
-    "score_thresh":  [36, 40],
+    "score_thresh":  [35, 40],
     "stop_atr_mult": [2.0, 2.5],
     "take_profit":   [0.22, 0.28, 0.32],
     "max_hold_days": [40, 55],
@@ -265,7 +265,56 @@ def detect_regime(bench_closes):
     if ma50 > ma200 * 1.02 and mom > 0:      return "BULL"
     elif ma50 < ma200 * 0.98 or mom < -0.05: return "BEAR"
     return "NEUTRAL"
+    
+def detect_market_mode(bench_closes):
+    """
+    Detect market mode: NORMAL, TREND_UP, TREND_DOWN, CRASH
+    Based on ADX proxy + volatility + momentum
+    """
+    if len(bench_closes) < 60:
+        return "NORMAL"
 
+    # Volatility: std of daily returns over 10 days vs 60 days
+    ret10 = [(bench_closes[i] - bench_closes[i+1]) / bench_closes[i+1]
+             for i in range(10)]
+    ret60 = [(bench_closes[i] - bench_closes[i+1]) / bench_closes[i+1]
+             for i in range(60)]
+    vol10 = (sum(r**2 for r in ret10) / 10) ** 0.5
+    vol60 = (sum(r**2 for r in ret60) / 60) ** 0.5
+    vol_ratio = vol10 / vol60 if vol60 > 0 else 1.0
+
+    # ADX proxy: smoothed directional movement
+    highs  = bench_closes[:15]
+    lows   = bench_closes[:15]
+    up_moves   = [max(0, highs[i] - highs[i+1]) for i in range(14)]
+    down_moves = [max(0, lows[i+1] - lows[i])   for i in range(14)]
+    plus_di  = sum(up_moves) / 14
+    minus_di = sum(down_moves) / 14
+    dx = abs(plus_di - minus_di) / (plus_di + minus_di) * 100 if (plus_di + minus_di) > 0 else 0
+
+    # Momentum 20 days
+    mom20 = (bench_closes[0] - bench_closes[19]) / bench_closes[19] if len(bench_closes) >= 20 else 0
+
+    # Momentum 5 days (very short term)
+    mom5 = (bench_closes[0] - bench_closes[4]) / bench_closes[4] if len(bench_closes) >= 5 else 0
+
+    # CRASH: high volatility + strong down momentum
+    if vol_ratio > 2.5 and mom20 < -0.08:
+        return "CRASH"
+
+    # TREND_DOWN: high volatility + down momentum
+    if vol_ratio > 1.8 and mom20 < -0.04:
+        return "TREND_DOWN"
+
+    # TREND_UP: strong up momentum + high vol (e.g. COVID rebound)
+    if vol_ratio > 1.5 and mom20 > 0.06 and mom5 > 0:
+        return "TREND_UP"
+
+    # TREND_UP: sustained up momentum even without high vol
+    if mom20 > 0.08 and dx > 25:
+        return "TREND_UP"
+
+    return "NORMAL"
 
 def market_trend_5d(bench_closes):
     """Returns True if S&P500 is trending up over last 5 days."""
@@ -291,7 +340,7 @@ def run_single(all_data, bench_df, all_dates, params):
     max_hold_days = params["max_hold_days"]
 
     cash      = INITIAL_CASH
-    holdings  = {}  # {ticker: {shares, entry_price, entry_date, atr_pct, sector, trail_high}}
+    holdings  = {}
     trades    = []
     equity    = []
     peak_eq   = INITIAL_CASH
@@ -311,57 +360,75 @@ def run_single(all_data, bench_df, all_dates, params):
         if i < 200:
             continue
 
-        # Regime + market trend
+        # Regime + market mode
         b_idx = bench_list.index(today) if today in bench_list else -1
         if b_idx < 200:
-            regime = "NEUTRAL"
-            mkt_up = True
+            regime      = "NEUTRAL"
+            market_mode = "NORMAL"
         else:
-            b_closes = bench_df["close"].iloc[b_idx-200:b_idx+1].tolist()[::-1]
-            regime   = detect_regime(b_closes)
-            mkt_up   = market_trend_5d(b_closes)
+            b_closes    = bench_df["close"].iloc[b_idx-200:b_idx+1].tolist()[::-1]
+            regime      = detect_regime(b_closes)
+            market_mode = detect_market_mode(b_closes)
 
-        # No entries if BEAR or market falling last 5 days
+        # CRASH or TREND_DOWN: exit all positions immediately, no new entries
+        if market_mode in ("CRASH", "TREND_DOWN"):
+            for ticker in list(holdings.keys()):
+                if ticker in all_data and today in all_data[ticker].index:
+                    pos       = holdings[ticker]
+                    cur_price = all_data[ticker].loc[today, "close"]
+                    pnl       = (cur_price - pos["entry_price"]) / pos["entry_price"]
+                    cash     += pos["shares"] * cur_price - FEE_US
+                    trades.append({
+                        "ticker":      ticker,
+                        "entry_date":  str(pos["entry_date"]),
+                        "exit_date":   str(today),
+                        "entry_price": round(pos["entry_price"], 4),
+                        "exit_price":  round(cur_price, 4),
+                        "trail_high":  round(pos.get("trail_high", cur_price), 4),
+                        "pnl_pct":     round(pnl * 100, 2),
+                        "reason":      f"market_{market_mode.lower()}",
+                        "regime":      regime,
+                        "days_held":   (today - pos["entry_date"]).days,
+                        "sector":      pos.get("sector", ""),
+                    })
+            holdings.clear()
+            equity[-1] = cash
+            continue
+
+        # TREND_UP: relax score threshold
+        entry_thresh = score_thresh * 0.8 if market_mode == "TREND_UP" else score_thresh
+
+        # No entries in BEAR
         allow_entry = (regime != "BEAR")
 
-        # Position size factor (drawdown protection)
+        # Position size factor
         ps_factor = position_size_factor(equity, peak_eq)
-        if ps_factor == 0.0:
-            allow_entry = False  # full pause if >20% DD
 
-        # Check exits with TRAILING STOP
+        # Check exits
         for ticker in list(holdings.keys()):
             if ticker not in all_data or today not in all_data[ticker].index:
                 continue
             pos       = holdings[ticker]
             cur_price = all_data[ticker].loc[today, "close"]
 
-            # Update trailing high
             if cur_price > pos["trail_high"]:
                 pos["trail_high"] = cur_price
 
             pnl       = (cur_price - pos["entry_price"]) / pos["entry_price"]
             days_held = (today - pos["entry_date"]).days
-
-           
-            # Fixed ATR stop from ENTRY (not trailing)
             fixed_stop = -pos["atr_pct"] * stop_atr_mult
 
             sell   = False
             reason = ""
             if pnl <= fixed_stop:
-                sell = True
-                reason = "stop_loss"
+                sell = True; reason = "stop_loss"
             elif pnl >= take_profit:
-                sell = True
-                reason = "take_profit"
+                sell = True; reason = "take_profit"
             elif days_held >= max_hold_days:
-                sell = True
-                reason = "timeout"
+                sell = True; reason = "timeout"
 
             if sell:
-                proceeds = pos["shares"] * cur_price - FEE_US
-                cash    += proceeds
+                cash += pos["shares"] * cur_price - FEE_US
                 trades.append({
                     "ticker":      ticker,
                     "entry_date":  str(pos["entry_date"]),
@@ -384,12 +451,12 @@ def run_single(all_data, bench_df, all_dates, params):
                 s = SECTOR_MAP.get(tk, "Other")
                 sector_count[s] = sector_count.get(s, 0) + 1
 
-            # Count losses in last 5 days (inverse pyramiding)
+            # Inverse pyramiding
             recent_losses = sum(1 for t in trades[-10:]
                                 if t["pnl_pct"] < 0 and
                                 (today - datetime.strptime(t["exit_date"], "%Y-%m-%d").date()).days <= 5)
             if recent_losses >= 3:
-                continue  # too many recent losses, skip entries
+                continue
 
             universe_rets = []
             for tk, df in all_data.items():
@@ -414,14 +481,13 @@ def run_single(all_data, bench_df, all_dates, params):
                 volumes = df["volume"].iloc[max(0,t_idx-250):t_idx+1].tolist()[::-1]
 
                 score, atr_pct = score_ticker(closes, highs, lows, volumes, regime, universe_rets)
-                if score >= score_thresh:
+                if score >= entry_thresh:
                     scores.append((ticker, score, df.loc[today, "close"], atr_pct, sec))
 
             scores.sort(key=lambda x: x[1], reverse=True)
             slots = MAX_POSITIONS - len(holdings)
 
             for ticker, score, price, atr_pct, sec in scores[:slots]:
-                # Adjusted slot size with ps_factor
                 slot_size = (INITIAL_CASH / MAX_POSITIONS) * ps_factor
                 invest    = min(slot_size, cash * 0.95)
                 if invest < price:
@@ -437,7 +503,7 @@ def run_single(all_data, bench_df, all_dates, params):
                         "atr_pct":     atr_pct,
                         "score":       score,
                         "sector":      sec,
-                        "trail_high":  price,  # trailing stop starts at entry
+                        "trail_high":  price,
                     }
                     sector_count[sec] = sector_count.get(sec, 0) + 1
 
@@ -496,7 +562,6 @@ def run_single(all_data, bench_df, all_dates, params):
         "equity":        [round(e, 2) for e in equity],
         "trades":        trades,
     }
-
 
 def run_backtest():
     logger.info("Downloading data...")
