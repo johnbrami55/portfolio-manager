@@ -1,8 +1,8 @@
 """
 backtest.py — Combined Model V1 Final:
-- CORE (60%): Simple 9M momentum rotation, variable rebalance frequency
+- CORE (60%): Simple 9M momentum rotation, rebalance every 42 days
 - SATELLITE (40%): Daily swing, offensive in BULL/NEUTRAL, defensive in BEAR
-- Target: 20%+ CAGR, DD < 15%
+- Target: 20%+ CAGR, DD < 20%, regular trades
 """
 import json
 import logging
@@ -22,7 +22,6 @@ START_DATE   = "2020-01-01"
 END_DATE     = "2025-12-31"
 INITIAL_CASH = 10000.0
 FEE_US       = 2.00
-
 CORE_PCT      = 0.60
 SATELLITE_PCT = 0.40
 
@@ -64,14 +63,14 @@ ALL_TICKERS = list(set(
 ))
 
 PARAM_GRID = {
-    "core_n":          [5, 8],
-    "core_mom_days":   [189],        # 9 mois — fixé, prouvé optimal
-    "core_ma":         [150, 200],
-    "rebalance_days":  [7, 14, 21, 42],  # fréquence variable
-    "sat_score_thresh":[33, 38],
-    "sat_stop_atr":    [2.0, 2.5],
-    "sat_take_profit": [0.22, 0.28],
-    "sat_hold_days":   [20, 35],
+    "core_n":           [5, 8],
+    "core_mom_days":    [189],
+    "core_ma":          [150, 200],
+    "rebalance_days":   [42],
+    "sat_score_thresh": [33, 38],
+    "sat_stop_atr":     [2.0, 2.5],
+    "sat_take_profit":  [0.22, 0.28],
+    "sat_hold_days":    [20, 35],
 }
 
 
@@ -103,7 +102,6 @@ def fetch_history(ticker):
 
 
 def calc_momentum(closes, days):
-    """Simple momentum — risk adjusted, skipping last month."""
     if len(closes) < days + 21:
         return None
     mom = (closes[21] - closes[days]) / closes[days]
@@ -151,28 +149,28 @@ def score_satellite(closes, highs, lows, volumes, regime):
     if len(closes) >= 200:
         ma100 = sum(closes[:100]) / 100
         ma200 = sum(closes[:200]) / 200
-        if closes[0] > ma20:   tp += 3.0
-        if ma20 > ma50:        tp += 3.0
-        if ma50 > ma100:       tp += 3.0
-        if ma100 > ma200:      tp += 3.0
+        if closes[0] > ma20:       tp += 3.0
+        if ma20 > ma50:            tp += 3.0
+        if ma50 > ma100:           tp += 3.0
+        if ma100 > ma200:          tp += 3.0
         ma50_prev = sum(closes[5:55])/50 if len(closes) >= 55 else ma50
-        if ma50 > ma50_prev:   tp += 1.0
+        if ma50 > ma50_prev:       tp += 1.0
         if closes[0] > ma200*1.02: tp += 1.0
     elif len(closes) >= 100:
         ma100 = sum(closes[:100]) / 100
-        if closes[0] > ma20:  tp += 2.5
-        if ma20 > ma50:       tp += 2.5
-        if ma50 > ma100:      tp += 3.0
+        if closes[0] > ma20: tp += 2.5
+        if ma20 > ma50:      tp += 2.5
+        if ma50 > ma100:     tp += 3.0
         tp *= 0.85
     if regime == "BEAR": tp *= 0.7
     score += min(tp, 12.0)
 
     rsi = calc_rsi(closes)
-    if 40 <= rsi <= 62:   score += 8.0
-    elif rsi < 25:        score += 6.0
-    elif rsi < 40:        score += 4.0
-    elif rsi > 75:        score += 0.0
-    else:                 score += 3.0
+    if 40 <= rsi <= 62:  score += 8.0
+    elif rsi < 25:       score += 6.0
+    elif rsi < 40:       score += 4.0
+    elif rsi > 75:       score += 0.0
+    else:                score += 3.0
 
     if len(volumes) >= 21:
         avg_vol = sum(volumes[1:21]) / 20
@@ -191,10 +189,10 @@ def score_satellite(closes, highs, lows, volumes, regime):
         macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
         sig_p  = calc_ema(closes[3:12],9)
         hist_p = macd_p - sig_p
-        if hist > 0 and hist_p <= 0:      score += 6.0
-        elif hist > 0 and macd > sig:     score += 4.0
-        elif hist > hist_p and hist > 0:  score += 3.0
-        elif macd > 0:                    score += 1.5
+        if hist > 0 and hist_p <= 0:     score += 6.0
+        elif hist > 0 and macd > sig:    score += 4.0
+        elif hist > hist_p and hist > 0: score += 3.0
+        elif macd > 0:                   score += 1.5
 
     mp = 0.0
     if len(closes) >= 21:
@@ -239,8 +237,8 @@ def detect_regime(bench_closes, ma_period=200):
     ma50  = sum(bench_closes[:50]) / 50
     ma200 = sum(bench_closes[:ma_period]) / ma_period
     mom   = (bench_closes[0]-bench_closes[99])/bench_closes[99] if len(bench_closes) >= 100 else 0
-    if ma50 > ma200*1.02 and mom > 0:       return "BULL"
-    elif ma50 < ma200*0.98 or mom < -0.05:  return "BEAR"
+    if ma50 > ma200*1.02 and mom > 0:      return "BULL"
+    elif ma50 < ma200*0.98 or mom < -0.05: return "BEAR"
     return "NEUTRAL"
 
 
@@ -335,23 +333,20 @@ def run_single(all_data, bench_df, all_dates, params):
             core_holdings.clear()
             last_rebal = today
 
-        # ── CORE: Rebalance check ─────────────────────────────────────────
+        # ── CORE: Rebalance every 42 days ─────────────────────────────────
         do_rebal = (last_rebal is None or (today-last_rebal).days >= rebal_days)
 
         if not in_bear and do_rebal:
-            # Score all core tickers — SAME 9M momentum, just checked more often
             scores = []
             for ticker in CORE_UNIVERSE:
                 if ticker not in all_data or today not in all_data[ticker].index:
                     continue
                 t_idx  = list(all_data[ticker].index).index(today)
                 closes = all_data[ticker]["close"].iloc[max(0,t_idx-core_mom_days-30):t_idx+1].tolist()[::-1]
-
                 if len(closes) >= 200:
                     ma200 = sum(closes[:200])/200
                     if closes[0] < ma200*0.95:
                         continue
-
                 mom = calc_momentum(closes, core_mom_days)
                 if mom is not None:
                     scores.append((ticker, mom, all_data[ticker].loc[today,"close"]))
@@ -359,7 +354,6 @@ def run_single(all_data, bench_df, all_dates, params):
             scores.sort(key=lambda x: x[1], reverse=True)
             target = [s[0] for s in scores[:core_n]]
 
-            # Exit positions not in target
             for ticker in list(core_holdings.keys()):
                 if ticker not in target:
                     if ticker in all_data and today in all_data[ticker].index:
@@ -380,7 +374,6 @@ def run_single(all_data, bench_df, all_dates, params):
                         })
                     del core_holdings[ticker]
 
-            # Enter new positions
             core_total = core_cash
             for ticker, pos in core_holdings.items():
                 if ticker in all_data and today in all_data[ticker].index:
@@ -404,10 +397,9 @@ def run_single(all_data, bench_df, all_dates, params):
                         "entry_price": price,
                         "entry_date":  today,
                     }
-
             last_rebal = today
 
-        # ── CORE: Daily stop-loss ─────────────────────────────────────────
+        # ── CORE: Daily stop-loss -7% ─────────────────────────────────────
         for ticker in list(core_holdings.keys()):
             if ticker not in all_data or today not in all_data[ticker].index:
                 continue
@@ -440,12 +432,9 @@ def run_single(all_data, bench_df, all_dates, params):
             fixed_stop = -pos["atr_pct"] * sat_stop_atr
 
             sell = False; reason = ""
-            if pnl <= fixed_stop:
-                sell = True; reason = "stop_loss"
-            elif pnl >= sat_tp:
-                sell = True; reason = "take_profit"
-            elif days_held >= sat_hold:
-                sell = True; reason = "timeout"
+            if pnl <= fixed_stop:        sell = True; reason = "stop_loss"
+            elif pnl >= sat_tp:          sell = True; reason = "take_profit"
+            elif days_held >= sat_hold:  sell = True; reason = "timeout"
 
             if sell:
                 sat_cash += pos["shares"]*cur_price - FEE_US
@@ -486,7 +475,6 @@ def run_single(all_data, bench_df, all_dates, params):
 
             sat_scores.sort(key=lambda x: x[1], reverse=True)
             slots = max_sat - len(sat_holdings)
-
             for ticker, score, price, atr_pct in sat_scores[:slots]:
                 slot_size = (INITIAL_CASH*SATELLITE_PCT) / max_sat
                 invest    = min(slot_size, sat_cash*0.95)
@@ -645,16 +633,17 @@ def run_backtest():
 
     ws1 = wb.active
     ws1.title = "Optimization"
-    hdrs = ["Core N","Mom Days","MA","Rebal Days","Sat Thresh","Sat ATR","Sat TP","Sat Hold",
-            "Total%","CAGR%","WR%","DD%","Sharpe","Trades","Core","Sat"]
+    hdrs = ["Core N","Mom Days","MA","Rebal","Sat Thresh","Sat ATR",
+            "Sat TP","Sat Hold","Total%","CAGR%","WR%","DD%","Sharpe",
+            "Trades","Core","Sat"]
     for c, h in enumerate(hdrs, 1):
         cell = ws1.cell(row=1, column=c, value=h)
         cell.fill = hf; cell.font = hft
     for r_idx, r in enumerate(sorted(results, key=lambda x: x["sharpe"], reverse=True), 2):
         p = r["params"]
         vals = [p["core_n"], p["core_mom_days"], p["core_ma"], p["rebalance_days"],
-                p["sat_score_thresh"], p["sat_stop_atr"], p["sat_take_profit"], p["sat_hold_days"],
-                r["total_return"], r["cagr"], r["win_rate"],
+                p["sat_score_thresh"], p["sat_stop_atr"], p["sat_take_profit"],
+                p["sat_hold_days"], r["total_return"], r["cagr"], r["win_rate"],
                 r["max_drawdown"], r["sharpe"], r["n_trades"],
                 r["n_core_trades"], r["n_sat_trades"]]
         fill = gf if r["total_return"] > 150 else (
@@ -663,33 +652,33 @@ def run_backtest():
         for c, v in enumerate(vals, 1):
             ws1.cell(row=r_idx, column=c, value=v).fill = fill
     for col in "ABCDEFGHIJKLMNOP":
-        ws1.column_dimensions[col].width = 12
+        ws1.column_dimensions[col].width = 11
 
     ws2 = wb.create_sheet("Best Config")
     sp500_annual = {2020:18.4,2021:28.7,2022:-18.2,2023:26.3,2024:25.0,2025:-2.0}
     rows = [
         ("", "Best Sharpe", "Best Return", "SPY"),
-        ("Core N",         best_sharpe["params"]["core_n"],          best_return["params"]["core_n"],          ""),
-        ("Momentum",       f"{best_sharpe['params']['core_mom_days']}d (9M)", f"{best_return['params']['core_mom_days']}d (9M)", ""),
-        ("MA Filter",      best_sharpe["params"]["core_ma"],         best_return["params"]["core_ma"],         ""),
-        ("Rebal Freq",     f"Every {best_sharpe['params']['rebalance_days']}d", f"Every {best_return['params']['rebalance_days']}d", ""),
-        ("Sat Threshold",  best_sharpe["params"]["sat_score_thresh"],best_return["params"]["sat_score_thresh"],""),
-        ("Sat ATR Stop",   best_sharpe["params"]["sat_stop_atr"],    best_return["params"]["sat_stop_atr"],    ""),
-        ("Sat TP",         f"{best_sharpe['params']['sat_take_profit']*100:.0f}%", f"{best_return['params']['sat_take_profit']*100:.0f}%", ""),
-        ("Sat Hold",       f"{best_sharpe['params']['sat_hold_days']}d", f"{best_return['params']['sat_hold_days']}d", ""),
-        ("Bear Satellite", "Defensive (XLE,LMT,WMT...)", "Defensive (XLE,LMT,WMT...)", ""),
+        ("Core N",        best_sharpe["params"]["core_n"],           best_return["params"]["core_n"],           ""),
+        ("Momentum",      "189d (9M fixed)",                         "189d (9M fixed)",                         ""),
+        ("MA Filter",     best_sharpe["params"]["core_ma"],          best_return["params"]["core_ma"],          ""),
+        ("Rebalance",     "Every 42 days",                           "Every 42 days",                           ""),
+        ("Sat Threshold", best_sharpe["params"]["sat_score_thresh"], best_return["params"]["sat_score_thresh"], ""),
+        ("Sat ATR Stop",  best_sharpe["params"]["sat_stop_atr"],     best_return["params"]["sat_stop_atr"],     ""),
+        ("Sat TP",        f"{best_sharpe['params']['sat_take_profit']*100:.0f}%", f"{best_return['params']['sat_take_profit']*100:.0f}%", ""),
+        ("Sat Hold",      f"{best_sharpe['params']['sat_hold_days']}d", f"{best_return['params']['sat_hold_days']}d", ""),
+        ("Bear Sat",      "Defensive universe", "Defensive universe", ""),
         ("", "", "", ""),
-        ("Total Return",   f"{best_sharpe['total_return']}%",  f"{best_return['total_return']}%",  f"{bench_ret:.1f}%"),
-        ("CAGR",           f"{best_sharpe['cagr']}%/year",     f"{best_return['cagr']}%/year",     ""),
-        ("Win Rate",       f"{best_sharpe['win_rate']}%",      f"{best_return['win_rate']}%",      ""),
-        ("Avg Win",        f"{best_sharpe['avg_win']}%",       f"{best_return['avg_win']}%",       ""),
-        ("Avg Loss",       f"{best_sharpe['avg_loss']}%",      f"{best_return['avg_loss']}%",      ""),
-        ("Profit Factor",  best_sharpe["profit_factor"],       best_return["profit_factor"],       ""),
-        ("Max Drawdown",   f"{best_sharpe['max_drawdown']}%",  f"{best_return['max_drawdown']}%",  ""),
-        ("Sharpe",         best_sharpe["sharpe"],              best_return["sharpe"],              ""),
-        ("Total Trades",   best_sharpe["n_trades"],            best_return["n_trades"],            ""),
-        ("Core Trades",    best_sharpe["n_core_trades"],       best_return["n_core_trades"],       ""),
-        ("Sat Trades",     best_sharpe["n_sat_trades"],        best_return["n_sat_trades"],        ""),
+        ("Total Return",  f"{best_sharpe['total_return']}%",  f"{best_return['total_return']}%",  f"{bench_ret:.1f}%"),
+        ("CAGR",          f"{best_sharpe['cagr']}%/year",     f"{best_return['cagr']}%/year",     ""),
+        ("Win Rate",      f"{best_sharpe['win_rate']}%",      f"{best_return['win_rate']}%",      ""),
+        ("Avg Win",       f"{best_sharpe['avg_win']}%",       f"{best_return['avg_win']}%",       ""),
+        ("Avg Loss",      f"{best_sharpe['avg_loss']}%",      f"{best_return['avg_loss']}%",      ""),
+        ("Profit Factor", best_sharpe["profit_factor"],       best_return["profit_factor"],       ""),
+        ("Max Drawdown",  f"{best_sharpe['max_drawdown']}%",  f"{best_return['max_drawdown']}%",  ""),
+        ("Sharpe",        best_sharpe["sharpe"],              best_return["sharpe"],              ""),
+        ("Total Trades",  best_sharpe["n_trades"],            best_return["n_trades"],            ""),
+        ("Core Trades",   best_sharpe["n_core_trades"],       best_return["n_core_trades"],       ""),
+        ("Sat Trades",    best_sharpe["n_sat_trades"],        best_return["n_sat_trades"],        ""),
     ]
     for r_idx, row in enumerate(rows, 1):
         for c, val in enumerate(row, 1):
@@ -738,7 +727,8 @@ def run_backtest():
     chart.title = "Combined Model V1 Final vs SPY"
     chart.style = 10
     n_rows = len(best_sharpe["equity"]) + 1
-    chart.add_data(Reference(ws5, min_col=2, max_col=3, min_row=1, max_row=n_rows), titles_from_data=True)
+    chart.add_data(Reference(ws5, min_col=2, max_col=3, min_row=1, max_row=n_rows),
+                   titles_from_data=True)
     chart.width = 28; chart.height = 16
     ws5.add_chart(chart, "E2")
 
