@@ -138,98 +138,98 @@ def calc_ema(data, span):
 
 
 def score_satellite(closes, highs, lows, volumes, regime):
+    """
+    Swing trading contrarian — on achète les creux, pas les sommets.
+    Logique : titre en retracement sur support, prêt à rebondir.
+    """
     if len(closes) < 50:
         return 0.0, 0.02
 
     score = 0.0
-    ma20  = sum(closes[:20]) / 20
-    ma50  = sum(closes[:50]) / 50
-    tp    = 0.0
-
-    if len(closes) >= 200:
-        ma100 = sum(closes[:100]) / 100
-        ma200 = sum(closes[:200]) / 200
-        if closes[0] > ma20:       tp += 3.0
-        if ma20 > ma50:            tp += 3.0
-        if ma50 > ma100:           tp += 3.0
-        if ma100 > ma200:          tp += 3.0
-        ma50_prev = sum(closes[5:55])/50 if len(closes) >= 55 else ma50
-        if ma50 > ma50_prev:       tp += 1.0
-        if closes[0] > ma200*1.02: tp += 1.0
-    elif len(closes) >= 100:
-        ma100 = sum(closes[:100]) / 100
-        if closes[0] > ma20: tp += 2.5
-        if ma20 > ma50:      tp += 2.5
-        if ma50 > ma100:     tp += 3.0
-        tp *= 0.85
-    if regime == "BEAR": tp *= 0.7
-    score += min(tp, 12.0)
-
-    rsi = calc_rsi(closes)
-    if 40 <= rsi <= 62:  score += 8.0
-    elif rsi < 25:       score += 6.0
-    elif rsi < 40:       score += 4.0
-    elif rsi > 75:       score += 0.0
-    else:                score += 3.0
-
-    if len(volumes) >= 21:
-        avg_vol = sum(volumes[1:21]) / 20
-        avg5    = sum(volumes[:5]) / 5
-        ratio   = volumes[0] / avg_vol if avg_vol > 0 else 0
-        vt      = avg5 / avg_vol if avg_vol > 0 else 1.0
-        if ratio >= 1.5 and vt > 1.1: score += 8.0
-        elif ratio >= 1.5:             score += 6.0
-        elif ratio >= 1.2:             score += 4.8
-        elif ratio >= 0.8:             score += 2.4
-
-    if len(closes) >= 29:
-        macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
-        sig    = calc_ema(closes[:9],9)
-        hist   = macd - sig
-        macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
-        sig_p  = calc_ema(closes[3:12],9)
-        hist_p = macd_p - sig_p
-        if hist > 0 and hist_p <= 0:     score += 6.0
-        elif hist > 0 and macd > sig:    score += 4.0
-        elif hist > hist_p and hist > 0: score += 3.0
-        elif macd > 0:                   score += 1.5
-
-    mp = 0.0
-    if len(closes) >= 21:
-        r1m = (closes[0]-closes[20])/closes[20]
-        mp += 2.0 if r1m > 0.03 else (1.0 if r1m > 0 else 0.0)
-    if len(closes) >= 63:
-        r3m = (closes[0]-closes[62])/closes[62]
-        mp += 3.0 if r3m > 0.05 else (1.5 if r3m > 0 else 0.0)
-    if len(closes) >= 126:
-        r6m = (closes[0]-closes[125])/closes[125]
-        mp += 3.0 if r6m > 0.08 else (1.5 if r6m > 0 else 0.0)
-    if regime == "BEAR": mp *= 0.6
-    score += min(mp, 8.0)
-
-    sma = sum(closes[:20])/20
-    std = (sum((x-sma)**2 for x in closes[:20])/20)**0.5
-    if std > 0:
-        pctb = (closes[0]-(sma-2*std))/(4*std)
-        if regime == "BEAR":
-            if 0.1 <= pctb <= 0.45:  score += 7.0
-            elif pctb < 0.1:          score += 4.0
-            elif pctb <= 0.65:        score += 2.0
-        else:
-            if pctb >= 0.6:           score += 5.0
-            elif pctb >= 0.4:         score += 3.0
-            elif 0.1 <= pctb < 0.4:   score += 5.0
-
-    stoch = 3.6 if 20 <= rsi <= 60 else (0.0 if rsi > 80 else 2.4)
-    score += stoch
-
     atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
-    if regime == "BEAR" and atr_pct > 0.04:
-        score *= 0.85
 
-    score += 15.0
+    # ── 1. RSI OVERSOLD (max 25 pts) ─────────────────────────────────────
+    # On veut acheter quand c'est oversold, pas overbought
+    rsi = calc_rsi(closes)
+    if rsi < 25:        score += 25.0  # extrême oversold → fort signal
+    elif rsi < 30:      score += 20.0  # oversold classique
+    elif rsi < 35:      score += 15.0  # légèrement oversold
+    elif rsi < 40:      score += 8.0   # neutre bas → acceptable
+    elif rsi > 70:      score += 0.0   # overbought → on n'achète pas
+    elif rsi > 60:      score += 2.0   # trop haut
+    else:               score += 5.0   # neutre
+
+    # ── 2. RETRACEMENT DEPUIS LE SOMMET (max 20 pts) ─────────────────────
+    # On veut un titre qui a corrigé depuis son sommet récent
+    if len(closes) >= 63:
+        high_63 = max(highs[:63]) if highs else max(closes[:63])
+        retrace = (high_63 - closes[0]) / high_63  # % de baisse depuis sommet
+        if retrace >= 0.30:   score += 20.0  # -30% depuis sommet → deep value
+        elif retrace >= 0.20: score += 15.0  # -20% → bon retracement
+        elif retrace >= 0.15: score += 10.0  # -15% → retracement correct
+        elif retrace >= 0.10: score += 5.0   # -10% → léger retracement
+        else:                 score += 0.0   # proche du sommet → pas intéressant
+
+    # ── 3. SUPPORT MA200 (max 15 pts) ────────────────────────────────────
+    # Prix proche de la MA200 = support long terme fort
+    if len(closes) >= 200:
+        ma200 = sum(closes[:200]) / 200
+        dist_ma200 = (closes[0] - ma200) / ma200  # % au-dessus/dessous MA200
+        if -0.05 <= dist_ma200 <= 0.05:   score += 15.0  # sur la MA200 ±5%
+        elif -0.10 <= dist_ma200 <= 0.10: score += 10.0  # proche MA200 ±10%
+        elif dist_ma200 < -0.10:          score += 5.0   # sous MA200 (oversold)
+        else:                             score += 0.0   # trop au-dessus
+
+    # ── 4. FIBONACCI RETRACEMENT (max 15 pts) ────────────────────────────
+    # Retracement de 38.2% ou 61.8% depuis le dernier swing
+    if len(closes) >= 126 and highs and lows:
+        high_126 = max(highs[:126])
+        low_126  = min(lows[:126])
+        swing    = high_126 - low_126
+        if swing > 0:
+            fib_382 = high_126 - swing * 0.382
+            fib_500 = high_126 - swing * 0.500
+            fib_618 = high_126 - swing * 0.618
+            price   = closes[0]
+            tol     = swing * 0.05  # tolérance 5%
+            if abs(price - fib_618) <= tol:  score += 15.0  # golden ratio
+            elif abs(price - fib_500) <= tol: score += 12.0  # 50%
+            elif abs(price - fib_382) <= tol: score += 10.0  # 38.2%
+
+    # ── 5. VOLUME SUR CREUX (max 15 pts) ─────────────────────────────────
+    # Volume en hausse quand le prix est bas = accumulation = signal fort
+    if len(volumes) >= 21 and len(closes) >= 21:
+        avg_vol  = sum(volumes[1:21]) / 20
+        vol_now  = volumes[0]
+        vol_ratio = vol_now / avg_vol if avg_vol > 0 else 1.0
+        # Prix en bas ET volume fort = accumulation
+        rsi_low = rsi < 40
+        if rsi_low and vol_ratio >= 1.5:  score += 15.0  # accumulation claire
+        elif rsi_low and vol_ratio >= 1.2: score += 10.0
+        elif rsi_low and vol_ratio >= 0.8: score += 5.0
+        elif vol_ratio >= 1.5:             score += 5.0   # volume fort mais pas oversold
+        else:                              score += 0.0
+
+    # ── 6. MACD REMONTE DEPUIS LE BAS (max 10 pts) ───────────────────────
+    # On veut voir le MACD qui commence à remonter depuis négatif
+    if len(closes) >= 29:
+        macd    = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
+        sig     = calc_ema(closes[:9],9)
+        hist    = macd - sig
+        macd_p  = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
+        sig_p   = calc_ema(closes[3:12],9)
+        hist_p  = macd_p - sig_p
+
+        if macd < 0 and hist > hist_p:      score += 10.0  # remonte depuis négatif
+        elif macd < 0 and hist > 0:         score += 7.0   # crossover depuis négatif
+        elif macd > 0 and hist > hist_p:    score += 3.0   # positif mais moins intéressant
+        else:                               score += 0.0
+
+    # ── MALUS BEAR ────────────────────────────────────────────────────────
+    if regime == "BEAR":
+        score *= 0.7  # plus sélectif en BEAR
+
     return min(100.0, score), atr_pct
-
 
 def detect_regime(bench_closes, ma_period=200):
     if len(bench_closes) < ma_period:
