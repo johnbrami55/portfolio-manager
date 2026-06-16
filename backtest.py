@@ -1,7 +1,7 @@
 """
 backtest.py — Combined Model V1 Final:
 - CORE (60%): Simple 9M momentum rotation, rebalance every 42 days
-- SATELLITE (40%): Daily swing, offensive in BULL/NEUTRAL, defensive in BEAR
+- SATELLITE (40%): Daily swing, offensive in BULL/NEUTRAL, cash in BEAR
 - Target: 20%+ CAGR, DD < 20%, regular trades
 """
 import json
@@ -42,11 +42,11 @@ CORE_UNIVERSE = [
     "QQQ", "XLK", "XLE", "XLF", "XLV", "XLI", "XLB", "XLP",
 ]
 
-SATELLITE_OFFENSIVE = [
+SATELLITE_UNIVERSE = [
     # Leveraged ETFs
     "TQQQ", "SOXL", "UPRO", "TECL", "LABU", "FAS", "TNA", "SPXL",
     # Crypto-adjacent
-    "COIN", "MSTR", "RIOT", "MARA", "CLSK", "HUT", "BITF",
+    "COIN", "MSTR", "RIOT", "MARA", "CLSK", "HUT",
     # High beta tech
     "PLTR", "SMCI", "IONQ", "RBLX", "HOOD", "SOFI", "AFRM",
     "UPST", "HIMS", "SOUN",
@@ -60,11 +60,7 @@ SATELLITE_OFFENSIVE = [
     "XBI", "ARKK",
 ]
 
-SATELLITE_DEFENSIVE = []
-
-ALL_TICKERS = list(set(
-    CORE_UNIVERSE + SATELLITE_OFFENSIVE + SATELLITE_DEFENSIVE
-))
+ALL_TICKERS = list(set(CORE_UNIVERSE + SATELLITE_UNIVERSE))
 
 PARAM_GRID = {
     "core_n":           [5, 8],
@@ -456,13 +452,14 @@ def run_single(all_data, bench_df, all_dates, params):
                 })
                 del sat_holdings[ticker]
 
-        # ── SATELLITE: Daily entries ──────────────────────────────────────
-        sat_universe = SATELLITE_OFFENSIVE if not in_bear else []
+        # ── SATELLITE: Daily entries — cash in BEAR ───────────────────────
+        if in_bear:
+            continue
 
         max_sat = 4
         if len(sat_holdings) < max_sat and sat_cash > 0:
             sat_scores = []
-            for ticker in sat_universe:
+            for ticker in SATELLITE_UNIVERSE:
                 if ticker in sat_holdings or ticker not in all_data:
                     continue
                 if today not in all_data[ticker].index:
@@ -626,7 +623,33 @@ def run_backtest():
     with open("backtest_trades.json", "w") as f:
         json.dump(best_sharpe["trades"], f, indent=2)
 
-    # ── Excel ──
+    # ── Analyse satellite par ticker ──────────────────────────────────────
+    sat_analysis = {}
+    for t in best_sharpe["trades"]:
+        if t.get("layer") != "SATELLITE":
+            continue
+        tk = t["ticker"]
+        if tk not in sat_analysis:
+            sat_analysis[tk] = {
+                "trades": 0, "wins": 0, "pnl": 0,
+                "stop_loss": 0, "take_profit": 0, "timeout": 0
+            }
+        sat_analysis[tk]["trades"] += 1
+        sat_analysis[tk]["pnl"]    += t["pnl_pct"]
+        if t["pnl_pct"] > 0:
+            sat_analysis[tk]["wins"] += 1
+        sat_analysis[tk][t["reason"]] = sat_analysis[tk].get(t["reason"], 0) + 1
+
+    logger.info("\nSATELLITE ANALYSIS BY TICKER:")
+    logger.info(f"{'Ticker':<10} {'Trades':>6} {'WR%':>6} {'AvgPnL':>8} {'SL':>5} {'TP':>5} {'TO':>5}")
+    for tk, s in sorted(sat_analysis.items(), key=lambda x: x[1]["pnl"], reverse=True):
+        wr  = s["wins"]/s["trades"]*100
+        avg = s["pnl"]/s["trades"]
+        logger.info(f"{tk:<10} {s['trades']:>6} {wr:>6.0f}% {avg:>8.1f}% "
+                    f"{s.get('stop_loss',0):>5} {s.get('take_profit',0):>5} "
+                    f"{s.get('timeout',0):>5}")
+
+    # ── Excel ──────────────────────────────────────────────────────────────
     wb  = openpyxl.Workbook()
     hf  = PatternFill("solid", fgColor="1a1a2e")
     hft = Font(color="FFFFFF", bold=True)
@@ -670,7 +693,7 @@ def run_backtest():
         ("Sat ATR Stop",  best_sharpe["params"]["sat_stop_atr"],     best_return["params"]["sat_stop_atr"],     ""),
         ("Sat TP",        f"{best_sharpe['params']['sat_take_profit']*100:.0f}%", f"{best_return['params']['sat_take_profit']*100:.0f}%", ""),
         ("Sat Hold",      f"{best_sharpe['params']['sat_hold_days']}d", f"{best_return['params']['sat_hold_days']}d", ""),
-        ("Bear Sat",      "Defensive universe", "Defensive universe", ""),
+        ("Bear Mode",     "Cash total", "Cash total", ""),
         ("", "", "", ""),
         ("Total Return",  f"{best_sharpe['total_return']}%",  f"{best_return['total_return']}%",  f"{bench_ret:.1f}%"),
         ("CAGR",          f"{best_sharpe['cagr']}%/year",     f"{best_return['cagr']}%/year",     ""),
@@ -736,31 +759,22 @@ def run_backtest():
     chart.width = 28; chart.height = 16
     ws5.add_chart(chart, "E2")
 
-# ── Analyse satellite ──
-sat_analysis = {}
-for t in best_sharpe["trades"]:
-    if t.get("layer") != "SATELLITE":
-        continue
-    tk = t["ticker"]
-    if tk not in sat_analysis:
-        sat_analysis[tk] = {
-            "trades": 0, "wins": 0, "pnl": 0,
-            "stop_loss": 0, "take_profit": 0, "timeout": 0
-        }
-    sat_analysis[tk]["trades"] += 1
-    sat_analysis[tk]["pnl"]    += t["pnl_pct"]
-    if t["pnl_pct"] > 0:
-        sat_analysis[tk]["wins"] += 1
-    sat_analysis[tk][t["reason"]] = sat_analysis[tk].get(t["reason"], 0) + 1
-
-logger.info("\nSATELLITE ANALYSIS BY TICKER:")
-logger.info(f"{'Ticker':<10} {'Trades':>6} {'WR%':>6} {'AvgPnL':>8} {'SL':>5} {'TP':>5} {'TO':>5}")
-for tk, s in sorted(sat_analysis.items(), key=lambda x: x[1]["pnl"], reverse=True):
-    wr  = s["wins"]/s["trades"]*100
-    avg = s["pnl"]/s["trades"]
-    logger.info(f"{tk:<10} {s['trades']:>6} {wr:>6.0f}% {avg:>8.1f}% "
-                f"{s.get('stop_loss',0):>5} {s.get('take_profit',0):>5} "
-                f"{s.get('timeout',0):>5}")
+    # ── Sheet 6 — Satellite by ticker ─────────────────────────────────────
+    ws6 = wb.create_sheet("Sat By Ticker")
+    for c, h in enumerate(["Ticker","Trades","WR%","Total PnL%","Avg PnL%","Stop Loss","Take Profit","Timeout"], 1):
+        cell = ws6.cell(row=1, column=c, value=h)
+        cell.fill = hf; cell.font = hft
+    for r_idx, (tk, s) in enumerate(
+            sorted(sat_analysis.items(), key=lambda x: x[1]["pnl"], reverse=True), 2):
+        wr  = s["wins"]/s["trades"]*100
+        avg = s["pnl"]/s["trades"]
+        vals = [tk, s["trades"], f"{wr:.0f}%", f"{s['pnl']:.1f}%", f"{avg:.1f}%",
+                s.get("stop_loss",0), s.get("take_profit",0), s.get("timeout",0)]
+        fill = gf if s["pnl"] > 0 else rf
+        for c, v in enumerate(vals, 1):
+            ws6.cell(row=r_idx, column=c, value=v).fill = fill
+    for col in "ABCDEFGH":
+        ws6.column_dimensions[col].width = 14
 
     wb.save("backtest_results.xlsx")
     logger.info("Saved backtest_results.xlsx")
