@@ -62,7 +62,7 @@ LIQUIDITY_MAX_SPREAD_PCT = 0.03
 LIQUIDITY_LOOKBACK_DAYS = 20
 BEAR_MIN_VOLUME_EUR = 500_000
 BEAR_MIN_MARKET_CAP_EUR = 500_000_000
-MAX_PRICE_EUR = 100.0   # max entry price for EU (.PA/.AS/.MI) and US (USD) tickers
+MAX_PRICE_EUR = 200.0   # max entry price for EU (.PA/.AS/.MI) and US (USD) tickers
 MAX_PRICE_HKD = 800.0   # max entry price for .HK tickers (approx 100 USD equivalent)
 
 SCORE_TECH_TREND_MAX = 10
@@ -168,6 +168,10 @@ US_TICKERS = [
 "GAP",   # Gap ~20$
 "X",     # US Steel ~40$
 "BB",    # BlackBerry ~3$
+ # High volatility / momentum basket
+"NVDA", "AMD", "TSLA", "PLTR", "SOFI",
+"RBLX", "RIVN", "COIN", "MSTR", "HOOD",
+"IONQ", "SMCI", "MELI", "SQ", "DKNG",
 ]
 
 HK_TICKERS = [
@@ -248,6 +252,11 @@ SECTOR_MAP = {
     "GM":"Consumer Discretionary","MO":"Consumer Staples","CVS":"Healthcare",
     "GE":"Industrials","AAL":"Industrials","BBY":"Consumer Discretionary",
     "GAP":"Consumer Discretionary","X":"Materials","BB":"Technology",
+    "NVDA": "Technology", "AMD": "Technology", "TSLA": "Consumer Discretionary",
+    "PLTR": "Technology", "SOFI": "Financials", "RBLX": "Communication Services",
+    "RIVN": "Consumer Discretionary", "COIN": "Financials", "MSTR": "Technology",
+    "HOOD": "Financials", "IONQ": "Technology", "SMCI": "Technology",
+    "MELI": "Consumer Discretionary", "SQ": "Financials", "DKNG": "Consumer Discretionary",
     # HK (HKEX)
     "0700.HK":"Communication Services",
     "9988.HK":"Consumer Discretionary",
