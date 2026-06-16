@@ -561,8 +561,38 @@ def run_single(all_data, bench_df, all_dates, params):
         "n_trades":      len(trades),
         "equity":        [round(e, 2) for e in equity],
         "trades":        trades,
+    annual = calc_annual_perf(trades, all_dates, equity)
     }
+def calc_annual_perf(trades, all_dates, equity):
+    """Calculate performance year by year."""
+    years = {}
+    # Group equity by year
+    for i, d in enumerate(all_dates):
+        yr = d.year
+        if yr not in years:
+            years[yr] = {"start_eq": equity[i], "end_eq": equity[i], "trades": 0, "wins": 0}
+        years[yr]["end_eq"] = equity[i]
 
+    # Count trades per year
+    for t in trades:
+        yr = int(t["entry_date"][:4])
+        if yr in years:
+            years[yr]["trades"] += 1
+            if t["pnl_pct"] > 0:
+                years[yr]["wins"] += 1
+
+    results = []
+    for yr in sorted(years.keys()):
+        y = years[yr]
+        ret = (y["end_eq"] / y["start_eq"] - 1) * 100 if y["start_eq"] > 0 else 0
+        wr  = y["wins"] / y["trades"] * 100 if y["trades"] > 0 else 0
+        results.append({
+            "year":     yr,
+            "return":   round(ret, 1),
+            "trades":   y["trades"],
+            "win_rate": round(wr, 1),
+        })
+    return results
 def run_backtest():
     logger.info("Downloading data...")
     all_data = {}
