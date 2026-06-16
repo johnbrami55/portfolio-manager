@@ -380,7 +380,7 @@ def run_backtest():
         else:
             logger.warning(f"  {t}: skip")
 
-    bench_df = fetch_history("SPY")
+    bench_df = fetch_history("QQQ")
     if bench_df is None:
         logger.error("Failed SPY"); return
 
