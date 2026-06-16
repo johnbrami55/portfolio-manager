@@ -68,11 +68,11 @@ VOLATILE_SET = set(UNIVERSE_VOLATILE)
 VOLATILE_SIZE_FACTOR = 0.5  # half position for volatile
 
 PARAM_GRID = {
-    "n_positions":    [5, 8, 10],
+    "n_positions":    [8, 10],
     "momentum_days":  [126, 189, 252],
     "ma_filter":      [150, 200],
     "rebalance_days": [21, 42],
-    "stop_loss":      [-0.07, -0.10, -0.15],
+    "stop_loss":      [-0.07, -0.08, -0.10],
 }
 
 
