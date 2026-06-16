@@ -20,8 +20,8 @@ from openpyxl.chart import LineChart, Reference
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 logger = logging.getLogger(__name__)
 
-START_DATE   = "2020-01-01"
-END_DATE     = "2025-12-31"
+START_DATE   = "2015-01-01"
+END_DATE     = "2019-12-31"
 INITIAL_CASH = 10000.0
 FEE_US       = 2.00
 
@@ -380,7 +380,7 @@ def run_backtest():
         else:
             logger.warning(f"  {t}: skip")
 
-    bench_df = fetch_history("QQQ")
+    bench_df = fetch_history("SPY")
     if bench_df is None:
         logger.error("Failed SPY"); return
 
