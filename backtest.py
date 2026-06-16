@@ -65,10 +65,10 @@ SECTOR_MAP = {
 }
 
 PARAM_GRID = {
-    "score_thresh":  [33, 36, 40],
-    "stop_atr_mult": [1.8, 2.2, 2.8],
-    "take_profit":   [0.18, 0.25, 0.32],
-    "max_hold_days": [35, 50, 70],
+    "score_thresh":  [28, 33, 36],
+    "stop_atr_mult": [1.5, 2.0, 2.5],
+    "take_profit":   [0.20, 0.25, 0.30],
+    "max_hold_days": [35, 50, 65],
 }
 
 
@@ -328,7 +328,7 @@ def run_single(all_data, bench_df, all_dates, params):
             mkt_up   = market_trend_5d(b_closes)
 
         # No entries if BEAR or market falling last 5 days
-        allow_entry = (regime != "BEAR") and mkt_up
+        allow_entry = (regime != "BEAR")
 
         # Position size factor (drawdown protection)
         ps_factor = position_size_factor(equity, peak_eq)
