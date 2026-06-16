@@ -65,10 +65,10 @@ SECTOR_MAP = {
 }
 
 PARAM_GRID = {
-    "score_thresh":  [28, 33, 36],
-    "stop_atr_mult": [1.5, 2.0, 2.5],
-    "take_profit":   [0.20, 0.25, 0.30],
-    "max_hold_days": [35, 50, 65],
+    "score_thresh":  [40, 45, 50],
+    "stop_atr_mult": [2.0, 2.5],
+    "take_profit":   [0.22, 0.28],
+    "max_hold_days": [40, 55],
 }
 
 
@@ -349,15 +349,15 @@ def run_single(all_data, bench_df, all_dates, params):
             pnl       = (cur_price - pos["entry_price"]) / pos["entry_price"]
             days_held = (today - pos["entry_date"]).days
 
-            # Dynamic stop: ATR-based from TRAILING HIGH (not entry)
-            trail_stop_price = pos["trail_high"] * (1 - pos["atr_pct"] * stop_atr_mult)
-            trail_pnl        = (cur_price - pos["entry_price"]) / pos["entry_price"]
+           
+            # Fixed ATR stop from ENTRY (not trailing)
+            fixed_stop = -pos["atr_pct"] * stop_atr_mult
 
             sell   = False
             reason = ""
-            if cur_price <= trail_stop_price:
+            if pnl <= fixed_stop:
                 sell = True
-                reason = "trail_stop" if pnl > 0 else "stop_loss"
+                reason = "stop_loss"
             elif pnl >= take_profit:
                 sell = True
                 reason = "take_profit"
@@ -375,7 +375,7 @@ def run_single(all_data, bench_df, all_dates, params):
                     "entry_price": round(pos["entry_price"], 4),
                     "exit_price":  round(cur_price, 4),
                     "trail_high":  round(pos["trail_high"], 4),
-                    "pnl_pct":     round(trail_pnl * 100, 2),
+                    "pnl_pct":     round(pnl * 100, 2),
                     "reason":      reason,
                     "regime":      regime,
                     "days_held":   days_held,
