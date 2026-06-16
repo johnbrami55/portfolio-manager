@@ -65,9 +65,9 @@ SECTOR_MAP = {
 }
 
 PARAM_GRID = {
-    "score_thresh":  [40, 45, 50],
+    "score_thresh":  [36, 40],
     "stop_atr_mult": [2.0, 2.5],
-    "take_profit":   [0.22, 0.28],
+    "take_profit":   [0.22, 0.28, 0.32],
     "max_hold_days": [40, 55],
 }
 
@@ -275,19 +275,13 @@ def market_trend_5d(bench_closes):
 
 
 def position_size_factor(equity_curve, peak_equity):
-    """
-    Dynamic position sizing based on drawdown from peak.
-    Returns a multiplier 0.25 - 1.0
-    """
     if not equity_curve or peak_equity <= 0:
         return 1.0
-    current = equity_curve[-1]
-    dd = (current - peak_equity) / peak_equity
-    if dd >= -0.05:   return 1.0    # <5% DD: full size
-    elif dd >= -0.10: return 0.75   # 5-10% DD: 75%
-    elif dd >= -0.15: return 0.50   # 10-15% DD: 50%
-    elif dd >= -0.20: return 0.25   # 15-20% DD: 25%
-    else:             return 0.0    # >20% DD: stop trading
+    dd = (equity_curve[-1] - peak_equity) / peak_equity
+    if dd >= -0.08:   return 1.0
+    elif dd >= -0.12: return 0.75
+    elif dd >= -0.15: return 0.50
+    else:             return 0.25  # jamais 0 — toujours quelques trades
 
 
 def run_single(all_data, bench_df, all_dates, params):
