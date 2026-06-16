@@ -80,7 +80,7 @@ def fetch_history(ticker):
     try:
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
         r = requests.get(url, headers=YF_HEADERS,
-                         params={"interval": "1d", "range": "7y"}, timeout=15)
+                         params={"interval": "1d", "range": "10y"}, timeout=15)
         if r.status_code != 200:
             return None
         data   = r.json()
