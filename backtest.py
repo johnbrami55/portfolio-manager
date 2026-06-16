@@ -19,8 +19,8 @@ from openpyxl.chart import LineChart, Reference
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 logger = logging.getLogger(__name__)
 
-START_DATE    = "2020-01-01"
-END_DATE      = "2025-12-31"
+START_DATE    = "2023-01-01"
+END_DATE      = "2023-12-31"
 MAX_POSITIONS = 12
 FEE_US        = 2.00
 INITIAL_CASH  = 10000.0
@@ -63,10 +63,10 @@ SECTOR_MAP = {
 }
 
 PARAM_GRID = {
-    "score_thresh":  [36],
-    "stop_atr_mult": [2.0],
-    "take_profit":   [0.22],
-    "max_hold_days": [50],
+    "score_thresh":  [33, 36, 40],
+    "stop_atr_mult": [1.5, 2.0, 2.5],
+    "take_profit":   [0.15, 22, 0.28],
+    "max_hold_days": [30, 50, 70],
 }
 
 
