@@ -736,6 +736,32 @@ def run_backtest():
     chart.width = 28; chart.height = 16
     ws5.add_chart(chart, "E2")
 
+# ── Analyse satellite ──
+sat_analysis = {}
+for t in best_sharpe["trades"]:
+    if t.get("layer") != "SATELLITE":
+        continue
+    tk = t["ticker"]
+    if tk not in sat_analysis:
+        sat_analysis[tk] = {
+            "trades": 0, "wins": 0, "pnl": 0,
+            "stop_loss": 0, "take_profit": 0, "timeout": 0
+        }
+    sat_analysis[tk]["trades"] += 1
+    sat_analysis[tk]["pnl"]    += t["pnl_pct"]
+    if t["pnl_pct"] > 0:
+        sat_analysis[tk]["wins"] += 1
+    sat_analysis[tk][t["reason"]] = sat_analysis[tk].get(t["reason"], 0) + 1
+
+logger.info("\nSATELLITE ANALYSIS BY TICKER:")
+logger.info(f"{'Ticker':<10} {'Trades':>6} {'WR%':>6} {'AvgPnL':>8} {'SL':>5} {'TP':>5} {'TO':>5}")
+for tk, s in sorted(sat_analysis.items(), key=lambda x: x[1]["pnl"], reverse=True):
+    wr  = s["wins"]/s["trades"]*100
+    avg = s["pnl"]/s["trades"]
+    logger.info(f"{tk:<10} {s['trades']:>6} {wr:>6.0f}% {avg:>8.1f}% "
+                f"{s.get('stop_loss',0):>5} {s.get('take_profit',0):>5} "
+                f"{s.get('timeout',0):>5}")
+
     wb.save("backtest_results.xlsx")
     logger.info("Saved backtest_results.xlsx")
 
