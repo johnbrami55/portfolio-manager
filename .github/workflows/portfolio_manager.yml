@@ -60,4 +60,4 @@ jobs:
           git pull --rebase --autostash origin main
           git add portfolio_state.json portfolio_report.xlsx dashboard.html scores_latest.json eu_cache.json score_history.json
           git diff --staged --quiet || git commit -m "chore: update state + report [skip ci]"
-          git pus
+          git push
