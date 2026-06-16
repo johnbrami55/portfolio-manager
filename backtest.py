@@ -225,9 +225,19 @@ def score_satellite(closes, highs, lows, volumes, regime):
         elif macd > 0 and hist > hist_p:    score += 3.0   # positif mais moins intéressant
         else:                               score += 0.0
 
-    # ── MALUS BEAR ────────────────────────────────────────────────────────
+    # ── FILTRE BEAR STRICT ────────────────────────────────────────────────
     if regime == "BEAR":
-        score *= 0.7  # plus sélectif en BEAR
+        # En BEAR on n'achète que si le titre est au-dessus de SA MA200
+        # = titre défensif qui résiste malgré le marché baissier
+        if len(closes) >= 200:
+            ma200 = sum(closes[:200]) / 200
+            if closes[0] < ma200:
+                return 0.0, atr_pct  # titre en downtrend → pas d'achat
+        # Et on est beaucoup plus sélectif
+        score *= 0.5
+        # Et RSI doit être vraiment oversold
+        if rsi > 35:
+            return 0.0, atr_pct
 
     return min(100.0, score), atr_pct
 
