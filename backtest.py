@@ -1,7 +1,7 @@
 """
 backtest.py — Combined Model V1 Final:
 - CORE (60%): Simple 9M momentum rotation, rebalance every 42 days
-- SATELLITE (40%): Daily swing, offensive in BULL/NEUTRAL, cash in BEAR
+- SATELLITE (40%): Daily swing, offensive in BULL/NEUTRAL, defensive in BEAR
 - Target: 20%+ CAGR, DD < 20%, regular trades
 """
 import json
@@ -59,14 +59,15 @@ SATELLITE_UNIVERSE = [
     # ETFs volatils
     "XBI", "ARKK",
 ]
+
 SATELLITE_BEAR = [
-    "XLE", "XOM", "CVX",           # Énergie
-    "LMT", "RTX", "NOC", "GD",     # Défense
-    "GLD", "SLV", "GDX",           # Or
-    "XLP", "WMT", "COST",          # Conso de base
-    "XLV", "ABBV",                  # Santé
-    "SH", "PSQ", "DOG",            # Inverse ETFs
-    "UUP",                          # Dollar
+    "XLE", "XOM", "CVX",
+    "LMT", "RTX", "NOC", "GD",
+    "GLD", "SLV", "GDX",
+    "XLP", "WMT", "COST",
+    "XLV", "ABBV",
+    "SH", "PSQ", "DOG",
+    "UUP",
 ]
 
 ALL_TICKERS = list(set(
@@ -159,50 +160,43 @@ def score_satellite(closes, highs, lows, volumes, regime):
     atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
 
     # ── FILTRE TENDANCE 6 MOIS ────────────────────────────────────────────
-    # On n'achète un retracement que si la tendance 6 mois est haussière
-    # Évite les couteaux qui tombent (LABU, UPST, RBLX, COIN en bear)
     if len(closes) >= 126:
         perf_6m = (closes[0] - closes[125]) / closes[125]
         if perf_6m < -0.20:
             return 0.0, atr_pct
 
     score = 0.0
-    atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
 
     # ── 1. RSI OVERSOLD (max 25 pts) ─────────────────────────────────────
-    # On veut acheter quand c'est oversold, pas overbought
     rsi = calc_rsi(closes)
-    if rsi < 25:        score += 25.0  # extrême oversold → fort signal
-    elif rsi < 30:      score += 20.0  # oversold classique
-    elif rsi < 35:      score += 15.0  # légèrement oversold
-    elif rsi < 40:      score += 8.0   # neutre bas → acceptable
-    elif rsi > 70:      score += 0.0   # overbought → on n'achète pas
-    elif rsi > 60:      score += 2.0   # trop haut
-    else:               score += 5.0   # neutre
+    if rsi < 25:        score += 25.0
+    elif rsi < 30:      score += 20.0
+    elif rsi < 35:      score += 15.0
+    elif rsi < 40:      score += 8.0
+    elif rsi > 70:      score += 0.0
+    elif rsi > 60:      score += 2.0
+    else:               score += 5.0
 
     # ── 2. RETRACEMENT DEPUIS LE SOMMET (max 20 pts) ─────────────────────
-    # On veut un titre qui a corrigé depuis son sommet récent
     if len(closes) >= 63:
         high_63 = max(highs[:63]) if highs else max(closes[:63])
-        retrace = (high_63 - closes[0]) / high_63  # % de baisse depuis sommet
-        if retrace >= 0.30:   score += 20.0  # -30% depuis sommet → deep value
-        elif retrace >= 0.20: score += 15.0  # -20% → bon retracement
-        elif retrace >= 0.15: score += 10.0  # -15% → retracement correct
-        elif retrace >= 0.10: score += 5.0   # -10% → léger retracement
-        else:                 score += 0.0   # proche du sommet → pas intéressant
+        retrace = (high_63 - closes[0]) / high_63
+        if retrace >= 0.30:   score += 20.0
+        elif retrace >= 0.20: score += 15.0
+        elif retrace >= 0.15: score += 10.0
+        elif retrace >= 0.10: score += 5.0
+        else:                 score += 0.0
 
     # ── 3. SUPPORT MA200 (max 15 pts) ────────────────────────────────────
-    # Prix proche de la MA200 = support long terme fort
     if len(closes) >= 200:
         ma200 = sum(closes[:200]) / 200
-        dist_ma200 = (closes[0] - ma200) / ma200  # % au-dessus/dessous MA200
-        if -0.05 <= dist_ma200 <= 0.05:   score += 15.0  # sur la MA200 ±5%
-        elif -0.10 <= dist_ma200 <= 0.10: score += 10.0  # proche MA200 ±10%
-        elif dist_ma200 < -0.10:          score += 5.0   # sous MA200 (oversold)
-        else:                             score += 0.0   # trop au-dessus
+        dist_ma200 = (closes[0] - ma200) / ma200
+        if -0.05 <= dist_ma200 <= 0.05:   score += 15.0
+        elif -0.10 <= dist_ma200 <= 0.10: score += 10.0
+        elif dist_ma200 < -0.10:          score += 5.0
+        else:                             score += 0.0
 
     # ── 4. FIBONACCI RETRACEMENT (max 15 pts) ────────────────────────────
-    # Retracement de 38.2% ou 61.8% depuis le dernier swing
     if len(closes) >= 126 and highs and lows:
         high_126 = max(highs[:126])
         low_126  = min(lows[:126])
@@ -212,55 +206,47 @@ def score_satellite(closes, highs, lows, volumes, regime):
             fib_500 = high_126 - swing * 0.500
             fib_618 = high_126 - swing * 0.618
             price   = closes[0]
-            tol     = swing * 0.05  # tolérance 5%
-            if abs(price - fib_618) <= tol:  score += 15.0  # golden ratio
-            elif abs(price - fib_500) <= tol: score += 12.0  # 50%
-            elif abs(price - fib_382) <= tol: score += 10.0  # 38.2%
+            tol     = swing * 0.05
+            if abs(price - fib_618) <= tol:   score += 15.0
+            elif abs(price - fib_500) <= tol: score += 12.0
+            elif abs(price - fib_382) <= tol: score += 10.0
 
     # ── 5. VOLUME SUR CREUX (max 15 pts) ─────────────────────────────────
-    # Volume en hausse quand le prix est bas = accumulation = signal fort
     if len(volumes) >= 21 and len(closes) >= 21:
-        avg_vol  = sum(volumes[1:21]) / 20
-        vol_now  = volumes[0]
-        vol_ratio = vol_now / avg_vol if avg_vol > 0 else 1.0
-        # Prix en bas ET volume fort = accumulation
-        rsi_low = rsi < 40
-        if rsi_low and vol_ratio >= 1.5:  score += 15.0  # accumulation claire
+        avg_vol   = sum(volumes[1:21]) / 20
+        vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
+        rsi_low   = rsi < 40
+        if rsi_low and vol_ratio >= 1.5:   score += 15.0
         elif rsi_low and vol_ratio >= 1.2: score += 10.0
         elif rsi_low and vol_ratio >= 0.8: score += 5.0
-        elif vol_ratio >= 1.5:             score += 5.0   # volume fort mais pas oversold
+        elif vol_ratio >= 1.5:             score += 5.0
         else:                              score += 0.0
 
     # ── 6. MACD REMONTE DEPUIS LE BAS (max 10 pts) ───────────────────────
-    # On veut voir le MACD qui commence à remonter depuis négatif
     if len(closes) >= 29:
-        macd    = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
-        sig     = calc_ema(closes[:9],9)
-        hist    = macd - sig
-        macd_p  = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
-        sig_p   = calc_ema(closes[3:12],9)
-        hist_p  = macd_p - sig_p
-
-        if macd < 0 and hist > hist_p:      score += 10.0  # remonte depuis négatif
-        elif macd < 0 and hist > 0:         score += 7.0   # crossover depuis négatif
-        elif macd > 0 and hist > hist_p:    score += 3.0   # positif mais moins intéressant
-        else:                               score += 0.0
+        macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
+        sig    = calc_ema(closes[:9],9)
+        hist   = macd - sig
+        macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
+        sig_p  = calc_ema(closes[3:12],9)
+        hist_p = macd_p - sig_p
+        if macd < 0 and hist > hist_p:   score += 10.0
+        elif macd < 0 and hist > 0:      score += 7.0
+        elif macd > 0 and hist > hist_p: score += 3.0
+        else:                            score += 0.0
 
     # ── FILTRE BEAR STRICT ────────────────────────────────────────────────
     if regime == "BEAR":
-        # En BEAR on n'achète que si le titre est au-dessus de SA MA200
-        # = titre défensif qui résiste malgré le marché baissier
         if len(closes) >= 200:
             ma200 = sum(closes[:200]) / 200
             if closes[0] < ma200:
-                return 0.0, atr_pct  # titre en downtrend → pas d'achat
-        # Et on est beaucoup plus sélectif
+                return 0.0, atr_pct
         score *= 0.5
-        # Et RSI doit être vraiment oversold
         if rsi > 35:
             return 0.0, atr_pct
 
     return min(100.0, score), atr_pct
+
 
 def detect_regime(bench_closes, ma_period=200):
     if len(bench_closes) < ma_period:
@@ -483,8 +469,8 @@ def run_single(all_data, bench_df, all_dates, params):
                 })
                 del sat_holdings[ticker]
 
-        # ── SATELLITE: Daily entries — cash in BEAR ───────────────────────
-       sat_universe = SATELLITE_BEAR if in_bear else SATELLITE_UNIVERSE
+        # ── SATELLITE: Daily entries ──────────────────────────────────────
+        sat_universe = SATELLITE_BEAR if in_bear else SATELLITE_UNIVERSE
 
         max_sat = 4
         if len(sat_holdings) < max_sat and sat_cash > 0:
@@ -723,7 +709,7 @@ def run_backtest():
         ("Sat ATR Stop",  best_sharpe["params"]["sat_stop_atr"],     best_return["params"]["sat_stop_atr"],     ""),
         ("Sat TP",        f"{best_sharpe['params']['sat_take_profit']*100:.0f}%", f"{best_return['params']['sat_take_profit']*100:.0f}%", ""),
         ("Sat Hold",      f"{best_sharpe['params']['sat_hold_days']}d", f"{best_return['params']['sat_hold_days']}d", ""),
-        ("Bear Mode",     "Cash total", "Cash total", ""),
+        ("Bear Sat",      "SATELLITE_BEAR (énergie, défense, or...)", "SATELLITE_BEAR", ""),
         ("", "", "", ""),
         ("Total Return",  f"{best_sharpe['total_return']}%",  f"{best_return['total_return']}%",  f"{bench_ret:.1f}%"),
         ("CAGR",          f"{best_sharpe['cagr']}%/year",     f"{best_return['cagr']}%/year",     ""),
@@ -789,7 +775,6 @@ def run_backtest():
     chart.width = 28; chart.height = 16
     ws5.add_chart(chart, "E2")
 
-    # ── Sheet 6 — Satellite by ticker ─────────────────────────────────────
     ws6 = wb.create_sheet("Sat By Ticker")
     for c, h in enumerate(["Ticker","Trades","WR%","Total PnL%","Avg PnL%","Stop Loss","Take Profit","Timeout"], 1):
         cell = ws6.cell(row=1, column=c, value=h)
