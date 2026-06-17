@@ -14,13 +14,6 @@
       "atr_pct": 0.04129,
       "shares": 9,
       "invested": 174.89
-    },
-    "RIOT": {
-      "entry_price": 27.420000076293945,
-      "entry_date": "2026-06-17",
-      "atr_pct": 0.07650568723085742,
-      "shares": 6,
-      "invested": 164.52000045776367
     }
   },
   "positions": {
@@ -49,19 +42,6 @@
       "trailing_high": 19.422,
       "beta": 1.0,
       "position_eur": 174.8
-    },
-    "RIOT": {
-      "entry_price": 27.420000076293945,
-      "entry_date": "2026-06-17",
-      "nb_shares": 6,
-      "weight": 0.08690966743674784,
-      "model_price": 27.420000076293945,
-      "slippage": 0,
-      "stop_loss": 23.224428176879883,
-      "take_profit": 35.09760009765625,
-      "trailing_high": 27.420000076293945,
-      "beta": 1.0,
-      "position_eur": 164.52000045776367
     }
   },
   "last_rebal": "2026-06-17",
