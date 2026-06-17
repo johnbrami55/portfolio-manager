@@ -1,25 +1,24 @@
 name: Listener
-
 on:
   schedule:
-    - cron: "*/10 * * * *"  # 8h-23h CET
+    - cron: "*/10 * * * *"
   workflow_dispatch:
-
 concurrency:
   group: listener
   cancel-in-progress: false
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   listen:
     runs-on: ubuntu-latest
     timeout-minutes: 4
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -38,3 +37,24 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GITHUB_PAT: ${{ secrets.GH_PAT }}
         run: python telegram_listener.py
+
+      - name: Commit state file
+        run: |
+          git config --global user.name "portfolio-bot"
+          git config --global user.email "portfolio-bot@github-actions"
+          git add portfolio_state.json
+          git diff --staged --quiet || git commit -m "chore: update portfolio_state [skip ci]"
+          git push
+
+      - name: Push to dashboard
+        env:
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git clone https://x-access-token:${GITHUB_PAT}@github.com/johnbrami55/portfolio-dashboard.git dashboard_repo
+          cp portfolio_state.json dashboard_repo/portfolio_state.json
+          cd dashboard_repo
+          git config user.name "portfolio-bot"
+          git config user.email "portfolio-bot@github-actions"
+          git add portfolio_state.json
+          git diff --staged --quiet || git commit -m "chore: update dashboard [skip ci]"
+          git push
