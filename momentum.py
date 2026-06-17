@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 CAPITAL       = 1893.0
-CORE_N        = 5
+CORE_N        = 8
 CORE_MOM_DAYS = 189
 CORE_MA       = 200
 REBAL_DAYS    = 42
