@@ -77,19 +77,49 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
     )
 
 
+def update_prices(state: dict) -> None:
+    """Fetch current prices for all positions and update portfolio_state.json."""
+    positions = state.get("positions", {})
+    if not positions:
+        return
+    for ticker, pos in positions.items():
+        try:
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+            r = requests.get(url, headers={
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "application/json",
+            }, params={"interval": "1d", "range": "5d"}, timeout=10)
+            if r.status_code == 200:
+                result = r.json().get("chart", {}).get("result")
+                if result:
+                    closes = result[0]["indicators"]["quote"][0].get("close", [])
+                    closes = [c for c in closes if c]
+                    if closes:
+                        price = closes[-1]
+                        pos["current_price"] = round(price, 4)
+                        pos["position_eur"]  = round(price * pos.get("nb_shares", 0), 2)
+        except Exception as e:
+            pass
+
+
 def main() -> None:
     token = os.environ["TELEGRAM_BOT_TOKEN"]
     authorized_chat = os.environ["TELEGRAM_CHAT_ID"]
     pat = os.environ["GITHUB_PAT"]
 
     last_id, sha = read_offset(pat)
-
     # First ever run: drain all pending updates without processing any
     if sha is None:
         updates = get_updates(token, 0)
         if updates:
             write_offset(pat, max(u["update_id"] for u in updates), None)
         return
+
+    # Mise à jour des prix à chaque run
+    from state import load_state, save_state
+    state = load_state()
+    update_prices(state)
+    save_state(state)
 
     updates = get_updates(token, last_id + 1)
     if not updates:
