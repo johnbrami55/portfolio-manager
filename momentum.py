@@ -38,7 +38,7 @@ YF_HEADERS = {
 }
 
 CORE_UNIVERSE = [
-    # Actions US — toutes disponibles sur DEGIRO
+    # Large caps US accessibles <200$
     "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "AMD",
     "AVGO", "ORCL", "CRM", "ADBE", "NOW", "PANW", "SNPS", "CDNS",
     "LMT", "RTX", "NOC", "GD",
@@ -46,8 +46,27 @@ CORE_UNIVERSE = [
     "V", "MA", "GS", "MS", "JPM",
     "COST", "HD", "WMT", "PG",
     "XOM", "CVX",
-    # ETF UCITS disponible sur DEGIRO
-    "SXR8.DE",  # S&P500 équivalent SPY
+    # Titres <150$ pour remplir les slots
+    "INTC",   # ~20$
+    "CSCO",   # ~65$
+    "T",      # ~23$
+    "VZ",     # ~47$
+    "BAC",    # ~45$
+    "F",      # ~14$
+    "PYPL",   # ~85$
+    "DIS",    # ~100$
+    "NKE",    # ~45$
+    "PFE",    # ~26$
+    "KO",     # ~80$
+    "PEP",    # ~146$
+    "MRK",    # ~115$
+    "ABT",    # ~90$
+    "NEE",    # ~86$
+    "PM",     # ~184$
+    "UPS",    # ~110$
+    "DHR",    # ~181$
+    # ETF UCITS
+    "SXR8.DE",
 ]
 
 SATELLITE_UNIVERSE = [
