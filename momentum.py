@@ -382,16 +382,23 @@ def score_satellite(data, regime):
 # ── STATE ─────────────────────────────────────────────────────────────────────
 def load_state():
     if os.path.exists(STATE_FILE):
-        with open(STATE_FILE) as f:
-            return json.load(f)
+        try:
+            with open(STATE_FILE) as f:
+                data = json.load(f)
+            # Vérifier que c'est bien notre format
+            if "last_rebal" in data:
+                return data
+        except:
+            pass
+    # Nouveau state vide
     return {
-        "core":          {},
-        "satellite":     {},
-        "last_rebal":    None,
-        "capital":       CAPITAL,
-        "core_cash":     CAPITAL * CORE_PCT,
-        "sat_cash":      CAPITAL * SAT_PCT,
-        "last_run":      None,
+        "core":       {},
+        "satellite":  {},
+        "last_rebal": None,
+        "capital":    CAPITAL,
+        "core_cash":  CAPITAL * CORE_PCT,
+        "sat_cash":   CAPITAL * SAT_PCT,
+        "last_run":   None,
     }
 
 
