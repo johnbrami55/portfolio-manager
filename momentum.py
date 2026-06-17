@@ -610,7 +610,7 @@ def run_satellite(state, spy_data):
                     "shares":      shares,
                     "invested":    invest,
                 }
-                state["positions"][ticker] = {
+         state["positions"][ticker] = {
                     "entry_price":   price,
                     "entry_date":    today,
                     "nb_shares":     shares,
