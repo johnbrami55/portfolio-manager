@@ -609,7 +609,7 @@ def run_satellite(state, spy_data):
                     "atr_pct":     atr_pct,
                     "shares":      shares,
                     "invested":    invest,
-                }
+         }
          state["positions"][ticker] = {
                     "entry_price":   price,
                     "entry_date":    today,
@@ -622,9 +622,9 @@ def run_satellite(state, spy_data):
                     "trailing_high": price,
                     "beta":          1.0,
                     "position_eur":  invest,
-                }
-                active += 1
-                save_state(state)
+         }
+         active += 1
+         save_state(state)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
