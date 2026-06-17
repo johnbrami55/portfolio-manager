@@ -2,52 +2,45 @@ name: Portfolio Manager
 
 on:
   schedule:
-    # Mon-Fri at 08:00 CET (= 07:00 UTC, accounting for CET=UTC+1)
     - cron: "0 7 * * 1-5"
-  # Allow manual trigger from GitHub Actions UI
+    - cron: "0 11 * * 1-5"
+    - cron: "0 14 * * 1-5"
   workflow_dispatch:
 
 jobs:
   run-portfolio-manager:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # needed to commit portfolio_state.json back
+      contents: write
 
     steps:
-      # 1. Checkout the repository
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. Setup Python 3.11
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install requests
 
-      # 4. Run the portfolio manager
       - name: Run portfolio manager
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          cd portfolio_manager
-          python main.py
+          python momentum.py
 
-      # 5. Commit and push portfolio_state.json if changed
       - name: Commit state file
         run: |
           git config --global user.name  "portfolio-bot"
           git config --global user.email "portfolio-bot@github-actions"
-          git add portfolio_manager/portfolio_state.json
-          # Only commit if there are changes
+          git add portfolio_state.json
           git diff --staged --quiet || git commit -m "chore: update portfolio_state [skip ci]"
           git push
