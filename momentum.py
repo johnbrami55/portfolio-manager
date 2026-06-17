@@ -601,29 +601,8 @@ def run_satellite(state, spy_data):
         msg += f"📌 Régime : {regime}\n"
         msg += f"🔄 Positions satellite : {active+1}/{MAX_SAT}"
 
-        send_telegram(msg)
-        state["satellite"][ticker] = {
-            "entry_price": price,
-            "entry_date":  today,
-            "atr_pct":     atr_pct,
-            "shares":      shares,
-            "invested":    invest,
-        }
-        state["positions"][ticker] = {
-            "entry_price":   price,
-            "entry_date":    today,
-            "nb_shares":     shares,
-            "weight":        invest / CAPITAL,
-            "model_price":   price,
-            "slippage":      0,
-            "stop_loss":     price * (1 - atr_pct * SAT_STOP_ATR),
-            "take_profit":   price * (1 + SAT_TP),
-            "trailing_high": price,
-            "beta":          1.0,
-            "position_eur":  invest,
-        }
+         send_telegram(msg)
         active += 1
-        save_state(state)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
