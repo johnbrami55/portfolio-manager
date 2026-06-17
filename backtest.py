@@ -151,136 +151,205 @@ def calc_ema(data, span):
 
 def score_satellite(closes, highs, lows, volumes, regime):
     """
-    Swing trading contrarian — on achète les creux, pas les sommets.
-    Logique : titre en retracement sur support, prêt à rebondir.
+    Scorer hybride :
+    - BULL  → breakout/momentum (achète ce qui monte fort)
+    - NEUTRAL/BEAR → contrarian/retracement (achète les creux)
     """
     if len(closes) < 50:
         return 0.0, 0.02
 
     atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
+    rsi = calc_rsi(closes)
 
     # ── FILTRE TENDANCE 6 MOIS ────────────────────────────────────────────
     if len(closes) >= 126:
         perf_6m = (closes[0] - closes[125]) / closes[125]
-        if perf_6m < -0.20:
-            return 0.0, atr_pct
+        if regime != "BULL" and perf_6m < -0.20:
+            return 0.0, atr_pct  # downtrend structurel hors BULL → pas d'achat
 
     score = 0.0
 
-    # ── 1. RSI OVERSOLD (max 25 pts) ─────────────────────────────────────
-    rsi = calc_rsi(closes)
-    if rsi < 25:        score += 25.0
-    elif rsi < 30:      score += 20.0
-    elif rsi < 35:      score += 15.0
-    elif rsi < 40:      score += 8.0
-    elif rsi > 70:      score += 0.0
-    elif rsi > 60:      score += 2.0
-    else:               score += 5.0
+    if regime == "BULL":
+        # ════════════════════════════════════════════════════════════════
+        # MODE BULL — BREAKOUT MOMENTUM
+        # On achète ce qui monte fort avec volume
+        # ════════════════════════════════════════════════════════════════
 
-    # ── 2. RETRACEMENT DEPUIS LE SOMMET (max 20 pts) ─────────────────────
-    if len(closes) >= 63:
-        high_63 = max(highs[:63]) if highs else max(closes[:63])
-        retrace = (high_63 - closes[0]) / high_63
-        if retrace >= 0.30:   score += 20.0
-        elif retrace >= 0.20: score += 15.0
-        elif retrace >= 0.15: score += 10.0
-        elif retrace >= 0.10: score += 5.0
-        else:                 score += 0.0
+        # 1. RSI fort mais pas overbought (max 20 pts)
+        if 55 <= rsi <= 75:    score += 20.0  # momentum sain
+        elif 50 <= rsi < 55:   score += 12.0  # OK
+        elif rsi > 75:         score += 5.0   # overbought — risqué
+        elif rsi < 40:         score += 0.0   # trop faible pour breakout
+        else:                  score += 8.0
 
-    # ── 3. SUPPORT MA200 (max 15 pts) ────────────────────────────────────
-    if len(closes) >= 200:
-        ma200 = sum(closes[:200]) / 200
-        dist_ma200 = (closes[0] - ma200) / ma200
-        if -0.05 <= dist_ma200 <= 0.05:   score += 15.0
-        elif -0.10 <= dist_ma200 <= 0.10: score += 10.0
-        elif dist_ma200 < -0.10:          score += 5.0
-        else:                             score += 0.0
-
-    # ── 4. FIBONACCI RETRACEMENT (max 15 pts) ────────────────────────────
-    if len(closes) >= 126 and highs and lows:
-        high_126 = max(highs[:126])
-        low_126  = min(lows[:126])
-        swing    = high_126 - low_126
-        if swing > 0:
-            fib_382 = high_126 - swing * 0.382
-            fib_500 = high_126 - swing * 0.500
-            fib_618 = high_126 - swing * 0.618
-            price   = closes[0]
-            tol     = swing * 0.05
-            if abs(price - fib_618) <= tol:   score += 15.0
-            elif abs(price - fib_500) <= tol: score += 12.0
-            elif abs(price - fib_382) <= tol: score += 10.0
-
-    # ── 5. VOLUME SUR CREUX (max 15 pts) ─────────────────────────────────
-    if len(volumes) >= 21 and len(closes) >= 21:
-        avg_vol   = sum(volumes[1:21]) / 20
-        vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
-        rsi_low   = rsi < 40
-        if rsi_low and vol_ratio >= 1.5:   score += 15.0
-        elif rsi_low and vol_ratio >= 1.2: score += 10.0
-        elif rsi_low and vol_ratio >= 0.8: score += 5.0
-        elif vol_ratio >= 1.5:             score += 5.0
-        else:                              score += 0.0
-
-    # ── 6. MACD REMONTE DEPUIS LE BAS (max 10 pts) ───────────────────────
-    if len(closes) >= 29:
-        macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
-        sig    = calc_ema(closes[:9],9)
-        hist   = macd - sig
-        macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
-        sig_p  = calc_ema(closes[3:12],9)
-        hist_p = macd_p - sig_p
-        if macd < 0 and hist > hist_p:   score += 10.0
-        elif macd < 0 and hist > 0:      score += 7.0
-        elif macd > 0 and hist > hist_p: score += 3.0
-        else:                            score += 0.0
-
-    # ── 7. QUALITÉ DU CREUX (max 30 pts, min -23 pts) ────────────────────
-
-    # A. Bougies qui rétrécissent = épuisement vendeurs
-    if len(highs) >= 10 and len(lows) >= 10:
-        range_recent = sum(highs[i]-lows[i] for i in range(5)) / 5
-        range_older  = sum(highs[i]-lows[i] for i in range(5,10)) / 5
-        if range_older > 0:
-            if range_recent < range_older * 0.7:
-                score += 10.0   # bougies rétrécissent → épuisement vendeurs
-            elif range_recent > range_older * 1.3:
-                score -= 10.0   # bougies s'élargissent → accélération baisse
-
-    # B. Divergence RSI positive = signal fort de retournement
-    if len(closes) >= 22:
-        rsi_now  = calc_rsi(list(closes[:15]))
-        rsi_prev = calc_rsi(list(closes[7:22]))
-        if closes[0] < closes[7] and rsi_now > rsi_prev:
-            score += 12.0   # prix baisse mais RSI remonte → divergence haussière
-        elif closes[0] < closes[7] and rsi_now < rsi_prev:
-            score -= 5.0    # momentum baissier confirmé
-
-    # C. Volume décroissant sur les jours de baisse = accumulation silencieuse
-    if len(volumes) >= 10 and len(closes) >= 10:
-        down_days_vol = []
-        for j in range(min(10, len(closes)-1)):
-            if closes[j] < closes[j+1]:
-                down_days_vol.append(volumes[j])
-        if len(down_days_vol) >= 3:
-            vol_trend = down_days_vol[0] / down_days_vol[-1] if down_days_vol[-1] > 0 else 1.0
-            if vol_trend < 0.7:
-                score += 8.0    # volume baisse sur jours de baisse → accumulation
-            elif vol_trend > 1.5:
-                score -= 8.0    # volume monte sur jours de baisse → distribution
-
-    # ── FILTRE BEAR STRICT ────────────────────────────────────────────────
-    if regime == "BEAR":
+        # 2. Prix au-dessus des MAs = tendance haussière (max 20 pts)
         if len(closes) >= 200:
+            ma20  = sum(closes[:20]) / 20
+            ma50  = sum(closes[:50]) / 50
             ma200 = sum(closes[:200]) / 200
-            if closes[0] < ma200:
+            if closes[0] > ma20 > ma50 > ma200:  score += 20.0  # alignement parfait
+            elif closes[0] > ma50 > ma200:        score += 15.0
+            elif closes[0] > ma200:               score += 8.0
+            else:                                 score += 0.0
+
+        # 3. Momentum récent fort (max 20 pts)
+        if len(closes) >= 63:
+            ret_1m = (closes[0] - closes[20]) / closes[20]
+            ret_3m = (closes[0] - closes[62]) / closes[62]
+            if ret_1m > 0.10:   score += 10.0  # +10% sur 1 mois
+            elif ret_1m > 0.05: score += 6.0
+            elif ret_1m > 0:    score += 3.0
+            else:               score += 0.0
+            if ret_3m > 0.20:   score += 10.0  # +20% sur 3 mois
+            elif ret_3m > 0.10: score += 6.0
+            elif ret_3m > 0:    score += 3.0
+            else:               score += 0.0
+
+        # 4. Volume fort = confirmation du move (max 15 pts)
+        if len(volumes) >= 21:
+            avg_vol   = sum(volumes[1:21]) / 20
+            vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
+            if vol_ratio >= 2.0:   score += 15.0
+            elif vol_ratio >= 1.5: score += 10.0
+            elif vol_ratio >= 1.2: score += 6.0
+            else:                  score += 0.0
+
+        # 5. MACD positif et en hausse (max 15 pts)
+        if len(closes) >= 29:
+            macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
+            sig    = calc_ema(closes[:9],9)
+            hist   = macd - sig
+            macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
+            sig_p  = calc_ema(closes[3:12],9)
+            hist_p = macd_p - sig_p
+            if macd > 0 and hist > 0 and hist > hist_p: score += 15.0
+            elif macd > 0 and hist > 0:                  score += 10.0
+            elif macd > 0:                               score += 5.0
+            else:                                        score += 0.0
+
+        # 6. Proche du plus haut 52 semaines = force (max 10 pts)
+        if len(closes) >= 252 and highs:
+            high_52w = max(highs[:252])
+            dist_ath = (high_52w - closes[0]) / high_52w
+            if dist_ath <= 0.05:   score += 10.0  # proche ATH
+            elif dist_ath <= 0.10: score += 6.0
+            elif dist_ath <= 0.20: score += 3.0
+            else:                  score += 0.0
+
+    else:
+        # ════════════════════════════════════════════════════════════════
+        # MODE NEUTRAL/BEAR — CONTRARIAN RETRACEMENT
+        # On achète les creux sur support
+        # ════════════════════════════════════════════════════════════════
+
+        # 1. RSI oversold (max 25 pts)
+        if rsi < 25:        score += 25.0
+        elif rsi < 30:      score += 20.0
+        elif rsi < 35:      score += 15.0
+        elif rsi < 40:      score += 8.0
+        elif rsi > 70:      score += 0.0
+        elif rsi > 60:      score += 2.0
+        else:               score += 5.0
+
+        # 2. Retracement depuis le sommet (max 20 pts)
+        if len(closes) >= 63:
+            high_63 = max(highs[:63]) if highs else max(closes[:63])
+            retrace = (high_63 - closes[0]) / high_63
+            if retrace >= 0.30:   score += 20.0
+            elif retrace >= 0.20: score += 15.0
+            elif retrace >= 0.15: score += 10.0
+            elif retrace >= 0.10: score += 5.0
+            else:                 score += 0.0
+
+        # 3. Support MA200 (max 15 pts)
+        if len(closes) >= 200:
+            ma200      = sum(closes[:200]) / 200
+            dist_ma200 = (closes[0] - ma200) / ma200
+            if -0.05 <= dist_ma200 <= 0.05:   score += 15.0
+            elif -0.10 <= dist_ma200 <= 0.10: score += 10.0
+            elif dist_ma200 < -0.10:          score += 5.0
+            else:                             score += 0.0
+
+        # 4. Fibonacci retracement (max 15 pts)
+        if len(closes) >= 126 and highs and lows:
+            high_126 = max(highs[:126])
+            low_126  = min(lows[:126])
+            swing    = high_126 - low_126
+            if swing > 0:
+                tol = swing * 0.05
+                fib_382 = high_126 - swing * 0.382
+                fib_500 = high_126 - swing * 0.500
+                fib_618 = high_126 - swing * 0.618
+                price   = closes[0]
+                if abs(price - fib_618) <= tol:   score += 15.0
+                elif abs(price - fib_500) <= tol: score += 12.0
+                elif abs(price - fib_382) <= tol: score += 10.0
+
+        # 5. Volume sur creux (max 15 pts)
+        if len(volumes) >= 21:
+            avg_vol   = sum(volumes[1:21]) / 20
+            vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
+            rsi_low   = rsi < 40
+            if rsi_low and vol_ratio >= 1.5:   score += 15.0
+            elif rsi_low and vol_ratio >= 1.2: score += 10.0
+            elif rsi_low and vol_ratio >= 0.8: score += 5.0
+            elif vol_ratio >= 1.5:             score += 5.0
+            else:                              score += 0.0
+
+        # 6. MACD remonte depuis le bas (max 10 pts)
+        if len(closes) >= 29:
+            macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
+            sig    = calc_ema(closes[:9],9)
+            hist   = macd - sig
+            macd_p = calc_ema(closes[3:15],12) - calc_ema(closes[3:29],26)
+            sig_p  = calc_ema(closes[3:12],9)
+            hist_p = macd_p - sig_p
+            if macd < 0 and hist > hist_p:   score += 10.0
+            elif macd < 0 and hist > 0:      score += 7.0
+            elif macd > 0 and hist > hist_p: score += 3.0
+            else:                            score += 0.0
+
+        # 7. Qualité du creux (max 30 pts, min -23 pts)
+        if len(highs) >= 10 and len(lows) >= 10:
+            range_recent = sum(highs[i]-lows[i] for i in range(5)) / 5
+            range_older  = sum(highs[i]-lows[i] for i in range(5,10)) / 5
+            if range_older > 0:
+                if range_recent < range_older * 0.7:
+                    score += 10.0
+                elif range_recent > range_older * 1.3:
+                    score -= 10.0
+
+        if len(closes) >= 22:
+            rsi_now  = calc_rsi(list(closes[:15]))
+            rsi_prev = calc_rsi(list(closes[7:22]))
+            if closes[0] < closes[7] and rsi_now > rsi_prev:
+                score += 12.0
+            elif closes[0] < closes[7] and rsi_now < rsi_prev:
+                score -= 5.0
+
+        if len(volumes) >= 10 and len(closes) >= 10:
+            down_days_vol = []
+            for j in range(min(10, len(closes)-1)):
+                if closes[j] < closes[j+1]:
+                    down_days_vol.append(volumes[j])
+            if len(down_days_vol) >= 3:
+                vol_trend = down_days_vol[0] / down_days_vol[-1] if down_days_vol[-1] > 0 else 1.0
+                if vol_trend < 0.7:
+                    score += 8.0
+                elif vol_trend > 1.5:
+                    score -= 8.0
+
+        # ── FILTRE BEAR STRICT ────────────────────────────────────────
+        if regime == "BEAR":
+            if len(closes) >= 200:
+                ma200 = sum(closes[:200]) / 200
+                if closes[0] < ma200:
+                    return 0.0, atr_pct
+            score *= 0.5
+            if rsi > 35:
                 return 0.0, atr_pct
-        score *= 0.5
-        if rsi > 35:
-            return 0.0, atr_pct
 
     return min(100.0, score), atr_pct
-
 
 def detect_regime(bench_closes, ma_period=200):
     if len(bench_closes) < ma_period:
