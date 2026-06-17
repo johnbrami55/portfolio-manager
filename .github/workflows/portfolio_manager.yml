@@ -50,7 +50,7 @@ jobs:
 
       - name: Push to dashboard
         env:
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_PAT: ${{ secrets.GH_PAT }}
         run: |
           git clone https://x-access-token:${GITHUB_PAT}@github.com/johnbrami55/portfolio-dashboard.git dashboard_repo
           cp portfolio_state.json dashboard_repo/portfolio_state.json
