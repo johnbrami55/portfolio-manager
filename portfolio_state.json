@@ -1,6 +1,6 @@
 {
   "current_regime": "BEAR",
-  "last_run": "2026-06-17T05:33:47.352746",
+  "last_run": "2026-06-17T05:37:44.466670",
   "positions": {},
   "score_history": {
     "ML.PA": [
@@ -23,8 +23,8 @@
         "date": "2026-06-12"
       },
       {
-        "score": 33.5,
-        "date": "2026-06-12"
+        "score": 28.333333333333332,
+        "date": "2026-06-17"
       },
       {
         "score": 28.333333333333332,
@@ -37,8 +37,8 @@
         "date": "2026-06-11"
       },
       {
-        "score": 21.0,
-        "date": "2026-06-11"
+        "score": 33.36666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 33.36666666666667,
@@ -61,12 +61,12 @@
     ],
     "AIR.PA": [
       {
-        "score": 23.0,
+        "score": 26.0,
         "date": "2026-06-11"
       },
       {
-        "score": 26.0,
-        "date": "2026-06-11"
+        "score": 28.333333333333332,
+        "date": "2026-06-17"
       },
       {
         "score": 28.333333333333332,
@@ -149,8 +149,8 @@
         "date": "2026-06-12"
       },
       {
-        "score": 23.6,
-        "date": "2026-06-12"
+        "score": 32.66666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 32.66666666666667,
@@ -191,8 +191,8 @@
         "date": "2026-06-12"
       },
       {
-        "score": 30.0,
-        "date": "2026-06-12"
+        "score": 31.266666666666666,
+        "date": "2026-06-17"
       },
       {
         "score": 31.266666666666666,
@@ -269,6 +269,10 @@
       {
         "score": 46.599999999999994,
         "date": "2026-06-17"
+      },
+      {
+        "score": 46.599999999999994,
+        "date": "2026-06-17"
       }
     ],
     "ASRNL.AS": [
@@ -303,6 +307,10 @@
       {
         "score": 31.4,
         "date": "2026-06-06"
+      },
+      {
+        "score": 43.766666666666666,
+        "date": "2026-06-17"
       },
       {
         "score": 43.766666666666666,
@@ -398,7 +406,7 @@
       },
       {
         "score": 38.86666666666667,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 38.86666666666667,
@@ -412,7 +420,7 @@
       },
       {
         "score": 41.56666666666667,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 41.56666666666667,
@@ -426,7 +434,7 @@
       },
       {
         "score": 42.599999999999994,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 42.599999999999994,
@@ -440,7 +448,7 @@
       },
       {
         "score": 37.366666666666674,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 37.366666666666674,
@@ -495,8 +503,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 40.2,
-        "date": "2026-06-16"
+        "score": 42.6,
+        "date": "2026-06-17"
       },
       {
         "score": 42.6,
@@ -524,7 +532,7 @@
       },
       {
         "score": 24.533333333333335,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 24.533333333333335,
@@ -579,8 +587,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 35.266666666666666,
-        "date": "2026-06-16"
+        "score": 37.36666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 37.36666666666667,
@@ -594,7 +602,7 @@
       },
       {
         "score": 43.2,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 43.2,
@@ -649,8 +657,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 23.4,
-        "date": "2026-06-16"
+        "score": 22.8,
+        "date": "2026-06-17"
       },
       {
         "score": 22.8,
@@ -677,8 +685,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 29.2,
-        "date": "2026-06-16"
+        "score": 31.6,
+        "date": "2026-06-17"
       },
       {
         "score": 31.6,
@@ -720,7 +728,7 @@
       },
       {
         "score": 35.166666666666664,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 35.166666666666664,
@@ -747,8 +755,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 37.36666666666667,
-        "date": "2026-06-16"
+        "score": 30.166666666666668,
+        "date": "2026-06-17"
       },
       {
         "score": 30.166666666666668,
@@ -761,8 +769,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 39.96666666666667,
-        "date": "2026-06-16"
+        "score": 36.766666666666666,
+        "date": "2026-06-17"
       },
       {
         "score": 36.766666666666666,
@@ -790,7 +798,7 @@
       },
       {
         "score": 25.133333333333333,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 25.133333333333333,
@@ -803,11 +811,11 @@
         "date": "2026-06-16"
       },
       {
-        "score": 28.133333333333333,
-        "date": "2026-06-16"
+        "score": 30.233333333333334,
+        "date": "2026-06-17"
       },
       {
-        "score": 30.233333333333334,
+        "score": 28.133333333333333,
         "date": "2026-06-17"
       }
     ],
@@ -817,8 +825,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 28.2,
-        "date": "2026-06-16"
+        "score": 25.8,
+        "date": "2026-06-17"
       },
       {
         "score": 25.8,
@@ -832,7 +840,7 @@
       },
       {
         "score": 28.96666666666667,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 28.96666666666667,
@@ -845,8 +853,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 30.2,
-        "date": "2026-06-16"
+        "score": 22.2,
+        "date": "2026-06-17"
       },
       {
         "score": 22.2,
@@ -873,8 +881,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 33.0,
-        "date": "2026-06-16"
+        "score": 25.8,
+        "date": "2026-06-17"
       },
       {
         "score": 25.8,
@@ -888,7 +896,7 @@
       },
       {
         "score": 34.333333333333336,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 34.333333333333336,
@@ -902,7 +910,7 @@
       },
       {
         "score": 30.533333333333335,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 30.533333333333335,
@@ -915,8 +923,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 34.86666666666667,
-        "date": "2026-06-16"
+        "score": 32.46666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 32.46666666666667,
@@ -929,8 +937,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 37.266666666666666,
-        "date": "2026-06-16"
+        "score": 34.86666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 34.86666666666667,
@@ -943,8 +951,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 28.8,
-        "date": "2026-06-16"
+        "score": 26.400000000000002,
+        "date": "2026-06-17"
       },
       {
         "score": 26.400000000000002,
@@ -957,8 +965,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 34.13333333333334,
-        "date": "2026-06-16"
+        "score": 31.733333333333334,
+        "date": "2026-06-17"
       },
       {
         "score": 31.733333333333334,
@@ -986,7 +994,7 @@
       },
       {
         "score": 33.13333333333333,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 33.13333333333333,
@@ -999,8 +1007,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 30.833333333333336,
-        "date": "2026-06-16"
+        "score": 28.433333333333334,
+        "date": "2026-06-17"
       },
       {
         "score": 28.433333333333334,
@@ -1042,7 +1050,7 @@
       },
       {
         "score": 25.733333333333334,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 25.733333333333334,
@@ -1055,8 +1063,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 38.46666666666667,
-        "date": "2026-06-16"
+        "score": 40.56666666666668,
+        "date": "2026-06-17"
       },
       {
         "score": 40.56666666666668,
@@ -1069,11 +1077,11 @@
         "date": "2026-06-16"
       },
       {
-        "score": 41.266666666666666,
-        "date": "2026-06-16"
+        "score": 40.56666666666668,
+        "date": "2026-06-17"
       },
       {
-        "score": 40.56666666666668,
+        "score": 39.16666666666667,
         "date": "2026-06-17"
       }
     ],
@@ -1083,8 +1091,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 34.2,
-        "date": "2026-06-16"
+        "score": 39.4,
+        "date": "2026-06-17"
       },
       {
         "score": 39.4,
@@ -1098,7 +1106,7 @@
       },
       {
         "score": 46.8,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 46.8,
@@ -1112,7 +1120,7 @@
       },
       {
         "score": 38.56666666666666,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 38.56666666666666,
@@ -1126,7 +1134,7 @@
       },
       {
         "score": 41.266666666666666,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 41.266666666666666,
@@ -1140,7 +1148,7 @@
       },
       {
         "score": 26.933333333333334,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 26.933333333333334,
@@ -1153,8 +1161,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 31.133333333333336,
-        "date": "2026-06-16"
+        "score": 28.733333333333334,
+        "date": "2026-06-17"
       },
       {
         "score": 28.733333333333334,
@@ -1167,8 +1175,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 34.666666666666664,
-        "date": "2026-06-16"
+        "score": 37.06666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 37.06666666666667,
@@ -1181,8 +1189,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 32.266666666666666,
-        "date": "2026-06-16"
+        "score": 34.66666666666667,
+        "date": "2026-06-17"
       },
       {
         "score": 34.66666666666667,
@@ -1196,7 +1204,7 @@
       },
       {
         "score": 25.733333333333334,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 25.733333333333334,
@@ -1209,8 +1217,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 33.8,
-        "date": "2026-06-16"
+        "score": 30.6,
+        "date": "2026-06-17"
       },
       {
         "score": 30.6,
@@ -1237,8 +1245,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 32.93333333333334,
-        "date": "2026-06-16"
+        "score": 34.13333333333333,
+        "date": "2026-06-17"
       },
       {
         "score": 34.13333333333333,
@@ -1251,8 +1259,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 26.933333333333334,
-        "date": "2026-06-16"
+        "score": 30.233333333333334,
+        "date": "2026-06-17"
       },
       {
         "score": 30.233333333333334,
@@ -1266,7 +1274,7 @@
       },
       {
         "score": 26.400000000000002,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 26.400000000000002,
@@ -1279,8 +1287,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 28.733333333333334,
-        "date": "2026-06-16"
+        "score": 21.533333333333335,
+        "date": "2026-06-17"
       },
       {
         "score": 21.533333333333335,
@@ -1294,7 +1302,7 @@
       },
       {
         "score": 25.8,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 25.8,
@@ -1307,8 +1315,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 25.8,
-        "date": "2026-06-16"
+        "score": 30.6,
+        "date": "2026-06-17"
       },
       {
         "score": 30.6,
@@ -1322,7 +1330,7 @@
       },
       {
         "score": 22.2,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 22.2,
@@ -1335,11 +1343,11 @@
         "date": "2026-06-16"
       },
       {
-        "score": 30.53333333333333,
-        "date": "2026-06-16"
+        "score": 35.400000000000006,
+        "date": "2026-06-17"
       },
       {
-        "score": 35.400000000000006,
+        "score": 32.63333333333333,
         "date": "2026-06-17"
       }
     ],
@@ -1349,8 +1357,8 @@
         "date": "2026-06-16"
       },
       {
-        "score": 28.2,
-        "date": "2026-06-16"
+        "score": 25.8,
+        "date": "2026-06-17"
       },
       {
         "score": 25.8,
@@ -1406,7 +1414,7 @@
       },
       {
         "score": 37.86666666666667,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 37.86666666666667,
@@ -1420,7 +1428,7 @@
       },
       {
         "score": 35.1,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 35.1,
@@ -1434,7 +1442,7 @@
       },
       {
         "score": 34.8,
-        "date": "2026-06-16"
+        "date": "2026-06-17"
       },
       {
         "score": 34.8,
@@ -1445,9 +1453,17 @@
       {
         "score": 33.0,
         "date": "2026-06-17"
+      },
+      {
+        "score": 33.0,
+        "date": "2026-06-17"
       }
     ],
     "VIE.PA": [
+      {
+        "score": 30.733333333333334,
+        "date": "2026-06-17"
+      },
       {
         "score": 30.733333333333334,
         "date": "2026-06-17"
@@ -1457,9 +1473,17 @@
       {
         "score": 27.066666666666666,
         "date": "2026-06-17"
+      },
+      {
+        "score": 27.066666666666666,
+        "date": "2026-06-17"
       }
     ],
     "KPN.AS": [
+      {
+        "score": 26.400000000000002,
+        "date": "2026-06-17"
+      },
       {
         "score": 26.400000000000002,
         "date": "2026-06-17"
@@ -1789,40 +1813,6 @@
       "last_close": 26.040000915527344
     },
     {
-      "ticker": "KHC",
-      "score": 40.56666666666668,
-      "tech_score": 25.566666666666674,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "Price > MA20 (23.62)",
-        "MA20 > MA50 (23.07)",
-        "RSI 51.4 ideal",
-        "Volume 0.9x avg (normal)",
-        "MACD above zero",
-        "3M 4.8% above median",
-        "Bollinger upper zone (%B=0.66)",
-        "StochRSI neutral (K=44)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0337,
-      "error": null,
-      "breakdown": {
-        "trend": 4.666666666666667,
-        "rsi": 6,
-        "volume": 2.4,
-        "macd": 3.0,
-        "momentum": 2.0999999999999996,
-        "bollinger": 5.6,
-        "stoch_rsi": 1.7999999999999998
-      },
-      "last_close": 23.989999771118164
-    },
-    {
       "ticker": "0001.HK",
       "score": 39.4,
       "tech_score": 24.4,
@@ -1856,6 +1846,40 @@
         "stoch_rsi": 4.800000000000001
       },
       "last_close": 69.80000305175781
+    },
+    {
+      "ticker": "KHC",
+      "score": 39.16666666666667,
+      "tech_score": 24.16666666666667,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Price > MA20 (23.64)",
+        "MA20 > MA50 (23.08)",
+        "RSI 43.7 ideal",
+        "Volume 0.9x avg (normal)",
+        "MACD above zero",
+        "3M 7.8% above median",
+        "Bollinger mid (%B=0.57)",
+        "StochRSI oversold (K=18)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0239,
+      "error": null,
+      "breakdown": {
+        "trend": 4.666666666666667,
+        "rsi": 6,
+        "volume": 2.4,
+        "macd": 3.0,
+        "momentum": 2.0999999999999996,
+        "bollinger": 2.4,
+        "stoch_rsi": 3.5999999999999996
+      },
+      "last_close": 23.799999237060547
     },
     {
       "ticker": "CSCO",
@@ -2096,38 +2120,6 @@
       "last_close": 194.3000030517578
     },
     {
-      "ticker": "PYPL",
-      "score": 35.400000000000006,
-      "tech_score": 20.400000000000002,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "RSI 40.5 ideal",
-        "Volume 1.3x avg",
-        "MACD bearish",
-        "3M -7.9% below median",
-        "Bollinger near lower/defensive (%B=0.38)",
-        "StochRSI bullish zone (K=64)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0376,
-      "error": null,
-      "breakdown": {
-        "trend": 0.0,
-        "rsi": 6,
-        "volume": 4.8,
-        "macd": 0.0,
-        "momentum": 0.0,
-        "bollinger": 4.8,
-        "stoch_rsi": 4.800000000000001
-      },
-      "last_close": 42.4900016784668
-    },
-    {
       "ticker": "PG",
       "score": 35.166666666666664,
       "tech_score": 20.166666666666664,
@@ -2203,18 +2195,18 @@
       "signals_tech": [
         "Price > MA20 (8.70)",
         "MA50 > MA200 (8.05)",
-        "RSI 63.2 partial",
+        "RSI 62.7 partial",
         "Volume 0.3x avg (weak)",
         "MACD above zero",
-        "3M 9.2% top quartile",
-        "Bollinger upper zone (%B=0.67)",
-        "StochRSI overbought (K=100)"
+        "3M 9.1% top quartile",
+        "Bollinger upper zone (%B=0.65)",
+        "StochRSI overbought (K=98)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0198,
+      "atr_pct": 0.0199,
       "error": null,
       "breakdown": {
         "trend": 4.666666666666667,
@@ -2225,7 +2217,7 @@
         "bollinger": 5.6,
         "stoch_rsi": 0.0
       },
-      "last_close": 8.789999961853027
+      "last_close": 8.779999732971191
     },
     {
       "ticker": "CVS",
@@ -2497,6 +2489,39 @@
       "last_close": 66.2
     },
     {
+      "ticker": "PYPL",
+      "score": 32.63333333333333,
+      "tech_score": 17.633333333333333,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "Price > MA20 (43.13)",
+        "RSI 49.4 ideal",
+        "Volume 1.3x avg",
+        "MACD bearish",
+        "3M -2.1% above median",
+        "Bollinger mid (%B=0.59)",
+        "StochRSI overbought (K=93)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0288,
+      "error": null,
+      "breakdown": {
+        "trend": 2.3333333333333335,
+        "rsi": 6,
+        "volume": 4.8,
+        "macd": 0.0,
+        "momentum": 2.0999999999999996,
+        "bollinger": 2.4,
+        "stoch_rsi": 0.0
+      },
+      "last_close": 43.650001525878906
+    },
+    {
       "ticker": "1398.HK",
       "score": 32.46666666666667,
       "tech_score": 17.46666666666667,
@@ -2504,20 +2529,20 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "Price > MA20 (6.88)",
+        "Price > MA20 (6.87)",
         "MA50 > MA200 (6.39)",
-        "RSI 76.8 overbought penalty",
-        "Volume 0.3x avg (weak)",
+        "RSI 73.8 overbought penalty",
+        "Volume 0.4x avg (weak)",
         "MACD above zero",
-        "3M 9.9% top quartile",
-        "Bollinger upper zone (%B=0.83)",
+        "3M 9.3% top quartile",
+        "Bollinger upper zone (%B=0.78)",
         "StochRSI overbought (K=100)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0208,
+      "atr_pct": 0.021,
       "error": null,
       "breakdown": {
         "trend": 4.666666666666667,
@@ -2528,7 +2553,7 @@
         "bollinger": 5.6,
         "stoch_rsi": 0.0
       },
-      "last_close": 7.119999885559082
+      "last_close": 7.079999923706055
     },
     {
       "ticker": "0016.HK",
@@ -2675,18 +2700,18 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 43.2 ideal",
+        "RSI 43.0 ideal",
         "Volume 0.3x avg (weak)",
         "MACD bearish",
-        "3M -14.3% below median",
+        "3M -14.4% below median",
         "Bollinger near lower/defensive (%B=0.16)",
-        "StochRSI bullish zone (K=64)"
+        "StochRSI bullish zone (K=63)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0353,
+      "atr_pct": 0.0354,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2697,7 +2722,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 4.800000000000001
       },
-      "last_close": 14.3100004196167
+      "last_close": 14.300000190734863
     },
     {
       "ticker": "0151.HK",
@@ -2707,18 +2732,18 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 52.6 ideal",
+        "RSI 53.2 ideal",
         "Volume 0.1x avg (weak)",
         "MACD bearish",
-        "3M -14.0% below median",
-        "Bollinger near lower/defensive (%B=0.17)",
-        "StochRSI bullish zone (K=68)"
+        "3M -13.8% below median",
+        "Bollinger near lower/defensive (%B=0.20)",
+        "StochRSI bullish zone (K=71)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0334,
+      "atr_pct": 0.0333,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -2729,7 +2754,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 4.800000000000001
       },
-      "last_close": 4.059999942779541
+      "last_close": 4.070000171661377
     },
     {
       "ticker": "XOM",
@@ -2763,39 +2788,6 @@
         "stoch_rsi": 4.800000000000001
       },
       "last_close": 141.86000061035156
-    },
-    {
-      "ticker": "NEE",
-      "score": 30.233333333333334,
-      "tech_score": 15.233333333333334,
-      "fund_score": 15.0,
-      "regime_bonus": 0.0,
-      "bonus_reason": "",
-      "signals_tech": [
-        "MA50 > MA200 (85.67)",
-        "RSI 44.5 ideal",
-        "Volume 0.7x avg (normal)",
-        "MACD bearish",
-        "3M -5.2% above median",
-        "Bollinger mid (%B=0.47)",
-        "StochRSI overbought (K=100)"
-      ],
-      "signals_fund": [
-        "Fundamental: Alpha Vantage free tier"
-      ],
-      "beta": 1.0,
-      "atr_pct": 0.0195,
-      "error": null,
-      "breakdown": {
-        "trend": 2.3333333333333335,
-        "rsi": 6,
-        "volume": 2.4,
-        "macd": 0.0,
-        "momentum": 2.0999999999999996,
-        "bollinger": 2.4,
-        "stoch_rsi": 0.0
-      },
-      "last_close": 86.2300033569336
     },
     {
       "ticker": "0066.HK",
@@ -2840,12 +2832,12 @@
       "signals_tech": [
         "MA20 > MA50 (83.83)",
         "MA50 > MA200 (83.47)",
-        "RSI 19.2 oversold bonus",
+        "RSI 19.1 oversold bonus",
         "Volume 0.4x avg (weak)",
         "MACD bearish",
         "3M 0.9% above median",
         "Bollinger below lower band (%B=0.09)",
-        "StochRSI oversold (K=8)"
+        "StochRSI oversold (K=7)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
@@ -2862,7 +2854,7 @@
         "bollinger": 0.0,
         "stoch_rsi": 3.5999999999999996
       },
-      "last_close": 80.8499984741211
+      "last_close": 80.80000305175781
     },
     {
       "ticker": "WMT",
@@ -2940,12 +2932,12 @@
       "bonus_reason": "",
       "signals_tech": [
         "MA50 > MA200 (70.97)",
-        "RSI 29.2 partial",
+        "RSI 29.4 partial",
         "Volume 0.3x avg (weak)",
         "MACD bearish",
         "3M -0.1% above median",
-        "Bollinger near lower/defensive (%B=0.26)",
-        "StochRSI neutral (K=20)"
+        "Bollinger near lower/defensive (%B=0.27)",
+        "StochRSI neutral (K=21)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
@@ -2962,7 +2954,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 1.7999999999999998
       },
-      "last_close": 73.0
+      "last_close": 73.05000305175781
     },
     {
       "ticker": "AIR.PA",
@@ -3035,6 +3027,39 @@
       "last_close": 42.35
     },
     {
+      "ticker": "NEE",
+      "score": 28.133333333333333,
+      "tech_score": 13.133333333333335,
+      "fund_score": 15.0,
+      "regime_bonus": 0.0,
+      "bonus_reason": "",
+      "signals_tech": [
+        "MA50 > MA200 (85.67)",
+        "RSI 44.5 ideal",
+        "Volume 0.7x avg (normal)",
+        "MACD bearish",
+        "3M -5.2% below median",
+        "Bollinger mid (%B=0.47)",
+        "StochRSI overbought (K=100)"
+      ],
+      "signals_fund": [
+        "Fundamental: Alpha Vantage free tier"
+      ],
+      "beta": 1.0,
+      "atr_pct": 0.0195,
+      "error": null,
+      "breakdown": {
+        "trend": 2.3333333333333335,
+        "rsi": 6,
+        "volume": 2.4,
+        "macd": 0.0,
+        "momentum": 0.0,
+        "bollinger": 2.4,
+        "stoch_rsi": 0.0
+      },
+      "last_close": 86.2300033569336
+    },
+    {
       "ticker": "SHELL.AS",
       "score": 27.066666666666666,
       "tech_score": 12.066666666666666,
@@ -3077,12 +3102,12 @@
       "bonus_reason": "",
       "signals_tech": [
         "MA50 > MA200 (56.80)",
-        "RSI 20.0 oversold bonus",
+        "RSI 19.9 oversold bonus",
         "Volume 0.2x avg (weak)",
         "MACD bearish",
-        "3M -7.7% below median",
-        "Bollinger near lower/defensive (%B=0.33)",
-        "StochRSI overbought (K=100)"
+        "3M -7.8% below median",
+        "Bollinger near lower/defensive (%B=0.32)",
+        "StochRSI overbought (K=99)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
@@ -3099,7 +3124,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 0.0
       },
-      "last_close": 56.5
+      "last_close": 56.45000076293945
     },
     {
       "ticker": "KPN.AS",
@@ -3206,10 +3231,10 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 41.3 ideal",
+        "RSI 41.4 ideal",
         "Volume 0.5x avg (weak)",
         "MACD bearish",
-        "3M -5.3% below median",
+        "3M -5.2% below median",
         "Bollinger near lower/defensive (%B=0.26)",
         "StochRSI overbought (K=100)"
       ],
@@ -3228,7 +3253,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 0.0
       },
-      "last_close": 384.79998779296875
+      "last_close": 385.0
     },
     {
       "ticker": "0027.HK",
@@ -3270,18 +3295,18 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 44.7 ideal",
+        "RSI 44.2 ideal",
         "Volume 0.3x avg (weak)",
         "MACD bearish",
-        "3M -10.7% below median",
-        "Bollinger near lower/defensive (%B=0.40)",
-        "StochRSI overbought (K=95)"
+        "3M -10.9% below median",
+        "Bollinger near lower/defensive (%B=0.38)",
+        "StochRSI overbought (K=93)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
       ],
       "beta": 1.0,
-      "atr_pct": 0.0233,
+      "atr_pct": 0.0234,
       "error": null,
       "breakdown": {
         "trend": 0.0,
@@ -3292,7 +3317,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 0.0
       },
-      "last_close": 4.260000228881836
+      "last_close": 4.25
     },
     {
       "ticker": "6098.HK",
@@ -3335,11 +3360,11 @@
       "bonus_reason": "",
       "signals_tech": [
         "MA50 > MA200 (23.39)",
-        "RSI 27.0 partial",
+        "RSI 26.9 partial",
         "Volume 0.9x avg (normal)",
         "MACD bearish",
-        "3M -22.3% below median",
-        "Bollinger below lower band (%B=-0.10)",
+        "3M -22.4% below median",
+        "Bollinger below lower band (%B=-0.11)",
         "StochRSI oversold (K=0)"
       ],
       "signals_fund": [
@@ -3357,7 +3382,7 @@
         "bollinger": 0.0,
         "stoch_rsi": 3.5999999999999996
       },
-      "last_close": 22.8799991607666
+      "last_close": 22.860000610351562
     },
     {
       "ticker": "0857.HK",
@@ -3434,10 +3459,10 @@
       "bonus_reason": "",
       "signals_tech": [
         "MA50 > MA200 (80.61)",
-        "RSI 33.1 partial",
+        "RSI 32.9 partial",
         "Volume 0.3x avg (weak)",
         "MACD bearish",
-        "3M -9.7% below median",
+        "3M -9.8% below median",
         "Bollinger near lower/defensive (%B=0.33)",
         "StochRSI overbought (K=100)"
       ],
@@ -3456,7 +3481,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 0.0
       },
-      "last_close": 75.30000305175781
+      "last_close": 75.25
     },
     {
       "ticker": "0700.HK",
@@ -3466,11 +3491,11 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 58.6 partial",
+        "RSI 58.5 partial",
         "Volume 0.3x avg (weak)",
         "MACD above zero",
-        "3M -19.4% below median",
-        "Bollinger mid (%B=0.50)",
+        "3M -19.5% below median",
+        "Bollinger mid (%B=0.49)",
         "StochRSI overbought (K=97)"
       ],
       "signals_fund": [
@@ -3488,7 +3513,7 @@
         "bollinger": 2.4,
         "stoch_rsi": 0.0
       },
-      "last_close": 450.0
+      "last_close": 449.3999938964844
     },
     {
       "ticker": "2318.HK",
@@ -3499,7 +3524,7 @@
       "bonus_reason": "",
       "signals_tech": [
         "RSI 28.1 partial",
-        "Volume 0.6x avg (weak)",
+        "Volume 0.7x avg (weak)",
         "MACD bearish",
         "3M -10.2% below median",
         "Bollinger near lower/defensive (%B=0.13)",
@@ -3530,12 +3555,12 @@
       "regime_bonus": 0.0,
       "bonus_reason": "",
       "signals_tech": [
-        "RSI 30.5 partial",
+        "RSI 30.2 partial",
         "Volume 0.3x avg (weak)",
         "MACD bearish",
-        "3M -17.0% below median",
-        "Bollinger near lower/defensive (%B=0.14)",
-        "StochRSI overbought (K=100)"
+        "3M -17.2% below median",
+        "Bollinger near lower/defensive (%B=0.13)",
+        "StochRSI overbought (K=98)"
       ],
       "signals_fund": [
         "Fundamental: Alpha Vantage free tier"
@@ -3552,7 +3577,7 @@
         "bollinger": 4.8,
         "stoch_rsi": 0.0
       },
-      "last_close": 7.590000152587891
+      "last_close": 7.579999923706055
     },
     {
       "ticker": "0762.HK",
