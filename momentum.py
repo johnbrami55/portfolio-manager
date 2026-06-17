@@ -27,7 +27,7 @@ SAT_PCT       = 0.40
 FEE           = 2.0
 MAX_SAT       = 4
 
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT  = os.environ.get("TELEGRAM_CHAT_ID")
 STATE_FILE     = "portfolio_state.json"
 
