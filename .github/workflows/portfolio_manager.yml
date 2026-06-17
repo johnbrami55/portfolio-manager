@@ -52,7 +52,7 @@ jobs:
           GITHUB_PAT: ${{ secrets.GH_PAT }}
           LIVE_MODE: ${{ (github.event.schedule == '20 14 * * 1-5' || github.event.inputs.live_mode == 'true') && 'true' || 'false' }}
         run: |
-          python main.py
+          python momentum.py
       - name: Commit state file
         run: |
           git config --global user.name "portfolio-bot"
