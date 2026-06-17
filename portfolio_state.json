@@ -35,8 +35,8 @@
       "take_profit": 129.87,
       "trailing_high": 101.58,
       "beta": 1.0,
-      "position_eur": 102.44,
-      "current_price": 102.44
+      "position_eur": 102.06,
+      "current_price": 102.06
     },
     "SEC0.DE": {
       "entry_price": 19.422,
@@ -49,8 +49,8 @@
       "take_profit": 24.87,
       "trailing_high": 19.422,
       "beta": 1.0,
-      "position_eur": 177.59,
-      "current_price": 19.732
+      "position_eur": 176.63,
+      "current_price": 19.626
     },
     "RIOT": {
       "entry_price": 27.15,
@@ -63,8 +63,8 @@
       "take_profit": 32.04,
       "trailing_high": 27.15,
       "beta": 1.5,
-      "position_eur": 166.02,
-      "current_price": 27.67
+      "position_eur": 166.09,
+      "current_price": 27.6809
     },
     "CSCO": {
       "entry_price": 118.96,
@@ -77,8 +77,8 @@
       "take_profit": 140.37,
       "trailing_high": 118.96,
       "beta": 1.0,
-      "position_eur": 118.39,
-      "current_price": 118.395
+      "position_eur": 118.6,
+      "current_price": 118.6
     },
     "XOM": {
       "entry_price": 141.11,
@@ -91,8 +91,8 @@
       "take_profit": 166.51,
       "trailing_high": 141.11,
       "beta": 1.0,
-      "position_eur": 141.73,
-      "current_price": 141.73
+      "position_eur": 141.27,
+      "current_price": 141.27
     },
     "INTC": {
       "entry_price": 121.48,
@@ -105,8 +105,8 @@
       "take_profit": 143.35,
       "trailing_high": 121.48,
       "beta": 1.2,
-      "position_eur": 121.03,
-      "current_price": 121.03
+      "position_eur": 120.93,
+      "current_price": 120.935
     },
     "MRK": {
       "entry_price": 114.5,
@@ -119,8 +119,8 @@
       "take_profit": 135.11,
       "trailing_high": 114.5,
       "beta": 0.9,
-      "position_eur": 115.36,
-      "current_price": 115.36
+      "position_eur": 115.39,
+      "current_price": 115.39
     },
     "WMT": {
       "entry_price": 119.7,
@@ -133,8 +133,8 @@
       "take_profit": 141.25,
       "trailing_high": 119.7,
       "beta": 0.7,
-      "position_eur": 119.85,
-      "current_price": 119.85
+      "position_eur": 119.81,
+      "current_price": 119.805
     }
   },
   "last_rebal": "2026-06-17",
@@ -144,6 +144,6 @@
   "core_cash": 1135.8,
   "sat_cash": 757.2,
   "current_regime": "BULL",
-  "last_run": "2026-06-17T14:52:41.470623",
+  "last_run": "2026-06-17T15:03:19.822731",
   "last_run_utc": "2026-06-17T10:24:00"
 }
