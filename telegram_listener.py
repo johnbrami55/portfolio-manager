@@ -83,7 +83,7 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
         return
 
     # Récupérer le taux EUR/USD
-    eur_usd = 1.12  # fallback
+    eur_usd = 1.12
     try:
         r = requests.get(
             "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X",
@@ -115,38 +115,39 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
             if r.status_code == 200:
                 result = r.json().get("chart", {}).get("result")
                 if result:
-                    closes = result[0]["indicators"]["quote"][0].get("close", [])
-                    # Récupérer la devise
+                    closes   = result[0]["indicators"]["quote"][0].get("close", [])
                     currency = result[0].get("meta", {}).get("currency", "USD")
-                    closes = [c for c in closes if c]
+                    closes   = [c for c in closes if c]
                     if closes:
-                        price_raw = closes[-1]
-                        currency  = result[0].get("meta", {}).get("currency", "USD")
-
-                        # Garder les prix dans leur devise native
-                        price_eur = price_raw / eur_usd if currency == "USD" else price_raw
-                        entry_raw = pos.get("entry_price", price_raw)  # déjà en devise native
-
-                        # P&L en devise native
-                        pnl_pct = (price_raw - entry_raw) / entry_raw * 100 if entry_raw else 0
+                        price_raw  = closes[-1]
+                        price_eur  = price_raw / eur_usd if currency == "USD" else price_raw
+                        shares     = pos.get("nb_shares", 0)
+                        entry_raw  = pos.get("entry_price", price_raw)
+                        entry_eur  = entry_raw / eur_usd if currency == "USD" else entry_raw
+                        pnl_pct    = (price_raw - entry_raw) / entry_raw * 100 if entry_raw else 0
                         pnl_native = (price_raw - entry_raw) * shares
+                        pnl_eur    = (price_eur - entry_eur) * shares
+                        sign       = "🟢" if pnl_native >= 0 else "🔴"
+                        sym        = "$" if currency == "USD" else "€"
 
-                        # Valeur en EUR pour le total
-                        pos["current_price"]     = round(price_raw, 4)    # prix en devise native
-                        pos["current_price_eur"] = round(price_eur, 4)    # prix converti en EUR
-                        pos["position_eur"]      = round(price_eur * shares, 2)  # valeur en EUR
+                        # Stocker prix natif ET converti
+                        pos["current_price"]     = round(price_raw, 4)
+                        pos["current_price_eur"] = round(price_eur, 4)
+                        pos["position_eur"]      = round(price_eur * shares, 2)
                         pos["currency"]          = currency
                         pos["eur_usd"]           = round(eur_usd, 4)
-                        total_invested += entry * shares
+
+                        total_invested += entry_eur * shares
                         total_current  += price_eur * shares
+
                         lines.append(
-                            f"{sign} *{ticker}*: {price_eur:.2f}€ "
-                            f"({pnl_pct:+.1f}% | {pnl_eur:+.0f}€)"
+                            f"{sign} *{ticker}*: {price_raw:.2f}{sym} "
+                            f"({pnl_pct:+.1f}% | {pnl_native:+.1f}{sym})"
                         )
         except Exception:
             lines.append(f"⚠️ {ticker}: erreur prix")
 
-    total_pnl = total_current - total_invested
+    total_pnl     = total_current - total_invested
     total_pnl_pct = total_pnl / total_invested * 100 if total_invested else 0
     lines.append(f"\n💼 *P&L total: {total_pnl:+.0f}€ ({total_pnl_pct:+.1f}%)*")
     lines.append(f"💱 EUR/USD: {eur_usd:.4f}")
