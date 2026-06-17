@@ -77,11 +77,34 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
     )
 
 
-def update_prices(state: dict) -> None:
-    """Fetch current prices for all positions and update portfolio_state.json."""
+def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
     positions = state.get("positions", {})
     if not positions:
         return
+
+    # Récupérer le taux EUR/USD
+    eur_usd = 1.12  # fallback
+    try:
+        r = requests.get(
+            "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X",
+            headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+            params={"interval": "1d", "range": "5d"},
+            timeout=10
+        )
+        if r.status_code == 200:
+            result = r.json().get("chart", {}).get("result")
+            if result:
+                closes = result[0]["indicators"]["quote"][0].get("close", [])
+                closes = [c for c in closes if c]
+                if closes:
+                    eur_usd = closes[-1]
+    except Exception:
+        pass
+
+    lines = ["📊 *Prix mis à jour*\n"]
+    total_invested = 0
+    total_current  = 0
+
     for ticker, pos in positions.items():
         try:
             url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
@@ -93,14 +116,45 @@ def update_prices(state: dict) -> None:
                 result = r.json().get("chart", {}).get("result")
                 if result:
                     closes = result[0]["indicators"]["quote"][0].get("close", [])
+                    # Récupérer la devise
+                    currency = result[0].get("meta", {}).get("currency", "USD")
                     closes = [c for c in closes if c]
                     if closes:
-                        price = closes[-1]
-                        pos["current_price"] = round(price, 4)
-                        pos["position_eur"]  = round(price * pos.get("nb_shares", 0), 2)
-        except Exception as e:
-            pass
+                        price_raw = closes[-1]
+                        # Convertir en EUR si nécessaire
+                        price_eur = price_raw / eur_usd if currency == "USD" else price_raw
+                        shares   = pos.get("nb_shares", 0)
+                        entry    = pos.get("entry_price", price_eur)
+                        pnl_pct  = (price_eur - entry) / entry * 100 if entry else 0
+                        pnl_eur  = (price_eur - entry) * shares
+                        sign     = "🟢" if pnl_eur >= 0 else "🔴"
+                        pos["current_price"] = round(price_eur, 4)
+                        pos["position_eur"]  = round(price_eur * shares, 2)
+                        pos["currency"]      = currency
+                        pos["eur_usd"]       = round(eur_usd, 4)
+                        total_invested += entry * shares
+                        total_current  += price_eur * shares
+                        lines.append(
+                            f"{sign} *{ticker}*: {price_eur:.2f}€ "
+                            f"({pnl_pct:+.1f}% | {pnl_eur:+.0f}€)"
+                        )
+        except Exception:
+            lines.append(f"⚠️ {ticker}: erreur prix")
 
+    total_pnl = total_current - total_invested
+    total_pnl_pct = total_pnl / total_invested * 100 if total_invested else 0
+    lines.append(f"\n💼 *P&L total: {total_pnl:+.0f}€ ({total_pnl_pct:+.1f}%)*")
+    lines.append(f"💱 EUR/USD: {eur_usd:.4f}")
+
+    if token and chat_id:
+        from datetime import datetime
+        if datetime.utcnow().minute < 10:
+            msg = "\n".join(lines)
+            requests.post(
+                f"https://api.telegram.org/bot{token}/sendMessage",
+                json={"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"},
+                timeout=10,
+            )
 
 def main() -> None:
     token = os.environ["TELEGRAM_BOT_TOKEN"]
