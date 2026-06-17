@@ -121,17 +121,22 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
                     closes = [c for c in closes if c]
                     if closes:
                         price_raw = closes[-1]
-                        # Convertir en EUR si nécessaire
+                        currency  = result[0].get("meta", {}).get("currency", "USD")
+
+                        # Garder les prix dans leur devise native
                         price_eur = price_raw / eur_usd if currency == "USD" else price_raw
-                        shares   = pos.get("nb_shares", 0)
-                        entry    = pos.get("entry_price", price_eur)
-                        pnl_pct  = (price_eur - entry) / entry * 100 if entry else 0
-                        pnl_eur  = (price_eur - entry) * shares
-                        sign     = "🟢" if pnl_eur >= 0 else "🔴"
-                        pos["current_price"] = round(price_eur, 4)
-                        pos["position_eur"]  = round(price_eur * shares, 2)
-                        pos["currency"]      = currency
-                        pos["eur_usd"]       = round(eur_usd, 4)
+                        entry_raw = pos.get("entry_price", price_raw)  # déjà en devise native
+
+                        # P&L en devise native
+                        pnl_pct = (price_raw - entry_raw) / entry_raw * 100 if entry_raw else 0
+                        pnl_native = (price_raw - entry_raw) * shares
+
+                        # Valeur en EUR pour le total
+                        pos["current_price"]     = round(price_raw, 4)    # prix en devise native
+                        pos["current_price_eur"] = round(price_eur, 4)    # prix converti en EUR
+                        pos["position_eur"]      = round(price_eur * shares, 2)  # valeur en EUR
+                        pos["currency"]          = currency
+                        pos["eur_usd"]           = round(eur_usd, 4)
                         total_invested += entry * shares
                         total_current  += price_eur * shares
                         lines.append(
