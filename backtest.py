@@ -235,6 +235,40 @@ def score_satellite(closes, highs, lows, volumes, regime):
         elif macd > 0 and hist > hist_p: score += 3.0
         else:                            score += 0.0
 
+    # ── 7. QUALITÉ DU CREUX (max 30 pts, min -23 pts) ────────────────────
+
+    # A. Bougies qui rétrécissent = épuisement vendeurs
+    if len(highs) >= 10 and len(lows) >= 10:
+        range_recent = sum(highs[i]-lows[i] for i in range(5)) / 5
+        range_older  = sum(highs[i]-lows[i] for i in range(5,10)) / 5
+        if range_older > 0:
+            if range_recent < range_older * 0.7:
+                score += 10.0   # bougies rétrécissent → épuisement vendeurs
+            elif range_recent > range_older * 1.3:
+                score -= 10.0   # bougies s'élargissent → accélération baisse
+
+    # B. Divergence RSI positive = signal fort de retournement
+    if len(closes) >= 22:
+        rsi_now  = calc_rsi(list(closes[:15]))
+        rsi_prev = calc_rsi(list(closes[7:22]))
+        if closes[0] < closes[7] and rsi_now > rsi_prev:
+            score += 12.0   # prix baisse mais RSI remonte → divergence haussière
+        elif closes[0] < closes[7] and rsi_now < rsi_prev:
+            score -= 5.0    # momentum baissier confirmé
+
+    # C. Volume décroissant sur les jours de baisse = accumulation silencieuse
+    if len(volumes) >= 10 and len(closes) >= 10:
+        down_days_vol = []
+        for j in range(min(10, len(closes)-1)):
+            if closes[j] < closes[j+1]:
+                down_days_vol.append(volumes[j])
+        if len(down_days_vol) >= 3:
+            vol_trend = down_days_vol[0] / down_days_vol[-1] if down_days_vol[-1] > 0 else 1.0
+            if vol_trend < 0.7:
+                score += 8.0    # volume baisse sur jours de baisse → accumulation
+            elif vol_trend > 1.5:
+                score -= 8.0    # volume monte sur jours de baisse → distribution
+
     # ── FILTRE BEAR STRICT ────────────────────────────────────────────────
     if regime == "BEAR":
         if len(closes) >= 200:
