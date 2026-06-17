@@ -385,23 +385,23 @@ def load_state():
         try:
             with open(STATE_FILE) as f:
                 data = json.load(f)
-            # Vérifier que c'est bien notre format
             if "last_rebal" in data:
+                # Ajouter positions si absent (compatibilité ancien listener)
+                if "positions" not in data:
+                    data["positions"] = {}
                 return data
         except:
             pass
-    # Nouveau state vide
     return {
         "core":       {},
         "satellite":  {},
+        "positions":  {},  # ← compatibilité ancien listener
         "last_rebal": None,
         "capital":    CAPITAL,
         "core_cash":  CAPITAL * CORE_PCT,
         "sat_cash":   CAPITAL * SAT_PCT,
         "last_run":   None,
     }
-
-
 def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2, default=str)
@@ -604,12 +604,26 @@ def run_satellite(state, spy_data):
         send_telegram(msg)
 
         state["satellite"][ticker] = {
-            "entry_price": price,
-            "entry_date":  today,
-            "atr_pct":     atr_pct,
-            "shares":      shares,
-            "invested":    invest,
-        }
+                    "entry_price": price,
+                    "entry_date":  today,
+                    "atr_pct":     atr_pct,
+                    "shares":      shares,
+                    "invested":    invest,
+                }
+                # Sync format ancien listener
+                state["positions"][ticker] = {
+                    "entry_price":   price,
+                    "entry_date":    today,
+                    "nb_shares":     shares,
+                    "weight":        invest / CAPITAL,
+                    "model_price":   price,
+                    "slippage":      0,
+                    "stop_loss":     price * (1 - atr_pct * SAT_STOP_ATR),
+                    "take_profit":   price * (1 + SAT_TP),
+                    "trailing_high": price,
+                    "beta":          1.0,
+                    "position_eur":  invest,
+                }
         active += 1
         save_state(state)
 
