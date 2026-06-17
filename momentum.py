@@ -601,7 +601,7 @@ def run_satellite(state, spy_data):
         msg += f"📌 Régime : {regime}\n"
         msg += f"🔄 Positions satellite : {active+1}/{MAX_SAT}"
 
-         send_telegram(msg)
+        send_telegram(msg)
         active += 1
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
