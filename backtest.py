@@ -145,6 +145,16 @@ def score_satellite(closes, highs, lows, volumes, regime):
     if len(closes) < 50:
         return 0.0, 0.02
 
+    atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
+
+    # ── FILTRE TENDANCE 6 MOIS ────────────────────────────────────────────
+    # On n'achète un retracement que si la tendance 6 mois est haussière
+    # Évite les couteaux qui tombent (LABU, UPST, RBLX, COIN en bear)
+    if len(closes) >= 126:
+        perf_6m = (closes[0] - closes[125]) / closes[125]
+        if perf_6m < -0.20:
+            return 0.0, atr_pct
+
     score = 0.0
     atr_pct = calc_atr(highs, lows, closes) if highs and lows else 0.02
 
