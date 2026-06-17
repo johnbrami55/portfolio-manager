@@ -59,8 +59,19 @@ SATELLITE_UNIVERSE = [
     # ETFs volatils
     "XBI", "ARKK",
 ]
+SATELLITE_BEAR = [
+    "XLE", "XOM", "CVX",           # Énergie
+    "LMT", "RTX", "NOC", "GD",     # Défense
+    "GLD", "SLV", "GDX",           # Or
+    "XLP", "WMT", "COST",          # Conso de base
+    "XLV", "ABBV",                  # Santé
+    "SH", "PSQ", "DOG",            # Inverse ETFs
+    "UUP",                          # Dollar
+]
 
-ALL_TICKERS = list(set(CORE_UNIVERSE + SATELLITE_UNIVERSE))
+ALL_TICKERS = list(set(
+    CORE_UNIVERSE + SATELLITE_UNIVERSE + SATELLITE_BEAR
+))
 
 PARAM_GRID = {
     "core_n":           [5, 8],
@@ -473,13 +484,12 @@ def run_single(all_data, bench_df, all_dates, params):
                 del sat_holdings[ticker]
 
         # ── SATELLITE: Daily entries — cash in BEAR ───────────────────────
-        if in_bear:
-            continue
+       sat_universe = SATELLITE_BEAR if in_bear else SATELLITE_UNIVERSE
 
         max_sat = 4
         if len(sat_holdings) < max_sat and sat_cash > 0:
             sat_scores = []
-            for ticker in SATELLITE_UNIVERSE:
+            for ticker in sat_universe:
                 if ticker in sat_holdings or ticker not in all_data:
                     continue
                 if today not in all_data[ticker].index:
