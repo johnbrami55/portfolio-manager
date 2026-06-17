@@ -43,31 +43,25 @@ CORE_UNIVERSE = [
 ]
 
 SATELLITE_UNIVERSE = [
-    # Leveraged ETFs
-    "TQQQ", "SOXL", "UPRO", "TECL", "LABU", "FAS", "TNA", "SPXL",
-    # Crypto-adjacent
-    "COIN", "MSTR", "RIOT", "MARA", "CLSK", "HUT",
-    # High beta tech
-    "PLTR", "SMCI", "IONQ", "RBLX", "HOOD", "SOFI", "AFRM",
-    "UPST", "HIMS", "SOUN",
-    # AI plays
-    "NVDA", "AMD", "ARM", "MRVL",
-    # Biotech
-    "MRNA", "BNTX",
-    # High momentum / space
-    "DKNG", "RKLB", "ASTS", "TSLA", "RIVN",
-    # ETFs volatils
-    "XBI", "ARKK",
+    # ETFs UCITS Xetra
+    "SXRV.DE",  # Nasdaq 100
+    "VVSM.DE",  # Semiconductors US
+    "SEC0.DE",  # Semiconductors Global
+    "QDVE.DE",  # Tech S&P500
+    # Actions US disponibles sur DEGIRO
+    "NVDA", "AMD", "META", "TSLA",
+    "COIN", "MSTR", "RIOT", "MARA",
+    "PLTR", "SMCI", "HOOD", "SOFI",
+    "HIMS", "DKNG", "AFRM",
+    "CLSK", "HUT", "ASTS", "RKLB",
+    "SOUN", "IONQ", "UPST",
 ]
 
 SATELLITE_BEAR = [
-    "XLE", "XOM", "CVX",
     "LMT", "RTX", "NOC", "GD",
-    "GLD", "SLV", "GDX",
-    "XLP", "WMT", "COST",
-    "XLV", "ABBV",
-    "SH", "PSQ", "DOG",
-    "UUP",
+    "XOM", "CVX",
+    "WMT", "COST", "PG", "ABBV",
+    "SXR8.DE",
 ]
 
 ALL_TICKERS = list(set(
