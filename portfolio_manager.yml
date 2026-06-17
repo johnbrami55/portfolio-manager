@@ -44,3 +44,16 @@ jobs:
           git add portfolio_state.json
           git diff --staged --quiet || git commit -m "chore: update portfolio_state [skip ci]"
           git push
+
+      - name: Push to dashboard
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+        run: |
+          git clone https://x-access-token:${GITHUB_PAT}@github.com/johnbrami55/portfolio-dashboard.git dashboard_repo
+          cp portfolio_state.json dashboard_repo/portfolio_state.json
+          cd dashboard_repo
+          git config user.name "portfolio-bot"
+          git config user.email "portfolio-bot@github-actions"
+          git add portfolio_state.json
+          git diff --staged --quiet || git commit -m "chore: update dashboard [skip ci]"
+          git push
