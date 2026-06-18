@@ -298,13 +298,25 @@ def score_satellite(data, regime):
             elif macd > 0 and hist > 0:                  score += 10.0
             elif macd > 0:                               score += 5.0
 
-        # Proche ATH (max 10 pts)
+        # ATH — bonus si cassure avec volume, pénalité si essoufflé
         if len(closes) >= 252 and highs:
             high_52w = max(highs[:252])
             dist_ath = (high_52w - closes[0]) / high_52w
-            if dist_ath <= 0.05:   score += 10.0
-            elif dist_ath <= 0.10: score += 6.0
-            elif dist_ath <= 0.20: score += 3.0
+            if len(volumes) >= 21:
+                avg_vol   = sum(volumes[1:21]) / 20
+                vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
+            else:
+                vol_ratio = 1.0
+            if dist_ath <= 0.05:
+                # Très proche ATH — bonus seulement si volume fort
+                if vol_ratio >= 1.5:   score += 10.0  # cassure avec volume ✅
+                elif vol_ratio >= 1.2: score += 4.0   # volume moyen
+                else:                  score -= 10.0  # essoufflé sans volume ❌
+            elif dist_ath <= 0.10:
+                if vol_ratio >= 1.2:   score += 6.0
+                else:                  score += 2.0
+            elif dist_ath <= 0.20:     score += 3.0
+            # Si > 20% sous ATH → neutre, le momentum récent fait le travail
 
     else:
         # ── MODE NEUTRAL/BEAR : CONTRARIAN RETRACEMENT ───────────────────
