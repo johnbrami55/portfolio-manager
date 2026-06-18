@@ -658,15 +658,15 @@ def main():
     run_satellite(state, spy_data)
 
     # Résumé
-    core_count = len(state["core"])
-    sat_count  = len(state["positions"])
+    core_count = len(state.get("core", {}))
+    sat_count = len(state.get("satellite", {}))
     logger.info(f"Core: {core_count}/{CORE_N} | Satellite: {sat_count}/{MAX_SAT}")
 
     send_telegram(
         f"✅ <b>Run terminé</b>\n"
         f"📊 Régime : {regime}\n"
-        f"🏦 Core : {core_count}/{CORE_N} positions\n"
-        f"🛰 Satellite : {sat_count}/{MAX_SAT} ouvertes\n"
+        f"🏦 Core : {core_count}/8 positions\n"
+        f"🛰 Satellite : {sat_count}/4 positions\n"
         f"🕐 {datetime.now().strftime('%H:%M %d/%m/%Y')}"
     )
 
