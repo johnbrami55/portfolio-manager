@@ -659,14 +659,14 @@ def main():
 
     # Résumé
     core_count = len(state["core"])
-    sat_count  = len(state["satellite"])
+    sat_count  = len(state["positions"])
     logger.info(f"Core: {core_count}/{CORE_N} | Satellite: {sat_count}/{MAX_SAT}")
 
     send_telegram(
         f"✅ <b>Run terminé</b>\n"
         f"📊 Régime : {regime}\n"
         f"🏦 Core : {core_count}/{CORE_N} positions\n"
-        f"🛰 Satellite : {sat_count}/{MAX_SAT} positions\n"
+        f"🛰 Satellite : {sat_count}/{MAX_SAT} ouvertes\n"
         f"🕐 {datetime.now().strftime('%H:%M %d/%m/%Y')}"
     )
 
