@@ -42,7 +42,6 @@ def _get_credentials() -> tuple[str, str]:
 
 
 def send_message(text: str) -> bool:
-    """Send a plain text message to the configured chat."""
     try:
         token, chat_id = _get_credentials()
         url  = TELEGRAM_API.format(token=token, method="sendMessage")
@@ -213,7 +212,7 @@ def send_weekly_summary(state: dict, regime: str, cac_weekly_return: float = 0.0
     )
 
 
-# ─── Command Handler (called by telegram_listener) ─────────────────────────────────────────
+# ─── Command Handler ──────────────────────────────────────────────
 
 def handle_command(text: str) -> str:
     parts = text.strip().split()
@@ -249,9 +248,38 @@ def handle_command(text: str) -> str:
         slippage_str = f"{info['slippage_pct']:+.2%}" if model_price != exec_price else "N/A"
         return (
             f"✅ *BUY recorded: {ticker}*\n"
-            f"{nb_shares} shares @ {exec_price:.2f} EUR\n"
-            f"Stop-loss: {stop_loss:.2f} EUR\nTake-profit: {take_profit:.2f} EUR\n"
+            f"{nb_shares} shares @ {exec_price:.2f}\n"
+            f"Stop-loss: {stop_loss:.2f}\nTake-profit: {take_profit:.2f}\n"
             f"Slippage vs model: {slippage_str}{flag}"
+        )
+
+    elif cmd == "/boughtcore":
+        if len(parts) < 4:
+            return "Usage: /boughtcore <TICKER> <NB_SHARES> <EXECUTION_PRICE>"
+        ticker, nb_str, price_str = parts[1].upper(), parts[2], parts[3]
+        try:
+            nb_shares  = int(nb_str)
+            exec_price = float(price_str)
+        except ValueError:
+            return "Invalid nb_shares or price."
+        model_price = exec_price
+        stop_loss   = exec_price * 0.93   # stop -7% pour le core
+        take_profit = exec_price * 1.20   # TP +20%
+        weight = beta = 0.0
+        info = record_buy(state, ticker, nb_shares, exec_price, model_price, stop_loss, take_profit, weight, beta)
+        # Enregistrer aussi dans core
+        state.setdefault("core", {})[ticker] = {
+            "shares":      nb_shares,
+            "entry_price": exec_price,
+            "entry_date":  datetime.utcnow().isoformat()[:10],
+        }
+        save_state(state)
+        return (
+            f"✅ *CORE BUY recorded: {ticker}*\n"
+            f"{nb_shares} shares @ {exec_price:.2f}\n"
+            f"Stop-loss: {stop_loss:.2f}\n"
+            f"Take-profit: {take_profit:.2f}\n"
+            f"Layer: CORE 🏦"
         )
 
     elif cmd == "/sold":
@@ -263,13 +291,19 @@ def handle_command(text: str) -> str:
             exec_price = float(price_str)
         except ValueError:
             return "Invalid nb_shares or price."
+        # Retirer aussi du core si présent
+        if ticker in state.get("core", {}):
+            del state["core"][ticker]
+        # Retirer du satellite si présent
+        if ticker in state.get("satellite", {}):
+            del state["satellite"][ticker]
         info     = record_sell(state, ticker, nb_shares, exec_price)
         save_state(state)
         pnl_sign = "✅" if info["pnl_eur"] >= 0 else "\U0001f534"
         return (
             f"{pnl_sign} *SELL recorded: {ticker}*\n"
-            f"{info['shares']} shares @ {exec_price:.2f} EUR\n"
-            f"Entry: {info['entry_price']:.2f} EUR\n"
+            f"{info['shares']} shares @ {exec_price:.2f}\n"
+            f"Entry: {info['entry_price']:.2f}\n"
             f"P&L: {info['pnl_eur']:+.2f} EUR ({info['pnl_pct']:+.1%})\n"
             f"\n{format_portfolio_snapshot(state)}"
         )
@@ -285,6 +319,7 @@ def handle_command(text: str) -> str:
             return f"\U0001f4c2 *Portefeuille vide*\nRégime: {regime} | Cash: {cash:.0f} EUR\nCapital initial: {initial:.0f} EUR"
         from datetime import date as _date
         today  = _date.today()
+        core_tickers = set(state.get("core", {}).keys())
         lines  = [f"\U0001f4c2 *Portefeuille — {regime}*\n"]
         latent = 0.0
         for ticker, pos in positions.items():
@@ -292,27 +327,26 @@ def handle_command(text: str) -> str:
             stop   = pos.get("stop_loss", 0)
             tp     = pos.get("take_profit", 0)
             shares = pos.get("nb_shares", 0)
-            try:
-                import yfinance as yf
-                hist  = yf.Ticker(ticker).history(period="5d")
-                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
-            except Exception:
-                price = entry
-            pnl_eur = (price - entry) * shares
+            price  = pos.get("current_price", entry)
+            currency = pos.get("currency", "EUR")
+            eur_usd  = pos.get("eur_usd", 1.12)
+            price_eur = price / eur_usd if currency == "USD" else price
+            entry_eur = entry / eur_usd if currency == "USD" else entry
+            pnl_eur = (price_eur - entry_eur) * shares
             pnl_pct = (price - entry) / entry if entry else 0
-            dist_stop_pct = (price - stop) / price if price else 0
-            dist_tp_pct   = (tp - price) / price if price else 0
+            sym = "$" if currency == "USD" else "€"
             latent += pnl_eur
             try:
                 days = (_date.today() - _date.fromisoformat(pos.get("entry_date", str(today)))).days
             except Exception:
                 days = 0
-            sign = "\U0001f7e2" if pnl_eur >= 0 else "\U0001f534"
+            sign  = "\U0001f7e2" if pnl_eur >= 0 else "\U0001f534"
+            layer = "🏦" if ticker in core_tickers else "🛰"
             lines.append(
-                f"{sign} *{ticker}* ({days}j)\n"
-                f"   Entrée: {entry:.2f} → Actuel: {price:.2f}\n"
+                f"{sign} {layer} *{ticker}* ({days}j)\n"
+                f"   Entrée: {entry:.2f}{sym} → Actuel: {price:.2f}{sym}\n"
                 f"   P&L: {pnl_eur:+.0f}€ ({pnl_pct:+.1%})\n"
-                f"   Stop: {stop:.2f} (−{dist_stop_pct:.1%})   TP: {tp:.2f} (+{dist_tp_pct:.1%})"
+                f"   Stop: {stop:.2f}{sym}   TP: {tp:.2f}{sym}"
             )
         pos_val = sum(p.get("position_eur", 0) for p in positions.values())
         lines.append(f"\n*P&L latent: {latent:+.2f} EUR*\nBeta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\nP&L clôturé: {total_pnl:+.2f} EUR")
@@ -320,11 +354,15 @@ def handle_command(text: str) -> str:
 
     elif cmd == "/status":
         from config import FULL_UNIVERSE
+        core_count = len(state.get("core", {}))
+        sat_count  = len(state.get("satellite", {}))
         return (
             f"⚙️ *System Status*\n"
             f"Regime: {state.get('current_regime','?')}\n"
             f"Last run: {state.get('last_run','never')}\n"
-            f"Positions: {len(state.get('positions',{}))}\n"
+            f"Core positions: {core_count}\n"
+            f"Satellite positions: {sat_count}\n"
+            f"Total positions: {len(state.get('positions',{}))}\n"
             f"Cash: {state.get('cash_eur',0):.0f} EUR\n"
             f"Universe size: {len(FULL_UNIVERSE)} tickers"
         )
@@ -370,14 +408,13 @@ def handle_command(text: str) -> str:
         pnl_pct   = perf.get("total_pnl_pct", 0)
         lines     = ["\U0001f4ca *Performance du portefeuille*\n"]
         for ticker, pos in positions.items():
-            entry = pos.get("entry_price", 0)
-            try:
-                import yfinance as yf
-                hist  = yf.Ticker(ticker).history(period="5d")
-                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
-            except Exception:
-                price = entry
-            pnl_eur     = (price - entry) * pos.get("nb_shares", 0)
+            entry    = pos.get("entry_price", 0)
+            price    = pos.get("current_price", entry)
+            currency = pos.get("currency", "EUR")
+            eur_usd  = pos.get("eur_usd", 1.12)
+            price_eur = price / eur_usd if currency == "USD" else price
+            entry_eur = entry / eur_usd if currency == "USD" else entry
+            pnl_eur   = (price_eur - entry_eur) * pos.get("nb_shares", 0)
             pnl_pct_pos = (price - entry) / entry if entry else 0
             sign = "✅" if pnl_eur >= 0 else "\U0001f534"
             lines.append(f"{sign} {ticker}: {pnl_eur:+.0f}€ ({pnl_pct_pos:+.1%})")
@@ -391,21 +428,22 @@ def handle_command(text: str) -> str:
             return "Aucune position ouverte."
         lines = ["⚠️ *Distances stop/TP par position*\n"]
         for ticker, pos in positions.items():
-            entry = pos.get("entry_price", 0)
-            stop  = pos.get("stop_loss", 0)
-            tp    = pos.get("take_profit", 0)
-            try:
-                import yfinance as yf
-                hist  = yf.Ticker(ticker).history(period="5d")
-                price = float(hist["Close"].iloc[-1]) if not hist.empty else entry
-            except Exception:
-                price = entry
+            entry    = pos.get("entry_price", 0)
+            stop     = pos.get("stop_loss", 0)
+            tp       = pos.get("take_profit", 0)
+            price    = pos.get("current_price", entry)
+            currency = pos.get("currency", "EUR")
+            eur_usd  = pos.get("eur_usd", 1.12)
+            sym      = "$" if currency == "USD" else "€"
+            price_eur = price / eur_usd if currency == "USD" else price
+            stop_eur  = stop / eur_usd if currency == "USD" else stop
+            tp_eur    = tp / eur_usd if currency == "USD" else tp
             dist_stop = (price - stop) / price if price else 0
             dist_tp   = (tp - price) / price if price else 0
-            eur_risk  = (price - stop) * pos.get("nb_shares", 0)
-            eur_tp    = (tp - price) * pos.get("nb_shares", 0)
+            eur_risk  = (price_eur - stop_eur) * pos.get("nb_shares", 0)
+            eur_tp    = (tp_eur - price_eur) * pos.get("nb_shares", 0)
             lines.append(
-                f"*{ticker}*\n  Prix: {price:.2f} | Stop: {stop:.2f} | TP: {tp:.2f}\n"
+                f"*{ticker}*\n  Prix: {price:.2f}{sym} | Stop: {stop:.2f}{sym} | TP: {tp:.2f}{sym}\n"
                 f"  Dist. stop: -{dist_stop:.1%} ({-eur_risk:.0f}€)\n"
                 f"  Dist. TP:   +{dist_tp:.1%} (+{eur_tp:.0f}€)"
             )
@@ -454,12 +492,14 @@ def handle_command(text: str) -> str:
         initial  = state.get("initial_capital", INITIAL_CAPITAL)
         pos_val  = sum(p.get("position_eur", 0) for p in state.get("positions", {}).values())
         total    = pos_val + cash
+        core_n   = len(state.get("core", {}))
+        sat_n    = len(state.get("satellite", {}))
         return (
             f"\U0001f4b0 *Capital disponible*\n"
             f"Cash: {cash:.2f} EUR ({cash/total:.1%})\n"
             f"Positions: {pos_val:.2f} EUR ({pos_val/total:.1%})\n"
             f"Total estimé: {total:.2f} EUR\nCapital initial: {initial:.2f} EUR\n"
-            f"Nb positions: {len(state.get('positions', {}))}"
+            f"Core: {core_n} positions | Satellite: {sat_n} positions"
         )
 
     elif cmd == "/alert":
@@ -488,7 +528,8 @@ def handle_command(text: str) -> str:
         return (
             "Commandes disponibles:\n"
             "/run — déclencher un run immédiat\n"
-            "/bought <TICKER> <NB> <PRICE>\n"
+            "/bought <TICKER> <NB> <PRICE> — satellite\n"
+            "/boughtcore <TICKER> <NB> <PRICE> — core\n"
             "/sold <TICKER> <NB> <PRICE>\n"
             "/portfolio — positions + P&L\n"
             "/status — état du système\n"
