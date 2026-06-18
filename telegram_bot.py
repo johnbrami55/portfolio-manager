@@ -349,7 +349,14 @@ def handle_command(text: str) -> str:
                 f"   Stop: {stop:.2f}{sym}   TP: {tp:.2f}{sym}"
             )
         pos_val = sum(p.get("position_eur", 0) for p in positions.values())
-        lines.append(f"\n*P&L latent: {latent:+.2f} EUR*\nBeta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\nP&L clôturé: {total_pnl:+.2f} EUR\n\n📊 [Dashboard](https://johnbrami55.github.io/portfolio-dashboard/)")
+        lines.append(
+            f"\n*P&L latent: {latent:+.2f} EUR*\n"
+            f"Beta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\n"
+            f"P&L clôturé: {total_pnl:+.2f} EUR\n\n"
+            f"📊 [Dashboard](https://johnbrami55.github.io/portfolio-dashboard/)"
+        )
+        return "\n\n".join(lines)
+        
 
     elif cmd == "/status":
         from config import FULL_UNIVERSE
