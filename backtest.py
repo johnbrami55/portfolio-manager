@@ -44,17 +44,26 @@ CORE_UNIVERSE = [
 
 SATELLITE_UNIVERSE = [
     # ETFs UCITS Xetra
-    "SXRV.DE",  # Nasdaq 100
-    "VVSM.DE",  # Semiconductors US
-    "SEC0.DE",  # Semiconductors Global
-    "QDVE.DE",  # Tech S&P500
-    # Actions US disponibles sur DEGIRO
+    "SXRV.DE", "VVSM.DE", "SEC0.DE", "QDVE.DE",
+    # Actions US high beta
     "NVDA", "AMD", "META", "TSLA",
     "COIN", "MSTR", "RIOT", "MARA",
     "PLTR", "SMCI", "HOOD", "SOFI",
     "HIMS", "DKNG", "AFRM",
     "CLSK", "HUT", "ASTS", "RKLB",
     "SOUN", "IONQ", "UPST",
+    # Hong Kong — marchés asiatiques
+    "0700.HK",  # Tencent
+    "9988.HK",  # Alibaba
+    "3690.HK",  # Meituan
+    "1810.HK",  # Xiaomi
+    "0941.HK",  # China Mobile
+    "1299.HK",  # AIA Group
+    # Europe volatile
+    "ASML.AS",  # ASML
+    "STM.PA",   # STMicro semi-conducteurs
+    "CAP.PA",   # Capgemini IT
+    "DSY.PA",   # Dassault Systèmes
 ]
 
 SATELLITE_BEAR = [
