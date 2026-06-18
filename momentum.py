@@ -70,20 +70,27 @@ CORE_UNIVERSE = [
 ]
 
 SATELLITE_UNIVERSE = [
+    # ETFs UCITS Xetra
     "SXRV.DE", "VVSM.DE", "SEC0.DE", "QDVE.DE",
+    # Actions US high beta
     "NVDA", "AMD", "META", "TSLA",
     "COIN", "MSTR", "RIOT", "MARA",
     "PLTR", "SMCI", "HOOD", "SOFI",
     "HIMS", "DKNG", "AFRM",
     "CLSK", "HUT", "ASTS", "RKLB",
     "SOUN", "IONQ", "UPST",
-]
-
-SATELLITE_BEAR = [
-    "LMT", "RTX", "NOC", "GD",
-    "XOM", "CVX",
-    "WMT", "COST", "PG", "ABBV",
-    "SXR8.DE",
+    # Hong Kong — marchés asiatiques
+    "0700.HK",  # Tencent
+    "9988.HK",  # Alibaba
+    "3690.HK",  # Meituan
+    "1810.HK",  # Xiaomi
+    "0941.HK",  # China Mobile
+    "1299.HK",  # AIA Group
+    # Europe volatile
+    "ASML.AS",  # ASML
+    "STM.PA",   # STMicro semi-conducteurs
+    "CAP.PA",   # Capgemini IT
+    "DSY.PA",   # Dassault Systèmes
 ]
 
 
