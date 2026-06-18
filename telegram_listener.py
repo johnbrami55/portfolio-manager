@@ -18,7 +18,6 @@ BRANCH = "main"
 
 
 def read_offset(pat: str) -> tuple[int, str | None]:
-    """Read last_update_id from GitHub. Returns (offset, sha) or (0, None) if not found."""
     resp = requests.get(
         f"{GITHUB_API}/repos/{REPO}/contents/{OFFSET_FILE}",
         headers={"Authorization": f"token {pat}", "Accept": "application/vnd.github.v3+json"},
@@ -32,7 +31,6 @@ def read_offset(pat: str) -> tuple[int, str | None]:
 
 
 def write_offset(pat: str, update_id: int, sha: str | None) -> None:
-    """Commit new last_update_id to GitHub."""
     body: dict = {
         "message": f"chore: telegram offset {update_id} [skip ci]",
         "content": base64.b64encode(str(update_id).encode()).decode(),
@@ -101,6 +99,16 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
     except Exception:
         pass
 
+    # Fetch SPY pour calcul beta
+    spy_returns = None
+    try:
+        import yfinance as yf
+        spy_hist = yf.Ticker("SPY").history(period="3mo")["Close"]
+        if len(spy_hist) > 20:
+            spy_returns = spy_hist.pct_change().dropna()
+    except Exception:
+        pass
+
     lines = ["📊 *Prix mis à jour*\n"]
     total_invested = 0
     total_current  = 0
@@ -137,6 +145,20 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
                         pos["currency"]          = currency
                         pos["eur_usd"]           = round(eur_usd, 4)
 
+                        # Calculer le beta vs SPY automatiquement
+                        if spy_returns is not None:
+                            try:
+                                stock_hist = yf.Ticker(ticker).history(period="3mo")["Close"]
+                                if len(stock_hist) > 20:
+                                    stock_ret = stock_hist.pct_change().dropna()
+                                    aligned = spy_returns.align(stock_ret, join='inner')
+                                    cov = aligned[0].cov(aligned[1])
+                                    var = aligned[0].var()
+                                    beta = round(cov / var, 2) if var > 0 else 1.0
+                                    pos["beta"] = beta
+                            except Exception:
+                                pass
+
                         total_invested += entry_eur * shares
                         total_current  += price_eur * shares
 
@@ -162,13 +184,13 @@ def update_prices(state: dict, token: str = None, chat_id: str = None) -> None:
                 timeout=10,
             )
 
+
 def main() -> None:
     token = os.environ["TELEGRAM_BOT_TOKEN"]
     authorized_chat = os.environ["TELEGRAM_CHAT_ID"]
     pat = os.environ["GITHUB_PAT"]
 
     last_id, sha = read_offset(pat)
-    # First ever run: drain all pending updates without processing any
     if sha is None:
         updates = get_updates(token, 0)
         if updates:
@@ -186,7 +208,6 @@ def main() -> None:
         return
 
     new_id = max(u["update_id"] for u in updates)
-    # ACK immediately before processing — prevents reprocessing on crash
     write_offset(pat, new_id, sha)
 
     from telegram_bot import handle_command
@@ -206,7 +227,10 @@ def main() -> None:
                 send_telegram(token, authorized_chat, "❌ Erreur lors du lancement du run.")
         else:
             reply = handle_command(text)
-            send_telegram(token, authorized_chat, reply)
+            if reply:
+                send_telegram(token, authorized_chat, reply)
+            else:
+                send_telegram(token, authorized_chat, "❌ Erreur interne — commande non exécutée")
 
 
 if __name__ == "__main__":
