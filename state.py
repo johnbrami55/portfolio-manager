@@ -176,7 +176,7 @@ def record_sell(
     pnl_pct = (execution_price - entry) / entry if entry else 0
 
     # Update performance
-    state["performance"]["total_pnl_eur"] += pnl_eur
+    state.setdefault("performance", {"total_pnl_eur": 0.0, "total_pnl_pct": 0.0})["total_pnl_eur"] += pnl_eur
     initial = state.get("initial_capital", INITIAL_CAPITAL)
     state["performance"]["total_pnl_pct"] = state["performance"]["total_pnl_eur"] / initial
 
