@@ -178,8 +178,7 @@ def record_sell(
     # Update performance
     state.setdefault("performance", {"total_pnl_eur": 0.0, "total_pnl_pct": 0.0})["total_pnl_eur"] += pnl_eur
     initial = state.get("initial_capital", INITIAL_CAPITAL)
-    state["performance"]["total_pnl_pct"] = state["performance"]["total_pnl_eur"] / initial
-
+    state["performance"]["total_pnl_pct"] = state["performance"]["total_pnl_eur"] / initial if initial else 0
     # Remove or reduce position
     if shares >= pos["nb_shares"]:
         del state["positions"][ticker]
