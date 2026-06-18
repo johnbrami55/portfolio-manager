@@ -350,7 +350,6 @@ def handle_command(text: str) -> str:
             )
         pos_val = sum(p.get("position_eur", 0) for p in positions.values())
         lines.append(f"\n*P&L latent: {latent:+.2f} EUR*\nBeta: {pb:.2f} | Positions: {pos_val:.0f}€ | Cash: {cash:.0f}€\nP&L clôturé: {total_pnl:+.2f} EUR")
-        return "\n\n".join(lines)
 
     elif cmd == "/status":
         from config import FULL_UNIVERSE
