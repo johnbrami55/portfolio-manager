@@ -525,6 +525,7 @@ def run_core(state, spy_data):
         msg += "\n"
 
     if to_buy:
+        cash_available = state.get("cash_eur", 0)
         msg += f"📈 <b>ACHETER :</b>\n"
         for ticker in to_buy:
             data = next((s for s in scores if s[0] == ticker), None)
@@ -536,6 +537,20 @@ def run_core(state, spy_data):
                 msg += f"   Prix : {price:.2f}$\n"
                 msg += f"   Shares : {shares}\n"
                 msg += f"   Investir : {invest:.0f}€\n"
+                if cash_available < invest + 200:
+                    # Identifier le satellite le moins performant à vendre
+                    sat_positions = state.get("satellite", {})
+                    if sat_positions:
+                        worst_ticker = min(
+                            sat_positions.keys(),
+                            key=lambda t: (
+                                (fetch_history(t) or {}).get("price", sat_positions[t]["entry_price"])
+                                - sat_positions[t]["entry_price"]
+                            ) / sat_positions[t]["entry_price"]
+                        )
+                        msg += f"   ⚠️ Cash insuffisant ({cash_available:.0f}€)\n"
+                        msg += f"   💡 Vends satellite <b>{worst_ticker}</b> pour financer\n"
+                        msg += f"   👉 /sold {worst_ticker} {sat_positions[worst_ticker]['shares']} [prix]\n"
         msg += "\n"
 
     msg += f"💰 Budget par position : ~{slot_size:.0f}€\n"
@@ -551,8 +566,6 @@ def run_satellite(state, spy_data):
     regime  = detect_regime(spy_data)
     bear    = in_bear(spy_data)
     today   = str(date.today())
-
-    # Choisir l'univers selon le régime
     universe = SATELLITE_BEAR if bear else SATELLITE_UNIVERSE
 
     # ── Stop-loss & take-profit sur positions actives ─────────────────────
@@ -561,14 +574,12 @@ def run_satellite(state, spy_data):
         data = fetch_history(ticker)
         if not data:
             continue
-
         price     = data["price"]
         entry     = pos["entry_price"]
         pnl       = (price - entry) / entry
         days_held = (date.today() - date.fromisoformat(pos["entry_date"])).days
         stop      = -pos["atr_pct"] * SAT_STOP_ATR
         pnl_eur   = pnl * pos["invested"]
-
         sell = False; reason = ""
         if pnl <= stop:
             sell = True; reason = f"🛑 Stop-loss ({pnl*100:.1f}%)"
@@ -576,12 +587,11 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
-
         if sell:
             emoji = "🟢" if pnl > 0 else "🔴"
             msg   = f"{emoji} <b>SATELLITE — VENDRE {ticker}</b>\n"
             msg  += f"Raison : {reason}\n"
-            msg  += f"Prix entrée : {entry:.2f}$ → Prix actuel : {price:.2f}$\n"
+            msg  += f"Prix entrée : {entry:.2f} → Prix actuel : {price:.2f}\n"
             msg  += f"P&L : {pnl*100:+.1f}% ({pnl_eur:+.0f}€)\n"
             msg  += f"Jours tenus : {days_held}j"
             send_telegram(msg)
@@ -589,16 +599,30 @@ def run_satellite(state, spy_data):
             save_state(state)
 
     # ── Nouvelles entrées ─────────────────────────────────────────────────
-    active = len(state["positions"])
-    if active >= MAX_SAT:
-        logger.info(f"Satellite: {active}/{MAX_SAT} positions — pas de nouvel achat")
+    active         = len(state["positions"])
+    cash_available = state.get("cash_eur", 0)
+    CASH_RESERVE   = 200  # garder 200€ de réserve minimum
+
+    cash_deployable = max(0, cash_available - CASH_RESERVE)
+
+    if cash_deployable < 100:
+        logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
         return
 
-    slot_size = (CAPITAL * SAT_PCT) / MAX_SAT
+    # Nombre de nouvelles positions possibles avec le cash dispo (~150€ min par position)
+    max_new = int(cash_deployable / 150)
+    if max_new == 0:
+        logger.info(f"Satellite: cash insuffisant pour une position ({cash_available:.0f}€)")
+        return
+
+    # Budget par position — plafonné à 300€
+    slot_size = min(cash_deployable / max_new, 300)
 
     sat_scores = []
     for ticker in universe:
         if ticker in state["satellite"]:
+            continue
+        if ticker in state["positions"]:
             continue
         data = fetch_history(ticker)
         if not data:
@@ -609,32 +633,29 @@ def run_satellite(state, spy_data):
             logger.info(f"  {ticker}: score={score:.1f}")
 
     sat_scores.sort(key=lambda x: x[1], reverse=True)
-    slots = MAX_SAT - active
 
-    for ticker, score, price, atr_pct in sat_scores[:slots]:
+    for ticker, score, price, atr_pct in sat_scores[:max_new]:
         shares  = int(slot_size / price)
         if shares == 0:
             continue
-        invest  = shares * price
-        stop_p  = price * (1 - atr_pct * SAT_STOP_ATR)
-        tp_p    = price * (1 + SAT_TP)
+        invest   = shares * price
+        stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
+        tp_p     = price * (1 + SAT_TP)
         stop_pct = atr_pct * SAT_STOP_ATR * 100
-
         regime_emoji = "🐂" if regime == "BULL" else ("🐻" if regime == "BEAR" else "😐")
-
         msg  = f"🟢 <b>SIGNAL BUY — SATELLITE</b> {regime_emoji}\n"
         msg += f"📈 <b>{ticker}</b>\n"
-        msg += f"💰 Prix : {price:.2f}$\n"
+        msg += f"💰 Prix : {price:.2f}\n"
         msg += f"📊 Score : {score:.0f}/100\n\n"
         msg += f"💵 Investir : {invest:.0f}€ ({shares} actions)\n"
-        msg += f"🛑 Stop-loss : {stop_p:.2f}$ (-{stop_pct:.1f}%)\n"
-        msg += f"🎯 Take-profit : {tp_p:.2f}$ (+{SAT_TP*100:.0f}%)\n"
+        msg += f"🛑 Stop-loss : {stop_p:.2f} (-{stop_pct:.1f}%)\n"
+        msg += f"🎯 Take-profit : {tp_p:.2f} (+{SAT_TP*100:.0f}%)\n"
         msg += f"⏱ Hold max : {SAT_HOLD_DAYS} jours\n\n"
         msg += f"📌 Régime : {regime}\n"
-        msg += f"🔄 Positions satellite : {active+1}/{MAX_SAT}"
-
+        msg += f"💰 Cash restant après achat : ~{cash_available - invest:.0f}€"
         send_telegram(msg)
         active += 1
+        cash_available -= invest
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
