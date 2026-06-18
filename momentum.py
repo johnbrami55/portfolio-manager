@@ -589,7 +589,7 @@ def run_satellite(state, spy_data):
             save_state(state)
 
     # ── Nouvelles entrées ─────────────────────────────────────────────────
-    active = len(state["satellite"])
+    active = len(state["positions"])
     if active >= MAX_SAT:
         logger.info(f"Satellite: {active}/{MAX_SAT} positions — pas de nouvel achat")
         return
