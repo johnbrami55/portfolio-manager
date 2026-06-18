@@ -32,11 +32,9 @@ DEFAULT_STATE = {
 
 
 def load_state() -> dict:
-    """Load portfolio state from JSON file. Returns default state if not found."""
     if not os.path.exists(STATE_FILE):
         logger.info(f"{STATE_FILE} not found — initializing default state")
         return dict(DEFAULT_STATE)
-
     try:
         with open(STATE_FILE, "r") as f:
             state = json.load(f)
@@ -49,7 +47,6 @@ def load_state() -> dict:
 
 
 def save_state(state: dict) -> None:
-    """Persist portfolio state to JSON file."""
     state["last_run"] = datetime.utcnow().isoformat()
     try:
         with open(STATE_FILE, "w") as f:
@@ -57,6 +54,34 @@ def save_state(state: dict) -> None:
         logger.info(f"State saved to {STATE_FILE}")
     except Exception as e:
         logger.error(f"Failed to save state: {e}")
+
+
+def _get_eur_usd() -> float:
+    """Fetch current EUR/USD rate from Yahoo Finance."""
+    try:
+        import requests
+        r = requests.get(
+            "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X",
+            headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+            params={"interval": "1d", "range": "5d"},
+            timeout=10
+        )
+        if r.status_code == 200:
+            result = r.json().get("chart", {}).get("result")
+            if result:
+                closes = result[0]["indicators"]["quote"][0].get("close", [])
+                closes = [c for c in closes if c]
+                if closes:
+                    return closes[-1]
+    except Exception:
+        pass
+    return 1.12
+
+
+def _is_usd_ticker(ticker: str) -> bool:
+    """Returns True if ticker is a USD-denominated asset."""
+    eur_suffixes = ('.DE', '.PA', '.AS', '.MI', '.L', '.BR', '.MC')
+    return not any(ticker.endswith(s) for s in eur_suffixes)
 
 
 def record_buy(
@@ -72,13 +97,23 @@ def record_buy(
 ) -> dict:
     """
     Record a confirmed buy execution in the state.
-    Returns slippage info.
+    execution_price is in the native currency of the ticker (USD for US stocks).
+    Cash deduction is always in EUR.
     """
     slippage_pct = (execution_price - model_price) / model_price if model_price else 0
-    position_eur = nb_shares * execution_price
+
+    # Convert to EUR for cash deduction
+    if _is_usd_ticker(ticker):
+        eur_usd = _get_eur_usd()
+        execution_price_eur = execution_price / eur_usd
+    else:
+        eur_usd = 1.0
+        execution_price_eur = execution_price
+
+    position_eur = nb_shares * execution_price_eur
 
     state["positions"][ticker] = {
-        "entry_price":   execution_price,
+        "entry_price":   execution_price,        # prix natif (USD ou EUR)
         "entry_date":    datetime.utcnow().isoformat()[:10],
         "nb_shares":     nb_shares,
         "weight":        weight,
@@ -88,21 +123,24 @@ def record_buy(
         "take_profit":   take_profit,
         "trailing_high": execution_price,
         "beta":          beta,
-        "position_eur":  position_eur,
+        "position_eur":  round(position_eur, 2),
+        "currency":      "USD" if _is_usd_ticker(ticker) else "EUR",
+        "eur_usd":       round(eur_usd, 4) if _is_usd_ticker(ticker) else 1.0,
     }
 
     state["cash_eur"] = max(0, state.get("cash_eur", 0) - position_eur)
     logger.info(f"Recorded BUY {ticker}: {nb_shares} shares @ {execution_price:.2f} "
-                f"(slippage {slippage_pct:.2%})")
+                f"({execution_price_eur:.2f} EUR) — cash remaining: {state['cash_eur']:.2f} EUR")
 
     return {
-        "ticker":         ticker,
-        "nb_shares":      nb_shares,
+        "ticker":          ticker,
+        "nb_shares":       nb_shares,
         "execution_price": execution_price,
-        "model_price":    model_price,
-        "slippage_pct":   slippage_pct,
-        "stop_loss":      stop_loss,
-        "take_profit":    take_profit,
+        "execution_price_eur": execution_price_eur,
+        "model_price":     model_price,
+        "slippage_pct":    slippage_pct,
+        "stop_loss":       stop_loss,
+        "take_profit":     take_profit,
     }
 
 
@@ -114,17 +152,28 @@ def record_sell(
 ) -> dict:
     """
     Record a confirmed sell execution.
-    Returns P&L info.
+    execution_price is in the native currency of the ticker.
     """
     pos = state["positions"].get(ticker)
     if not pos:
         logger.warning(f"Sell recorded for {ticker} not in positions — tracking only")
-        return {"ticker": ticker, "pnl_eur": 0, "pnl_pct": 0}
+        return {"ticker": ticker, "pnl_eur": 0, "pnl_pct": 0, "shares": nb_shares,
+                "entry_price": 0, "execution_price": execution_price}
 
-    entry     = pos["entry_price"]
-    shares    = min(nb_shares, pos["nb_shares"])
-    pnl_eur   = (execution_price - entry) * shares
-    pnl_pct   = (execution_price - entry) / entry
+    entry  = pos["entry_price"]
+    shares = min(nb_shares, pos["nb_shares"])
+
+    # Convert to EUR
+    if _is_usd_ticker(ticker):
+        eur_usd = _get_eur_usd()
+        execution_price_eur = execution_price / eur_usd
+        entry_eur = entry / eur_usd
+    else:
+        execution_price_eur = execution_price
+        entry_eur = entry
+
+    pnl_eur = (execution_price_eur - entry_eur) * shares
+    pnl_pct = (execution_price - entry) / entry if entry else 0
 
     # Update performance
     state["performance"]["total_pnl_eur"] += pnl_eur
@@ -137,10 +186,10 @@ def record_sell(
     else:
         state["positions"][ticker]["nb_shares"] -= shares
         state["positions"][ticker]["position_eur"] = (
-            state["positions"][ticker]["nb_shares"] * execution_price
+            state["positions"][ticker]["nb_shares"] * execution_price_eur
         )
 
-    state["cash_eur"] = state.get("cash_eur", 0) + execution_price * shares
+    state["cash_eur"] = state.get("cash_eur", 0) + execution_price_eur * shares
 
     state.setdefault("trade_history", []).append({
         "ticker":      ticker,
@@ -168,10 +217,8 @@ def record_sell(
 
 
 def update_score_history(state: dict, scores: list[dict]) -> None:
-    """Update rolling score history in state (keep last 3 runs per ticker)."""
     today = datetime.utcnow().isoformat()[:10]
     history = state.setdefault("score_history", {})
-
     for s in scores:
         ticker = s["ticker"]
         entry  = {"score": s["score"], "date": today}
@@ -182,7 +229,6 @@ def update_score_history(state: dict, scores: list[dict]) -> None:
 
 
 def load_score_history() -> dict:
-    """Load per-ticker score history from score_history.json. Returns empty dict if not found."""
     if not os.path.exists(SCORE_HISTORY_FILE):
         return {}
     try:
@@ -194,7 +240,6 @@ def load_score_history() -> dict:
 
 
 def save_score_history(history: dict) -> None:
-    """Persist score history to score_history.json."""
     try:
         with open(SCORE_HISTORY_FILE, "w") as f:
             json.dump(history, f, indent=2)
@@ -204,7 +249,6 @@ def save_score_history(history: dict) -> None:
 
 
 def append_to_score_history(history: dict, scores: list[dict]) -> dict:
-    """Add current run scores to history, keeping last SCORE_HISTORY_MAX_RUNS per ticker."""
     today = datetime.utcnow().isoformat()[:10]
     for s in scores:
         ticker = s["ticker"]
