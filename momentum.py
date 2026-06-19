@@ -626,18 +626,9 @@ def run_satellite(state, spy_data):
 
     cash_deployable = max(0, cash_available - CASH_RESERVE)
 
-    if cash_deployable < 100:
+    if cash_deployable < 50:
         logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
         return
-
-    # Nombre de nouvelles positions possibles avec le cash dispo (~150€ min par position)
-    max_new = int(cash_deployable / 150)
-    if max_new == 0:
-        logger.info(f"Satellite: cash insuffisant pour une position ({cash_available:.0f}€)")
-        return
-
-    # Budget par position — plafonné à 300€
-    slot_size = min(cash_deployable / max_new, 300)
 
     sat_scores = []
     for ticker in universe:
@@ -655,32 +646,33 @@ def run_satellite(state, spy_data):
 
     sat_scores.sort(key=lambda x: x[1], reverse=True)
 
-    bought = 0
-    for ticker, score, price, atr_pct in sat_scores:
-        if bought >= max_new:
-            break
-        shares  = int(slot_size / price)
-        if shares == 0:
-            continue  # titre trop cher pour le budget — essayer le suivant
-        invest   = shares * price
+    if not sat_scores:
+        logger.info("Satellite: aucun candidat éligible")
+        return
+
+    # Construire un message unique avec TOUS les candidats triés par score,
+    # marquant ceux qui sont réellement achetables avec le cash dispo
+    msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
+    msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
+
+    for ticker, score, price, atr_pct in sat_scores[:8]:  # top 8 max pour ne pas spammer
+        shares = int(cash_deployable / price)
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + SAT_TP)
         stop_pct = atr_pct * SAT_STOP_ATR * 100
-        regime_emoji = "🐂" if regime == "BULL" else ("🐻" if regime == "BEAR" else "😐")
-        msg  = f"🟢 <b>SIGNAL BUY — SATELLITE</b> {regime_emoji}\n"
-        msg += f"📈 <b>{ticker}</b>\n"
-        msg += f"💰 Prix : {price:.2f}\n"
-        msg += f"📊 Score : {score:.0f}/100\n\n"
-        msg += f"💵 Investir : {invest:.0f}€ ({shares} actions)\n"
-        msg += f"🛑 Stop-loss : {stop_p:.2f} (-{stop_pct:.1f}%)\n"
-        msg += f"🎯 Take-profit : {tp_p:.2f} (+{SAT_TP*100:.0f}%)\n"
-        msg += f"⏱ Hold max : {SAT_HOLD_DAYS} jours\n\n"
-        msg += f"📌 Régime : {regime}\n"
-        msg += f"💰 Cash restant après achat : ~{cash_available - invest:.0f}€"
-        send_telegram(msg)
-        active += 1
-        cash_available -= invest
-        bought += 1
+
+        if shares > 0:
+            invest = shares * price
+            msg += f"✅ <b>{ticker}</b> — Score {score:.0f}/100\n"
+            msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
+            msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{SAT_TP*100:.0f}%)\n\n"
+        else:
+            msg += f"🔒 <b>{ticker}</b> — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
+
+    msg += f"⏱ Hold max : {SAT_HOLD_DAYS}j\n"
+    msg += f"📌 Régime : {regime}"
+    send_telegram(msg)
+        
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
