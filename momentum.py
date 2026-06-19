@@ -646,10 +646,13 @@ def run_satellite(state, spy_data):
 
     sat_scores.sort(key=lambda x: x[1], reverse=True)
 
-    for ticker, score, price, atr_pct in sat_scores[:max_new]:
+    bought = 0
+    for ticker, score, price, atr_pct in sat_scores:
+        if bought >= max_new:
+            break
         shares  = int(slot_size / price)
         if shares == 0:
-            continue
+            continue  # titre trop cher pour le budget — essayer le suivant
         invest   = shares * price
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + SAT_TP)
@@ -668,6 +671,7 @@ def run_satellite(state, spy_data):
         send_telegram(msg)
         active += 1
         cash_available -= invest
+        bought += 1
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
