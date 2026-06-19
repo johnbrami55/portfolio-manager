@@ -79,18 +79,23 @@ SATELLITE_UNIVERSE = [
     "HIMS", "DKNG", "AFRM",
     "CLSK", "HUT", "ASTS", "RKLB",
     "SOUN", "IONQ", "UPST",
-    # Hong Kong — marchés asiatiques
-    "0700.HK",  # Tencent
-    "9988.HK",  # Alibaba
-    "3690.HK",  # Meituan
-    "1810.HK",  # Xiaomi
-    "0941.HK",  # China Mobile
-    "1299.HK",  # AIA Group
-    # Europe volatile
-    "ASML.AS",  # ASML
-    "STM.PA",   # STMicro semi-conducteurs
-    "CAP.PA",   # Capgemini IT
-    "DSY.PA",   # Dassault Systèmes
+    # Hong Kong — high beta / volatile
+    "0700.HK", "9988.HK", "3690.HK", "1810.HK", "0941.HK", "1299.HK",
+    "1801.HK",  # Innovent Biologics
+    "9866.HK",  # NIO
+    "2015.HK",  # Li Auto
+    "9618.HK",  # JD.com
+    "1024.HK",  # Kuaishou
+    "9888.HK",  # Baidu
+    "9999.HK",  # NetEase
+    "0285.HK",  # BYD Electronic
+    "6160.HK",  # BeiGene
+    # Europe — volatile / growth
+    "ASML.AS", "STM.PA", "CAP.PA", "DSY.PA",
+    "ADYEN.AS", # Adyen
+    "BESI.AS",  # BE Semiconductor
+    "ALO.PA",   # Alstom
+    "RNO.PA",   # Renault
 ]
 
 
