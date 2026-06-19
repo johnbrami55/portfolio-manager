@@ -240,7 +240,7 @@ def score_satellite(data, regime):
     volumes = list(reversed(data["volumes"]))
 
     if len(closes) < 50:
-        return 0.0, 0.02
+        return 0.0, 0.02, SAT_TP
 
     atr_pct = calc_atr(data["highs"], data["lows"], data["closes"])
     rsi     = calc_rsi(data["closes"])
@@ -249,7 +249,7 @@ def score_satellite(data, regime):
     if regime != "BULL" and len(closes) >= 126:
         perf_6m = (closes[0] - closes[125]) / closes[125]
         if perf_6m < -0.20:
-            return 0.0, atr_pct
+            return 0.0, atr_pct, SAT_TP
 
     score = 0.0
 
@@ -259,7 +259,7 @@ def score_satellite(data, regime):
         if len(closes) >= 2:
             daily_change = (closes[0] - closes[1]) / closes[1]
             if daily_change > 0.05:
-                return 0.0, atr_pct
+                return 0.0, atr_pct, SAT_TP
         # RSI fort (max 20 pts)
         if 55 <= rsi <= 75:    score += 20.0
         elif 50 <= rsi < 55:   score += 12.0
@@ -424,12 +424,37 @@ def score_satellite(data, regime):
             if len(closes) >= 200:
                 ma200 = sum(closes[:200]) / 200
                 if closes[0] < ma200:
-                    return 0.0, atr_pct
+                    return 0.0, atr_pct, SAT_TP
             score *= 0.5
             if rsi > 35:
-                return 0.0, atr_pct
+                return 0.0, atr_pct, SAT_TP
 
-    return min(100.0, score), atr_pct
+    # ── Calcul du TP dynamique basé sur la structure technique ──────────
+    price = closes[0]
+    tp_dynamic = None
+
+    if regime == "BULL":
+        if len(closes) >= 252 and highs:
+            high_52w = max(highs[:252])
+            if price < high_52w:
+                # Objectif = ATH + extension de 10%
+                tp_dynamic = (high_52w * 1.10 - price) / price
+            else:
+                # Déjà au-dessus de l'ATH — extension de 15% depuis le prix actuel
+                tp_dynamic = 0.15
+    else:
+        if len(closes) >= 63 and highs:
+            high_63 = max(highs[:63])
+            if price < high_63:
+                # Objectif = retour au sommet récent
+                tp_dynamic = (high_63 - price) / price
+
+    # Garde-fous : TP entre 8% minimum et 35% maximum
+    if tp_dynamic is None:
+        tp_dynamic = SAT_TP  # fallback sur la valeur fixe
+    tp_dynamic = max(0.08, min(0.35, tp_dynamic))
+
+    return min(100.0, score), atr_pct, tp_dynamic
 
 
 # ── STATE ─────────────────────────────────────────────────────────────────────
@@ -639,9 +664,9 @@ def run_satellite(state, spy_data):
         data = fetch_history(ticker)
         if not data:
             continue
-        score, atr_pct = score_satellite(data, regime)
+        score, atr_pct, tp_dynamic = score_satellite(data, regime)
         if score >= SAT_THRESH:
-            sat_scores.append((ticker, score, data["price"], atr_pct))
+            sat_scores.append((ticker, score, data["price"], atr_pct, tp_dynamic))
             logger.info(f"  {ticker}: score={score:.1f}")
 
     sat_scores.sort(key=lambda x: x[1], reverse=True)
@@ -655,17 +680,17 @@ def run_satellite(state, spy_data):
     msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
     msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
 
-    for ticker, score, price, atr_pct in sat_scores[:12]:  # top 12 max pour ne pas spammer
+    for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:  # top 12 max pour ne pas spammer
         shares = int(cash_deployable / price)
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
-        tp_p     = price * (1 + SAT_TP)
+        tp_p     = price * (1 + tp_dynamic)
         stop_pct = atr_pct * SAT_STOP_ATR * 100
 
         if shares > 0:
             invest = shares * price
             msg += f"✅ <b>{ticker}</b> — Score {score:.0f}/100\n"
             msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
-            msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{SAT_TP*100:.0f}%)\n\n"
+            msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
         else:
             msg += f"🔒 <b>{ticker}</b> — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
 
