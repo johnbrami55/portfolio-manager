@@ -97,7 +97,14 @@ SATELLITE_UNIVERSE = [
     "ALO.PA",   # Alstom
     "RNO.PA",   # Renault
 ]
-
+SATELLITE_BEAR = [
+    # Défensif en régime BEAR — secteurs résilients, faible beta
+    "LMT", "RTX", "NOC", "GD",      # Défense
+    "XOM", "CVX",                    # Énergie
+    "WMT", "COST", "PG", "KO",       # Consommation de base
+    "ABBV", "MRK",                   # Santé
+    "SXR8.DE",                       # ETF S&P 500 UCITS — défensif
+]
 
 # ── TELEGRAM ──────────────────────────────────────────────────────────────────
 def send_telegram(msg):
