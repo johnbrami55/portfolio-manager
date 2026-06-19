@@ -154,6 +154,7 @@ def fetch_history(ticker, days=300):
         }
     except Exception as e:
         logger.warning(f"{ticker}: {e}")
+        logger.info(f"{ticker}: dernière date={dates_c[-1]}, close={closes_c[-1]}")
         return None
 
 
