@@ -622,7 +622,7 @@ def run_satellite(state, spy_data):
     # ── Nouvelles entrées ─────────────────────────────────────────────────
     active         = len(state["positions"])
     cash_available = state.get("cash_eur", 0)
-    CASH_RESERVE   = 200  # garder 200€ de réserve minimum
+    CASH_RESERVE   = 50  # garder 50€ de réserve minimum
 
     cash_deployable = max(0, cash_available - CASH_RESERVE)
 
