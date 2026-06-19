@@ -26,6 +26,7 @@ CORE_PCT      = 0.60
 SAT_PCT       = 0.40
 FEE           = 2.0
 MAX_SAT       = 4
+ROTATION_MIN_GAP = 0.08  # écart minimum de potentiel pour suggérer une rotation
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT  = os.environ.get("TELEGRAM_CHAT_ID")
@@ -47,24 +48,8 @@ CORE_UNIVERSE = [
     "COST", "HD", "WMT", "PG",
     "XOM", "CVX",
     # Titres <150$ pour remplir les slots
-    "INTC",   # ~20$
-    "CSCO",   # ~65$
-    "T",      # ~23$
-    "VZ",     # ~47$
-    "BAC",    # ~45$
-    "F",      # ~14$
-    "PYPL",   # ~85$
-    "DIS",    # ~100$
-    "NKE",    # ~45$
-    "PFE",    # ~26$
-    "KO",     # ~80$
-    "PEP",    # ~146$
-    "MRK",    # ~115$
-    "ABT",    # ~90$
-    "NEE",    # ~86$
-    "PM",     # ~184$
-    "UPS",    # ~110$
-    "DHR",    # ~181$
+    "INTC", "CSCO", "T", "VZ", "BAC", "F", "PYPL", "DIS", "NKE", "PFE",
+    "KO", "PEP", "MRK", "ABT", "NEE", "PM", "UPS", "DHR",
     # ETF UCITS
     "SXR8.DE",
 ]
@@ -105,6 +90,7 @@ SATELLITE_BEAR = [
     "ABBV", "MRK",                   # Santé
     "SXR8.DE",                       # ETF S&P 500 UCITS — défensif
 ]
+
 
 # ── TELEGRAM ──────────────────────────────────────────────────────────────────
 def send_telegram(msg):
@@ -260,6 +246,7 @@ def score_satellite(data, regime):
             daily_change = (closes[0] - closes[1]) / closes[1]
             if daily_change > 0.05:
                 return 0.0, atr_pct, SAT_TP
+
         # RSI fort (max 20 pts)
         if 55 <= rsi <= 75:    score += 20.0
         elif 50 <= rsi < 55:   score += 12.0
@@ -317,15 +304,13 @@ def score_satellite(data, regime):
             else:
                 vol_ratio = 1.0
             if dist_ath <= 0.05:
-                # Très proche ATH — bonus seulement si volume fort
-                if vol_ratio >= 1.5:   score += 10.0  # cassure avec volume ✅
-                elif vol_ratio >= 1.2: score += 4.0   # volume moyen
-                else:                  score -= 10.0  # essoufflé sans volume ❌
+                if vol_ratio >= 1.5:   score += 10.0
+                elif vol_ratio >= 1.2: score += 4.0
+                else:                  score -= 10.0
             elif dist_ath <= 0.10:
                 if vol_ratio >= 1.2:   score += 6.0
                 else:                  score += 2.0
             elif dist_ath <= 0.20:     score += 3.0
-            # Si > 20% sous ATH → neutre, le momentum récent fait le travail
 
     else:
         # ── MODE NEUTRAL/BEAR : CONTRARIAN RETRACEMENT ───────────────────
@@ -437,21 +422,17 @@ def score_satellite(data, regime):
         if len(closes) >= 252 and highs:
             high_52w = max(highs[:252])
             if price < high_52w:
-                # Objectif = ATH + extension de 10%
                 tp_dynamic = (high_52w * 1.10 - price) / price
             else:
-                # Déjà au-dessus de l'ATH — extension de 15% depuis le prix actuel
                 tp_dynamic = 0.15
     else:
         if len(closes) >= 63 and highs:
             high_63 = max(highs[:63])
             if price < high_63:
-                # Objectif = retour au sommet récent
                 tp_dynamic = (high_63 - price) / price
 
-    # Garde-fous : TP entre 8% minimum et 35% maximum
     if tp_dynamic is None:
-        tp_dynamic = SAT_TP  # fallback sur la valeur fixe
+        tp_dynamic = SAT_TP
     tp_dynamic = max(0.08, min(0.35, tp_dynamic))
 
     return min(100.0, score), atr_pct, tp_dynamic
@@ -464,7 +445,6 @@ def load_state():
             with open(STATE_FILE) as f:
                 data = json.load(f)
             if "last_rebal" in data:
-                # Ajouter positions si absent (compatibilité ancien listener)
                 if "positions" not in data:
                     data["positions"] = {}
                 return data
@@ -473,13 +453,15 @@ def load_state():
     return {
         "core":       {},
         "satellite":  {},
-        "positions":  {},  # ← compatibilité ancien listener
+        "positions":  {},
         "last_rebal": None,
         "capital":    CAPITAL,
         "core_cash":  CAPITAL * CORE_PCT,
         "sat_cash":   CAPITAL * SAT_PCT,
         "last_run":   None,
     }
+
+
 def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2, default=str)
@@ -508,7 +490,6 @@ def run_core(state, spy_data):
     if bear:
         return
 
-    # Vérifier si rebalancement nécessaire
     needs_rebal = False
     if not state["last_rebal"]:
         needs_rebal = True
@@ -521,7 +502,6 @@ def run_core(state, spy_data):
         logger.info(f"Core: pas de rebalancement (dernier: {state['last_rebal']})")
         return
 
-    # Calculer momentum pour tous les tickers
     scores = []
     for ticker in CORE_UNIVERSE:
         data = fetch_history(ticker)
@@ -540,7 +520,6 @@ def run_core(state, spy_data):
     scores.sort(key=lambda x: x[1], reverse=True)
     target = [s[0] for s in scores[:CORE_N]]
 
-    # Comparer avec positions actuelles
     current  = set(state["core"].keys())
     to_sell  = current - set(target)
     to_buy   = set(target) - current
@@ -584,7 +563,6 @@ def run_core(state, spy_data):
                 msg += f"   Shares : {shares}\n"
                 msg += f"   Investir : {invest:.0f}€\n"
                 if cash_available < invest + 200:
-                    # Identifier le satellite le moins performant à vendre
                     sat_positions = state.get("satellite", {})
                     if sat_positions:
                         worst_ticker = min(
@@ -675,12 +653,13 @@ def run_satellite(state, spy_data):
         logger.info("Satellite: aucun candidat éligible")
         return
 
-    # Construire un message unique avec TOUS les candidats triés par score,
-    # marquant ceux qui sont réellement achetables avec le cash dispo
+    # Construire un message unique avec TOUS les candidats triés par score
     msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
     msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
 
-    for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:  # top 12 max pour ne pas spammer
+    locked_candidates = []  # candidats trop chers — utilisés pour la rotation
+
+    for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:
         shares = int(cash_deployable / price)
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + tp_dynamic)
@@ -693,11 +672,49 @@ def run_satellite(state, spy_data):
             msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
         else:
             msg += f"🔒 <b>{ticker}</b> — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
+            locked_candidates.append((ticker, score, price, atr_pct, tp_dynamic))
 
-    msg += f"⏱ Hold max : {SAT_HOLD_DAYS}j\n"
+    # ── Logique de rotation : comparer le potentiel restant des positions
+    #    détenues avec celui des candidats bloqués par manque de cash ──────
+    if locked_candidates and state["satellite"]:
+        current_potential = []
+        for sat_ticker, sat_pos in state["satellite"].items():
+            sat_data = fetch_history(sat_ticker)
+            if not sat_data:
+                continue
+            sat_price = sat_data["price"]
+            sat_entry = sat_pos["entry_price"]
+            sat_pnl   = (sat_price - sat_entry) / sat_entry
+            _, _, sat_tp_dynamic = score_satellite(sat_data, regime)
+            current_potential.append((sat_ticker, sat_pnl, sat_tp_dynamic))
+
+        # La position avec le potentiel restant le plus faible = candidate à la vente
+        current_potential.sort(key=lambda x: x[2])
+
+        if current_potential:
+            worst_ticker, worst_pnl, worst_potential = current_potential[0]
+            rotation_lines = []
+            seen_candidates = set()
+            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in locked_candidates[:3]:
+                if cand_ticker in seen_candidates:
+                    continue
+                if cand_tp > worst_potential + ROTATION_MIN_GAP:
+                    seen_candidates.add(cand_ticker)
+                    rotation_lines.append(
+                        f"⚠️ <b>{worst_ticker}</b> (P&L {worst_pnl*100:+.1f}%, potentiel restant +{worst_potential*100:.0f}%) "
+                        f"semble moins prometteur que <b>{cand_ticker}</b> (potentiel +{cand_tp*100:.0f}%, score {cand_score:.0f})\n"
+                        f"💡 Envisage de vendre {worst_ticker} pour libérer du cash et acheter {cand_ticker}\n"
+                    )
+
+            if rotation_lines:
+                msg += f"\n🔄 <b>SUGGESTIONS DE ROTATION</b>\n"
+                msg += "\n".join(rotation_lines)
+                msg += "\n"
+
+    msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
     msg += f"📌 Régime : {regime}"
     send_telegram(msg)
-        
+
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
