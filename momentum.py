@@ -674,10 +674,13 @@ def run_satellite(state, spy_data):
             msg += f"🔒 <b>{ticker}</b> — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
             locked_candidates.append((ticker, score, price, atr_pct, tp_dynamic))
 
-    # ── Logique de rotation : comparer le potentiel restant des positions
-    #    détenues avec celui des candidats bloqués par manque de cash ──────
+    # ── Logique de rotation : ne proposer que si une position détenue
+    #    montre un VRAI essoufflement technique (score recalculé faible),
+    #    pas juste un potentiel théorique mécaniquement plus faible ──────
+    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # score en dessous duquel on considère un essoufflement réel
+
     if locked_candidates and state["satellite"]:
-        current_potential = []
+        weak_positions = []
         for sat_ticker, sat_pos in state["satellite"].items():
             sat_data = fetch_history(sat_ticker)
             if not sat_data:
@@ -685,24 +688,28 @@ def run_satellite(state, spy_data):
             sat_price = sat_data["price"]
             sat_entry = sat_pos["entry_price"]
             sat_pnl   = (sat_price - sat_entry) / sat_entry
-            _, _, sat_tp_dynamic = score_satellite(sat_data, regime)
-            current_potential.append((sat_ticker, sat_pnl, sat_tp_dynamic))
+            sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
 
-        # La position avec le potentiel restant le plus faible = candidate à la vente
-        current_potential.sort(key=lambda x: x[2])
+            # On ne considère que les positions dont le score s'est vraiment dégradé
+            if sat_cur_score < ROTATION_SCORE_THRESHOLD:
+                weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
 
-        if current_potential:
-            worst_ticker, worst_pnl, worst_potential = current_potential[0]
+        # Parmi les positions affaiblies, la plus faible en premier
+        weak_positions.sort(key=lambda x: x[2])
+
+        if weak_positions:
+            worst_ticker, worst_pnl, worst_score, worst_potential = weak_positions[0]
             rotation_lines = []
             seen_candidates = set()
             for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in locked_candidates[:3]:
                 if cand_ticker in seen_candidates:
                     continue
-                if cand_tp > worst_potential + ROTATION_MIN_GAP:
+                if cand_score > worst_score + 15:  # le candidat doit être nettement meilleur
                     seen_candidates.add(cand_ticker)
                     rotation_lines.append(
-                        f"⚠️ <b>{worst_ticker}</b> (P&L {worst_pnl*100:+.1f}%, potentiel restant +{worst_potential*100:.0f}%) "
-                        f"semble moins prometteur que <b>{cand_ticker}</b> (potentiel +{cand_tp*100:.0f}%, score {cand_score:.0f})\n"
+                        f"⚠️ <b>{worst_ticker}</b> (P&L {worst_pnl*100:+.1f}%, score retombé à {worst_score:.0f}/100, "
+                        f"potentiel restant +{worst_potential*100:.0f}%) montre des signes d'essoufflement\n"
+                        f"   vs <b>{cand_ticker}</b> (score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
                         f"💡 Envisage de vendre {worst_ticker} pour libérer du cash et acheter {cand_ticker}\n"
                     )
 
