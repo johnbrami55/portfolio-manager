@@ -258,6 +258,18 @@ SECTOR_MAP = {
     "RIVN": "Consumer Discretionary", "COIN": "Financials", "MSTR": "Technology",
     "HOOD": "Financials", "IONQ": "Technology", "SMCI": "Technology",
     "MELI": "Consumer Discretionary", "SQ": "Financials", "DKNG": "Consumer Discretionary",
+    "HUT": "Crypto Mining",
+    "CLSK": "Crypto Mining",
+    "MARA": "Crypto Mining",
+    "RIOT": "Crypto Mining",
+    "COIN": "Crypto Mining",
+    "MSTR": "Crypto Mining",
+    "HOOD": "Financials",
+    "KO": "Consumer Staples",
+    "VVSM.DE": "Technology",
+    "SEC0.DE": "Technology",
+    "QDVE.DE": "Technology",
+    "SXRV.DE": "Technology",
     # HK (HKEX)
     "0700.HK":"Communication Services",
     "9988.HK":"Consumer Discretionary",
@@ -294,4 +306,5 @@ SECTOR_MAP = {
     "6098.HK":"Industrials",
     "0017.HK":"Real Estate",
     "0027.HK":"Consumer Discretionary",
+    
 }
