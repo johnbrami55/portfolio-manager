@@ -129,20 +129,17 @@ def fetch_history(ticker, days=300):
         lows    = quote.get("low", [])
         volumes = quote.get("volume", [])
         dates   = [datetime.utcfromtimestamp(t).date() for t in ts]
-
-        # Nettoyer les None
         data_clean = [(d,c,h,l,v) for d,c,h,l,v in
                       zip(dates,closes,highs,lows,volumes)
                       if c and h and l and v]
         if len(data_clean) < 50:
             return None
-
         dates_c   = [x[0] for x in data_clean]
         closes_c  = [x[1] for x in data_clean]
         highs_c   = [x[2] for x in data_clean]
         lows_c    = [x[3] for x in data_clean]
         volumes_c = [x[4] for x in data_clean]
-
+        logger.info(f"{ticker}: dernière date={dates_c[-1]}, close={closes_c[-1]:.2f}")
         return {
             "dates":   dates_c,
             "closes":  closes_c,
@@ -154,7 +151,6 @@ def fetch_history(ticker, days=300):
         }
     except Exception as e:
         logger.warning(f"{ticker}: {e}")
-        logger.info(f"{ticker}: dernière date={dates_c[-1]}, close={closes_c[-1]}")
         return None
 
 
