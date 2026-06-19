@@ -172,7 +172,7 @@ US_TICKERS = [
 "NVDA", "AMD", "TSLA", "PLTR", "SOFI",
 "RBLX", "RIVN", "COIN", "MSTR", "HOOD",
 "IONQ", "SMCI", "MELI", "SQ", "DKNG",
-"HUT", "CLSK", "MARA",
+"HUT", "CLSK", "MARA", "QDVE.DE", "SXRV.DE", "VVSM.DE", "SEC0.DE",
 ]
 
 HK_TICKERS = [
