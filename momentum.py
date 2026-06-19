@@ -655,7 +655,7 @@ def run_satellite(state, spy_data):
     msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
     msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
 
-    for ticker, score, price, atr_pct in sat_scores[:8]:  # top 8 max pour ne pas spammer
+    for ticker, score, price, atr_pct in sat_scores[:12]:  # top 12 max pour ne pas spammer
         shares = int(cash_deployable / price)
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + SAT_TP)
