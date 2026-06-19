@@ -228,6 +228,10 @@ SECTOR_MAP = {
     "RAND.AS":"Industrials","REN.AS":"Industrials","SHELL.AS":"Energy",
     "UMG.AS":"Communication Services","UNA.AS":"Consumer Staples",
     "VPK.AS":"Materials","WKL.AS":"Technology",
+    "ADYEN.AS": "Technology",
+    "BESI.AS": "Technology",
+    "ALO.PA": "Industrials",
+    "RNO.PA": "Consumer Discretionary",
     # US (NYSE / Nasdaq)
     "AAPL":"Technology","MSFT":"Technology","NVDA":"Technology",
     "GOOGL":"Communication Services","AMZN":"Consumer Discretionary",
@@ -306,5 +310,14 @@ SECTOR_MAP = {
     "6098.HK":"Industrials",
     "0017.HK":"Real Estate",
     "0027.HK":"Consumer Discretionary",
+    "1801.HK": "Health Care",
+    "9866.HK": "Consumer Discretionary",
+    "2015.HK": "Consumer Discretionary",
+    "9618.HK": "Consumer Discretionary",
+    "1024.HK": "Communication Services",
+    "9888.HK": "Communication Services",
+    "9999.HK": "Communication Services",
+    "0285.HK": "Technology",
+    "6160.HK": "Health Care",
     
 }
