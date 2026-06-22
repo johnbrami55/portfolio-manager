@@ -91,7 +91,13 @@ SATELLITE_BEAR = [
     "SXR8.DE",                       # ETF S&P 500 UCITS — défensif
 ]
 
-
+def market_of(ticker: str) -> str:
+    if ticker.endswith(".HK"):
+        return "🇭🇰 HK"
+    if ticker.endswith((".PA", ".AS", ".MI", ".DE")):
+        return "🇪🇺 EU"
+    return "🇺🇸 US"
+    
 # ── TELEGRAM ──────────────────────────────────────────────────────────────────
 def send_telegram(msg):
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT:
