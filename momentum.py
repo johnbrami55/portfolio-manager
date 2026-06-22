@@ -619,7 +619,7 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
         if sell:
             emoji = "🟢" if pnl > 0 else "🔴"
-            msg   = f"{emoji} <b>SATELLITE — VENDRE {ticker}</b>\n"
+            msg   = f"{emoji} <b>SATELLITE — VENDRE {ticker}</b> {market_of(ticker)}\n"
             msg  += f"Raison : {reason}\n"
             msg  += f"Prix entrée : {entry:.2f} → Prix actuel : {price:.2f}\n"
             msg  += f"P&L : {pnl*100:+.1f}% ({pnl_eur:+.0f}€)\n"
@@ -666,24 +666,23 @@ def run_satellite(state, spy_data):
     locked_candidates = []  # candidats trop chers — utilisés pour la rotation
 
     for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:
-        shares = int(cash_deployable / price)
+        shares   = int(cash_deployable / price)
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + tp_dynamic)
         stop_pct = atr_pct * SAT_STOP_ATR * 100
+        market   = market_of(ticker)
 
         if shares > 0:
             invest = shares * price
-            msg += f"✅ <b>{ticker}</b> — Score {score:.0f}/100\n"
+            msg += f"✅ <b>{ticker}</b> {market} — Score {score:.0f}/100\n"
             msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
             msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
         else:
-            msg += f"🔒 <b>{ticker}</b> — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
+            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
             locked_candidates.append((ticker, score, price, atr_pct, tp_dynamic))
 
-    # ── Logique de rotation : ne proposer que si une position détenue
-    #    montre un VRAI essoufflement technique (score recalculé faible),
-    #    pas juste un potentiel théorique mécaniquement plus faible ──────
-    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # score en dessous duquel on considère un essoufflement réel
+    # ── Logique de rotation ───────────────────────────────────────────────
+    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10
 
     if locked_candidates and state["satellite"]:
         weak_positions = []
@@ -696,11 +695,9 @@ def run_satellite(state, spy_data):
             sat_pnl   = (sat_price - sat_entry) / sat_entry
             sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
 
-            # On ne considère que les positions dont le score s'est vraiment dégradé
             if sat_cur_score < ROTATION_SCORE_THRESHOLD:
                 weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
 
-        # Parmi les positions affaiblies, la plus faible en premier
         weak_positions.sort(key=lambda x: x[2])
 
         if weak_positions:
@@ -710,12 +707,14 @@ def run_satellite(state, spy_data):
             for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in locked_candidates[:3]:
                 if cand_ticker in seen_candidates:
                     continue
-                if cand_score > worst_score + 15:  # le candidat doit être nettement meilleur
+                if cand_score > worst_score + 15:
                     seen_candidates.add(cand_ticker)
                     rotation_lines.append(
-                        f"⚠️ <b>{worst_ticker}</b> (P&L {worst_pnl*100:+.1f}%, score retombé à {worst_score:.0f}/100, "
+                        f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
+                        f"(P&L {worst_pnl*100:+.1f}%, score retombé à {worst_score:.0f}/100, "
                         f"potentiel restant +{worst_potential*100:.0f}%) montre des signes d'essoufflement\n"
-                        f"   vs <b>{cand_ticker}</b> (score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
+                        f"   vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
+                        f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
                         f"💡 Envisage de vendre {worst_ticker} pour libérer du cash et acheter {cand_ticker}\n"
                     )
 
@@ -727,7 +726,6 @@ def run_satellite(state, spy_data):
     msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
     msg += f"📌 Régime : {regime}"
     send_telegram(msg)
-
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
