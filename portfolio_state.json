@@ -272,7 +272,7 @@
       "current_price_eur": 29.1351
     },
     "CIFR": {
-      "entry_price": 28.18,
+      "entry_price": 26.18,
       "entry_date": "2026-06-23",
       "nb_shares": 6,
       "weight": 0.0,
@@ -334,16 +334,6 @@
       "entry_date": "2026-06-23",
       "exit_date": "2026-06-23"
     },
-    {
-      "ticker": "CIFR",
-      "side": "SELL",
-      "nb_shares": 6,
-      "entry_price": 26.18,
-      "exit_price": 28.18,
-      "pnl_eur": 10.53,
-      "pnl_pct": 0.0764,
-      "entry_date": "2026-06-23",
-      "exit_date": "2026-06-23"
-    }
+  
   ]
 }
