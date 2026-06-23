@@ -81,6 +81,34 @@ SATELLITE_UNIVERSE = [
     "BESI.AS",  # BE Semiconductor
     "ALO.PA",   # Alstom
     "RNO.PA",   # Renault
+    # US — Small/Mid caps high potential
+    "CELH",   # Celsius Holdings — boissons énergétiques
+    "RDDT",   # Reddit — social media
+    "CAVA",   # Cava Group — restauration rapide saine
+    "JOBY",   # Joby Aviation — taxis volants
+    "ACHR",   # Archer Aviation — eVTOL
+    "LUNR",   # Intuitive Machines — exploration lunaire
+    "PONY",   # Pony.ai — véhicules autonomes
+    "RGTI",   # Rigetti Computing — quantum computing
+    "QUBT",   # Quantum Computing Inc — quantum
+    "KULR",   # KULR Technology — gestion thermique
+    "WULF",   # TeraWulf — crypto mining solaire
+    "CORZ",   # Core Scientific — crypto mining
+    "BTBT",   # Bit Brother — crypto mining
+    "CIFR",   # Cipher Mining — crypto mining
+    "EXPI",   # eXp World Holdings — immobilier digital
+    "GENIE",  # Genie Energy — énergie
+    "HIMS",   # Hims & Hers — déjà présent, garder
+    # Hong Kong — small caps tech/EV/IA
+    "9868.HK",  # Xpeng — EV chinois
+    "0020.HK",  # SenseTime — IA chinoise
+    "9961.HK",  # Trip.com — voyage en ligne
+    "2382.HK",  # Sunny Optical — optique/semi
+    "2238.HK",  # GAC Group — automobile
+    # Europe — niche growth
+    "AIXA.DE",  # Aixtron — équipements semi-conducteurs
+    "EVT.DE",   # Evotec — biotech
+    "MDXH.AS",  # MDxHealth — diagnostics
 ]
 SATELLITE_BEAR = [
     # Défensif en régime BEAR — secteurs résilients, faible beta
