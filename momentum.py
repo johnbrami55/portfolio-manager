@@ -568,7 +568,7 @@ def run_core(state, spy_data):
                 msg += f"   Prix : {price:.2f}$\n"
                 msg += f"   Shares : {shares}\n"
                 msg += f"   Investir : {invest:.0f}€\n"
-                if cash_available < invest + 200:
+                if cash_available < invest + 140:
                     sat_positions = state.get("satellite", {})
                     if sat_positions:
                         worst_ticker = min(
@@ -631,13 +631,11 @@ def run_satellite(state, spy_data):
     # ── Nouvelles entrées ─────────────────────────────────────────────────
     active         = len(state["positions"])
     cash_available = state.get("cash_eur", 0)
-    CASH_RESERVE   = 140  # garder 140€ de réserve minimum
-
+    CASH_RESERVE   = 140
     cash_deployable = max(0, cash_available - CASH_RESERVE)
 
-    if cash_deployable < 140:
-        logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
-        return
+    # Même si pas assez de cash pour acheter, on continue pour la rotation
+    has_cash = cash_deployable >= 140
 
     sat_scores = []
     for ticker in universe:
@@ -657,6 +655,11 @@ def run_satellite(state, spy_data):
 
     if not sat_scores:
         logger.info("Satellite: aucun candidat éligible")
+        return
+
+    # Si pas de cash ET pas de positions satellite à évaluer pour rotation → on sort
+    if not has_cash and not state["satellite"]:
+        logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
         return
 
     # Construire un message unique avec TOUS les candidats triés par score
