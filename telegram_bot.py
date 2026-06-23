@@ -362,50 +362,35 @@ def handle_command(text: str) -> str:
             return "Usage: /check <TICKER>"
         ticker = parts[1].upper()
         try:
-            import requests as req
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-            r = req.get(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
-                        params={"interval": "1d", "range": "2y"}, timeout=15)
-            if r.status_code != 200:
-                return f"❌ Impossible de charger {ticker}"
-            result = r.json().get("chart", {}).get("result")
-            if not result:
-                return f"❌ Données indisponibles pour {ticker}"
-            
-            from momentum import fetch_history, score_satellite, detect_regime, in_bear
-            import yfinance as yf
-            spy_hist = yf.Ticker("SPY").history(period="1y")
-            spy_closes = list(spy_hist["Close"])
-            spy_highs  = list(spy_hist["High"])
-            spy_lows   = list(spy_hist["Low"])
-            spy_vols   = list(spy_hist["Volume"])
-            spy_data = {"closes": spy_closes, "highs": spy_highs, "lows": spy_lows, "volumes": spy_vols, "price": spy_closes[-1]}
-            regime = detect_regime(spy_data)
-            
+            from momentum import fetch_history, score_satellite, detect_regime
+
+            # Récupérer le régime depuis le state (pas besoin de refetcher SPY)
+            regime = state.get("current_regime", "BULL")
+
             data = fetch_history(ticker)
             if not data:
                 return f"❌ Historique insuffisant pour {ticker}"
-            
+
             score, atr_pct, tp_dynamic = score_satellite(data, regime)
             price = data["price"]
-            
+
             # Position actuelle si détenue
             pos = state.get("positions", {}).get(ticker)
             pos_info = ""
             if pos:
-                entry = pos.get("entry_price", price)
-                pnl_pct = (price - entry) / entry * 100
-                stop = pos.get("stop_loss", 0)
-                tp = pos.get("take_profit", 0)
+                entry    = pos.get("entry_price", price)
+                pnl_pct  = (price - entry) / entry * 100
+                stop     = pos.get("stop_loss", 0)
+                tp       = pos.get("take_profit", 0)
                 currency = pos.get("currency", "EUR")
-                sym = "$" if currency == "USD" else "€"
+                sym      = "$" if currency == "USD" else "€"
                 pos_info = (
                     f"\n📊 <b>Position détenue :</b>\n"
                     f"   Entrée : {entry:.2f}{sym} → Actuel : {price:.2f}{sym}\n"
                     f"   P&L : {pnl_pct:+.1f}%\n"
                     f"   Stop : {stop:.2f}{sym} | TP : {tp:.2f}{sym}\n"
                 )
-            
+
             # Verdict
             if score >= 60:
                 verdict = "🟢 Signal fort — tendance saine"
@@ -415,10 +400,10 @@ def handle_command(text: str) -> str:
                 verdict = "🟠 Signal faible — proche du seuil"
             else:
                 verdict = "🔴 Signal éteint — essoufflement technique"
-            
+
             stop_p = price * (1 - atr_pct * 2.0)
             tp_p   = price * (1 + tp_dynamic)
-            
+
             return (
                 f"🔍 <b>Analyse — {ticker}</b> | Régime {regime}\n"
                 f"{pos_info}\n"
@@ -427,10 +412,11 @@ def handle_command(text: str) -> str:
                 f"📐 Volatilité (ATR) : {atr_pct*100:.1f}%\n"
                 f"🛑 Stop suggéré : {stop_p:.2f} (-{atr_pct*2*100:.1f}%)\n"
                 f"🎯 TP suggéré : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
-                f"💡 {'Conserver' if score >= 26 else 'Envisager une sortie — signal sous le seuil minimum'}"
+                f"💡 {'Conserver — signal encore actif' if score >= 26 else 'Envisager une sortie — signal sous le seuil minimum (26/100)'}"
             )
         except Exception as e:
             return f"❌ Erreur analyse {ticker} : {e}"
+
     elif cmd == "/status":
         from config import FULL_UNIVERSE
         core_count = len(state.get("core", {}))
