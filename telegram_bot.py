@@ -620,6 +620,7 @@ def handle_command(text: str) -> str:
             "/explain <TICKER> — détail complet\n"
             "/cash — capital disponible\n"
             "/alert <TICKER> <PRIX> — alerte prix\n"
+            "/check <TICKER> — analyse technique complète d'un titre"
             "/pause — suspendre les signaux\n"
             "/resume — reprendre les signaux"
         )
