@@ -657,13 +657,11 @@ def run_satellite(state, spy_data):
             save_state(state)
 
     # ── Nouvelles entrées ─────────────────────────────────────────────────
-    active         = len(state["positions"])
-    cash_available = state.get("cash_eur", 0)
-    CASH_RESERVE   = 140
+    cash_available  = state.get("cash_eur", 0)
+    CASH_RESERVE    = 140
     cash_deployable = max(0, cash_available - CASH_RESERVE)
-
-    # Même si pas assez de cash pour acheter, on continue pour la rotation
-    has_cash = cash_deployable >= 140
+    has_cash        = cash_deployable >= 140
+    MAX_PRICE       = 150  # filtre prix unitaire max
 
     sat_scores = []
     for ticker in universe:
@@ -673,6 +671,9 @@ def run_satellite(state, spy_data):
             continue
         data = fetch_history(ticker)
         if not data:
+            continue
+        # Filtre prix unitaire > 150€/$
+        if data["price"] > MAX_PRICE:
             continue
         score, atr_pct, tp_dynamic = score_satellite(data, regime)
         if score >= SAT_THRESH:
@@ -685,19 +686,17 @@ def run_satellite(state, spy_data):
         logger.info("Satellite: aucun candidat éligible")
         return
 
-    # Si pas de cash ET pas de positions satellite à évaluer pour rotation → on sort
-    if not has_cash and not state["satellite"]:
+    # Si pas de cash ET pas de positions à évaluer pour rotation → on sort
+    if not has_cash and not state.get("positions", {}):
         logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
         return
 
-    # Construire un message unique avec TOUS les candidats triés par score
+    # ── Construction du message ───────────────────────────────────────────
     msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
     msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
 
-    locked_candidates = []  # candidats trop chers — utilisés pour la rotation
-
     for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:
-        shares   = int(cash_deployable / price)
+        shares   = int(cash_deployable / price) if cash_deployable > 0 else 0
         stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
         tp_p     = price * (1 + tp_dynamic)
         stop_pct = atr_pct * SAT_STOP_ATR * 100
@@ -709,42 +708,38 @@ def run_satellite(state, spy_data):
             msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
             msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
         else:
-            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
-            locked_candidates.append((ticker, score, price, atr_pct, tp_dynamic))
+            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
 
     # ── Logique de rotation — indépendante du cash ────────────────────────
-    # Compare toutes les positions satellite détenues avec tous les candidats
-    # du scan, peu importe si on a du cash ou pas
     ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
     core_tickers = set(state.get("core", {}).keys())
 
-    # Évaluer toutes les positions satellite (exclure CORE)
     weak_positions = []
     for sat_ticker, sat_pos in state.get("positions", {}).items():
         if sat_ticker in core_tickers:
-            continue  # on ne touche jamais au CORE via cette logique
+            continue
         sat_data = fetch_history(sat_ticker)
         if not sat_data:
             continue
-        sat_price = sat_data["price"]
-        sat_entry = sat_pos.get("entry_price", sat_price)
-        sat_pnl   = (sat_price - sat_entry) / sat_entry
+        sat_price     = sat_data["price"]
+        sat_entry     = sat_pos.get("entry_price", sat_price)
+        sat_pnl       = (sat_price - sat_entry) / sat_entry
         sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
 
         if sat_cur_score < ROTATION_SCORE_THRESHOLD:
             weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
 
-    # Trier : score le plus faible en premier
     weak_positions.sort(key=lambda x: x[2])
 
     if weak_positions and sat_scores:
         rotation_lines = []
-        seen_pairs = set()
+        seen_pairs     = set()
 
         for worst_ticker, worst_pnl, worst_score, worst_potential in weak_positions[:2]:
-            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in sat_scores[:5]:
-                # Pas de rotation vers un titre déjà détenu
+            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in sat_scores[:3]:
                 if cand_ticker in state.get("positions", {}):
+                    continue
+                if cand_price > MAX_PRICE:
                     continue
                 pair = (worst_ticker, cand_ticker)
                 if pair in seen_pairs:
