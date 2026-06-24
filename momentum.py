@@ -26,7 +26,7 @@ CORE_PCT      = 0.60
 SAT_PCT       = 0.40
 FEE           = 2.0
 MAX_SAT       = 4
-ROTATION_MIN_GAP = 0.08  # écart minimum de potentiel pour suggérer une rotation
+ROTATION_MIN_GAP = 0.08
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT  = os.environ.get("TELEGRAM_CHAT_ID")
@@ -39,7 +39,6 @@ YF_HEADERS = {
 }
 
 CORE_UNIVERSE = [
-    # Large caps US accessibles <200$
     "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "AMD",
     "AVGO", "ORCL", "CRM", "ADBE", "NOW", "PANW", "SNPS", "CDNS",
     "LMT", "RTX", "NOC", "GD",
@@ -47,76 +46,36 @@ CORE_UNIVERSE = [
     "V", "MA", "GS", "MS", "JPM",
     "COST", "HD", "WMT", "PG",
     "XOM", "CVX",
-    # Titres <150$ pour remplir les slots
     "INTC", "CSCO", "T", "VZ", "BAC", "F", "PYPL", "DIS", "NKE", "PFE",
     "KO", "PEP", "MRK", "ABT", "NEE", "PM", "UPS", "DHR",
-    # ETF UCITS
     "SXR8.DE",
 ]
 
 SATELLITE_UNIVERSE = [
-    # ETFs UCITS Xetra
     "SXRV.DE", "VVSM.DE", "SEC0.DE", "QDVE.DE",
-    # Actions US high beta
     "NVDA", "AMD", "META", "TSLA",
     "COIN", "MSTR", "RIOT", "MARA",
     "PLTR", "SMCI", "HOOD", "SOFI",
     "HIMS", "DKNG", "AFRM",
     "CLSK", "HUT", "ASTS", "RKLB",
     "SOUN", "IONQ", "UPST",
-    # Hong Kong — high beta / volatile
     "0700.HK", "9988.HK", "3690.HK", "1810.HK", "0941.HK", "1299.HK",
-    "1801.HK",  # Innovent Biologics
-    "9866.HK",  # NIO
-    "2015.HK",  # Li Auto
-    "9618.HK",  # JD.com
-    "1024.HK",  # Kuaishou
-    "9888.HK",  # Baidu
-    "9999.HK",  # NetEase
-    "0285.HK",  # BYD Electronic
-    "6160.HK",  # BeiGene
-    # Europe — volatile / growth
+    "1801.HK", "9866.HK", "2015.HK", "9618.HK", "1024.HK", "9888.HK",
+    "9999.HK", "0285.HK", "6160.HK",
     "ASML.AS", "STM.PA", "CAP.PA", "DSY.PA",
-    "ADYEN.AS", # Adyen
-    "BESI.AS",  # BE Semiconductor
-    "ALO.PA",   # Alstom
-    "RNO.PA",   # Renault
-    # US — Small/Mid caps high potential
-    "CELH",   # Celsius Holdings — boissons énergétiques
-    "RDDT",   # Reddit — social media
-    "CAVA",   # Cava Group — restauration rapide saine
-    "JOBY",   # Joby Aviation — taxis volants
-    "ACHR",   # Archer Aviation — eVTOL
-    "LUNR",   # Intuitive Machines — exploration lunaire
-    "PONY",   # Pony.ai — véhicules autonomes
-    "RGTI",   # Rigetti Computing — quantum computing
-    "QUBT",   # Quantum Computing Inc — quantum
-    "KULR",   # KULR Technology — gestion thermique
-    "WULF",   # TeraWulf — crypto mining solaire
-    "CORZ",   # Core Scientific — crypto mining
-    "BTBT",   # Bit Brother — crypto mining
-    "CIFR",   # Cipher Mining — crypto mining
-    "EXPI",   # eXp World Holdings — immobilier digital
-    "GENIE",  # Genie Energy — énergie
-    "HIMS",   # Hims & Hers — déjà présent, garder
-    # Hong Kong — small caps tech/EV/IA
-    "9868.HK",  # Xpeng — EV chinois
-    "0020.HK",  # SenseTime — IA chinoise
-    "9961.HK",  # Trip.com — voyage en ligne
-    "2382.HK",  # Sunny Optical — optique/semi
-    "2238.HK",  # GAC Group — automobile
-    # Europe — niche growth
-    "AIXA.DE",  # Aixtron — équipements semi-conducteurs
-    "EVT.DE",   # Evotec — biotech
-    "MDXH.AS",  # MDxHealth — diagnostics
+    "ADYEN.AS", "BESI.AS", "ALO.PA", "RNO.PA",
+    "CELH", "RDDT", "CAVA", "JOBY", "ACHR", "LUNR", "PONY",
+    "RGTI", "QUBT", "KULR", "WULF", "CORZ", "BTBT", "CIFR", "EXPI", "GENIE",
+    "9868.HK", "0020.HK", "9961.HK", "2382.HK", "2238.HK",
+    "AIXA.DE", "EVT.DE", "MDXH.AS",
 ]
+
 SATELLITE_BEAR = [
-    # Défensif en régime BEAR — secteurs résilients, faible beta
-    "LMT", "RTX", "NOC", "GD",      # Défense
-    "XOM", "CVX",                    # Énergie
-    "WMT", "COST", "PG", "KO",       # Consommation de base
-    "ABBV", "MRK",                   # Santé
-    "SXR8.DE",                       # ETF S&P 500 UCITS — défensif
+    "LMT", "RTX", "NOC", "GD",
+    "XOM", "CVX",
+    "WMT", "COST", "PG", "KO",
+    "ABBV", "MRK",
+    "SXR8.DE",
 ]
 
 def market_of(ticker: str) -> str:
@@ -125,7 +84,7 @@ def market_of(ticker: str) -> str:
     if ticker.endswith((".PA", ".AS", ".MI", ".DE", ".F")):
         return "🇪🇺 EU"
     return "🇺🇸 US"
-    
+
 # ── TELEGRAM ──────────────────────────────────────────────────────────────────
 def send_telegram(msg):
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT:
@@ -265,7 +224,6 @@ def score_satellite(data, regime, held=False):
     atr_pct = calc_atr(data["highs"], data["lows"], data["closes"])
     rsi     = calc_rsi(data["closes"])
 
-    # Filtre tendance 6 mois (hors BULL)
     if regime != "BULL" and len(closes) >= 126:
         perf_6m = (closes[0] - closes[125]) / closes[125]
         if perf_6m < -0.20:
@@ -274,22 +232,18 @@ def score_satellite(data, regime, held=False):
     score = 0.0
 
     if regime == "BULL":
-        # ── MODE BULL : BREAKOUT MOMENTUM ────────────────────────────────
-        # Filtre ATH — skip si position déjà ouverte
         if not held and len(closes) >= 252 and highs:
             high_52w = max(highs[:252])
             dist_ath = (high_52w - closes[0]) / high_52w
             if dist_ath < 0.08:
                 return 0.0, atr_pct, SAT_TP
 
-        # RSI fort (max 20 pts)
         if 55 <= rsi <= 75:    score += 20.0
         elif 50 <= rsi < 55:   score += 12.0
         elif rsi > 75:         score += 5.0
         elif rsi < 40:         score += 0.0
         else:                  score += 8.0
 
-        # MAs alignées (max 20 pts)
         if len(closes) >= 200:
             ma20  = sum(closes[:20]) / 20
             ma50  = sum(closes[:50]) / 50
@@ -298,7 +252,6 @@ def score_satellite(data, regime, held=False):
             elif closes[0] > ma50 > ma200:        score += 15.0
             elif closes[0] > ma200:               score += 8.0
 
-        # Momentum récent (max 20 pts)
         if len(closes) >= 63:
             ret_1m = (closes[0] - closes[20]) / closes[20]
             ret_3m = (closes[0] - closes[62]) / closes[62]
@@ -309,7 +262,6 @@ def score_satellite(data, regime, held=False):
             elif ret_3m > 0.10: score += 6.0
             elif ret_3m > 0:    score += 3.0
 
-        # Volume fort (max 15 pts)
         if len(volumes) >= 21:
             avg_vol   = sum(volumes[1:21]) / 20
             vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
@@ -317,7 +269,6 @@ def score_satellite(data, regime, held=False):
             elif vol_ratio >= 1.5: score += 10.0
             elif vol_ratio >= 1.2: score += 6.0
 
-        # MACD positif (max 15 pts)
         if len(closes) >= 29:
             macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
             sig    = calc_ema(closes[:9],9)
@@ -329,7 +280,6 @@ def score_satellite(data, regime, held=False):
             elif macd > 0 and hist > 0:                  score += 10.0
             elif macd > 0:                               score += 5.0
 
-        # ATH — bonus si cassure avec volume, pénalité si essoufflé
         if len(closes) >= 252 and highs:
             high_52w = max(highs[:252])
             dist_ath = (high_52w - closes[0]) / high_52w
@@ -348,9 +298,6 @@ def score_satellite(data, regime, held=False):
             elif dist_ath <= 0.20:     score += 3.0
 
     else:
-        # ── MODE NEUTRAL/BEAR : CONTRARIAN RETRACEMENT ───────────────────
-
-        # RSI oversold (max 25 pts)
         if rsi < 25:        score += 25.0
         elif rsi < 30:      score += 20.0
         elif rsi < 35:      score += 15.0
@@ -359,7 +306,6 @@ def score_satellite(data, regime, held=False):
         elif rsi > 60:      score += 2.0
         else:               score += 5.0
 
-        # Retracement depuis sommet (max 20 pts)
         if len(closes) >= 63:
             high_63 = max(highs[:63]) if highs else max(closes[:63])
             retrace = (high_63 - closes[0]) / high_63
@@ -368,7 +314,6 @@ def score_satellite(data, regime, held=False):
             elif retrace >= 0.15: score += 10.0
             elif retrace >= 0.10: score += 5.0
 
-        # Support MA200 (max 15 pts)
         if len(closes) >= 200:
             ma200      = sum(closes[:200]) / 200
             dist_ma200 = (closes[0] - ma200) / ma200
@@ -376,7 +321,6 @@ def score_satellite(data, regime, held=False):
             elif -0.10 <= dist_ma200 <= 0.10: score += 10.0
             elif dist_ma200 < -0.10:          score += 5.0
 
-        # Fibonacci (max 15 pts)
         if len(closes) >= 126 and highs and lows:
             high_126 = max(highs[:126])
             low_126  = min(lows[:126])
@@ -391,7 +335,6 @@ def score_satellite(data, regime, held=False):
                 elif abs(price - fib_500) <= tol: score += 12.0
                 elif abs(price - fib_382) <= tol: score += 10.0
 
-        # Volume sur creux (max 15 pts)
         if len(volumes) >= 21:
             avg_vol   = sum(volumes[1:21]) / 20
             vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
@@ -401,7 +344,6 @@ def score_satellite(data, regime, held=False):
             elif rsi_low and vol_ratio >= 0.8: score += 5.0
             elif vol_ratio >= 1.5:             score += 5.0
 
-        # MACD remonte depuis bas (max 10 pts)
         if len(closes) >= 29:
             macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
             sig    = calc_ema(closes[:9],9)
@@ -413,7 +355,6 @@ def score_satellite(data, regime, held=False):
             elif macd < 0 and hist > 0:      score += 7.0
             elif macd > 0 and hist > hist_p: score += 3.0
 
-        # Qualité du creux (max 30 pts)
         if len(highs) >= 10 and len(lows) >= 10:
             range_recent = sum(highs[i]-lows[i] for i in range(5)) / 5
             range_older  = sum(highs[i]-lows[i] for i in range(5,10)) / 5
@@ -439,7 +380,6 @@ def score_satellite(data, regime, held=False):
                 if vol_trend < 0.7:   score += 8.0
                 elif vol_trend > 1.5: score -= 8.0
 
-        # Filtre BEAR strict
         if regime == "BEAR":
             if len(closes) >= 200:
                 ma200 = sum(closes[:200]) / 200
@@ -449,7 +389,6 @@ def score_satellite(data, regime, held=False):
             if rsi > 35:
                 return 0.0, atr_pct, SAT_TP
 
-    # ── Calcul du TP dynamique basé sur la structure technique ──────────
     price = closes[0]
     tp_dynamic = None
 
@@ -508,7 +447,6 @@ def run_core(state, spy_data):
     bear    = in_bear(spy_data)
     today   = str(date.today())
 
-    # Bear exit — vendre tout le core
     if bear and state["core"]:
         msg = f"🔴 <b>CORE — BEAR EXIT</b>\n"
         msg += f"📉 Régime : BEAR — SPY sous MA{CORE_MA}\n\n"
@@ -622,9 +560,9 @@ def run_core(state, spy_data):
 
 # ── SATELLITE SCAN ────────────────────────────────────────────────────────────
 def run_satellite(state, spy_data):
-    regime  = detect_regime(spy_data)
-    bear    = in_bear(spy_data)
-    today   = str(date.today())
+    regime   = detect_regime(spy_data)
+    bear     = in_bear(spy_data)
+    today    = str(date.today())
     universe = SATELLITE_BEAR if bear else SATELLITE_UNIVERSE
 
     core_tickers = set(state.get("core", {}).keys())
@@ -678,6 +616,7 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
+
         if not sell:
             cur_score, _, _ = score_satellite(data, regime, held=True)
             entry_score = pos.get("entry_score", 0)
@@ -691,6 +630,7 @@ def run_satellite(state, spy_data):
                 sell = True
                 reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
                           f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
+
         if sell:
             emoji = "🟢" if pnl_eur > 0 else "🔴"
             sym   = "$" if currency == "USD" else "€"
@@ -801,124 +741,6 @@ def run_satellite(state, spy_data):
     msg += f"📌 Régime : {regime}"
     send_telegram(msg)
 
-    # ── Nouvelles entrées ─────────────────────────────────────────────────
-    cash_available  = state.get("cash_eur", 0)
-    CASH_RESERVE    = 140
-    cash_deployable = max(0, cash_available - CASH_RESERVE)
-    has_cash        = cash_deployable >= 140
-    MAX_PRICE       = 150  # filtre prix unitaire max
-
-    sat_scores = []
-    for ticker in universe:
-        if ticker in state.get("satellite", {}):
-            continue
-        if ticker in state.get("positions", {}):
-            continue
-        data = fetch_history(ticker)
-        if not data:
-            continue
-        if data["price"] > MAX_PRICE:
-            continue
-        score, atr_pct, tp_dynamic = score_satellite(data, regime)
-        if score >= SAT_THRESH:
-            sat_scores.append((ticker, score, data["price"], atr_pct, tp_dynamic))
-            logger.info(f"  {ticker}: score={score:.1f}")
-
-    sat_scores.sort(key=lambda x: x[1], reverse=True)
-
-    if not sat_scores:
-        logger.info("Satellite: aucun candidat éligible")
-        return
-
-    if not has_cash and not state.get("positions", {}):
-        logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
-        return
-
-    # ── Construction du message ───────────────────────────────────────────
-    msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
-    msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
-
-    for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:
-        shares   = int(cash_deployable / price) if cash_deployable > 0 else 0
-        stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
-        tp_p     = price * (1 + tp_dynamic)
-        stop_pct = atr_pct * SAT_STOP_ATR * 100
-        market   = market_of(ticker)
-
-        if shares > 0:
-            invest = shares * price
-            msg += f"✅ <b>{ticker}</b> {market} — Score {score:.0f}/100\n"
-            msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
-            msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
-        else:
-            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
-
-    # ── Logique de rotation — indépendante du cash ────────────────────────
-    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
-
-    weak_positions = []
-    for sat_ticker, sat_pos in state.get("positions", {}).items():
-        if sat_ticker in core_tickers:
-            continue
-        sat_data = fetch_history(sat_ticker)
-        if not sat_data:
-            continue
-        sat_price      = sat_data["price"]
-        sat_entry      = sat_pos.get("entry_price", sat_price)
-        sat_pnl        = (sat_price - sat_entry) / sat_entry if sat_entry else 0
-        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime, held=True)
-
-        # Exclure si score 0 mais P&L positif — faux positif filtre ATH
-        if sat_cur_score == 0 and sat_pnl > 0:
-            continue
-
-        if sat_cur_score < ROTATION_SCORE_THRESHOLD:
-            weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
-
-    weak_positions.sort(key=lambda x: x[2])
-
-    if weak_positions and sat_scores:
-        rotation_lines = []
-        seen_pairs     = set()
-
-        for worst_ticker, worst_pnl, worst_score, worst_potential in weak_positions[:2]:
-            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in sat_scores[:3]:
-                if cand_ticker in state.get("positions", {}):
-                    continue
-                if cand_price > MAX_PRICE:
-                    continue
-                pair = (worst_ticker, cand_ticker)
-                if pair in seen_pairs:
-                    continue
-                if cand_score > worst_score + 15:
-                    seen_pairs.add(pair)
-                    worst_pos      = state.get("positions", {}).get(worst_ticker, {})
-                    worst_shares   = worst_pos.get("nb_shares", worst_pos.get("shares", 0))
-                    worst_price    = worst_pos.get("current_price", 0)
-                    worst_eur_usd  = worst_pos.get("eur_usd", 1.12)
-                    worst_currency = worst_pos.get("currency", "EUR")
-                    cash_freed     = worst_shares * (worst_price / worst_eur_usd if worst_currency == "USD" else worst_price)
-                    total_cash     = cash_freed + cash_deployable
-                    cand_shares    = int(total_cash / cand_price) if cand_price > 0 else 0
-                    cand_invest    = cand_shares * cand_price
-
-                    rotation_lines.append(
-                        f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
-                        f"(P&L {worst_pnl*100:+.1f}%, score {worst_score:.0f}/100) "
-                        f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
-                        f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
-                        f"💡 Vends {worst_ticker} ({worst_shares} actions) → "
-                        f"achète {cand_ticker} : ~{cand_shares} actions = {cand_invest:.0f}€\n"
-                    )
-
-        if rotation_lines:
-            msg += f"\n🔄 <b>SUGGESTIONS DE ROTATION</b>\n"
-            msg += "\n".join(rotation_lines)
-            msg += "\n"
-
-    msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
-    msg += f"📌 Régime : {regime}"
-    send_telegram(msg)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
@@ -935,15 +757,11 @@ def main():
 
     state = load_state()
 
-    # Core rotation
     run_core(state, spy_data)
-
-    # Satellite scan
     run_satellite(state, spy_data)
 
-    # Résumé
     core_count = len(state.get("core", {}))
-    sat_count = len(state.get("satellite", {}))
+    sat_count  = len(state.get("satellite", {}))
     logger.info(f"Core: {core_count}/{CORE_N} | Satellite: {sat_count}/{MAX_SAT}")
 
     send_telegram(
