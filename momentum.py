@@ -658,7 +658,7 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
         if not sell:
             cur_score, _, _ = score_satellite(data, regime, held=True)
-            if cur_score < 35:
+            if cur_score < 40:
                 sell = True
                 reason = f"📉 Score trop faible ({cur_score:.0f}/100)"
         if sell:
