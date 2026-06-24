@@ -359,63 +359,72 @@ def handle_command(text: str) -> str:
        
     elif cmd == "/check":
         if len(parts) < 2:
-            return "Usage: /check <TICKER>"
-        ticker = parts[1].upper()
-        try:
-            from momentum import fetch_history, score_satellite, detect_regime
+            return "Usage: /check <TICKER> ou /check ALL"
+        
+        target = parts[1].upper()
+        
+        # Liste des tickers à analyser
+        if target == "ALL":
+            tickers_to_check = list(state.get("positions", {}).keys())
+            if not tickers_to_check:
+                return "Aucune position ouverte."
+        else:
+            tickers_to_check = [target]
+        
+        from momentum import fetch_history, score_satellite
+        regime = state.get("current_regime", "BULL")
+        
+        results = []
+        for ticker in tickers_to_check:
+            try:
+                data = fetch_history(ticker)
+                if not data:
+                    results.append(f"❌ <b>{ticker}</b> : données indisponibles")
+                    continue
+                
+                score, atr_pct, tp_dynamic = score_satellite(data, regime)
+                price = data["price"]
+                
+                pos = state.get("positions", {}).get(ticker)
+                if pos:
+                    entry    = pos.get("entry_price", price)
+                    currency = pos.get("currency", "EUR")
+                    eur_usd  = pos.get("eur_usd", 1.12)
+                    sym      = "$" if currency == "USD" else "€"
+                    price_eur  = price / eur_usd if currency == "USD" else price
+                    entry_eur  = entry / eur_usd if currency == "USD" else entry
+                    pnl_pct    = (price - entry) / entry * 100
+                    pnl_eur    = (price_eur - entry_eur) * pos.get("nb_shares", 1)
+                    pnl_sign   = "🟢" if pnl_eur >= 0 else "🔴"
+                else:
+                    sym = ""
+                    pnl_pct = 0
+                    pnl_eur = 0
+                    pnl_sign = "⚪"
 
-            # Récupérer le régime depuis le state (pas besoin de refetcher SPY)
-            regime = state.get("current_regime", "BULL")
+                if score >= 60:
+                    verdict = "🟢 Fort"
+                elif score >= 40:
+                    verdict = "🟡 Modéré"
+                elif score >= 26:
+                    verdict = "🟠 Faible"
+                else:
+                    verdict = "🔴 Éteint"
 
-            data = fetch_history(ticker)
-            if not data:
-                return f"❌ Historique insuffisant pour {ticker}"
+                stop_p = price * (1 - atr_pct * 2.0)
+                tp_p   = price * (1 + tp_dynamic)
 
-            score, atr_pct, tp_dynamic = score_satellite(data, regime)
-            price = data["price"]
-
-            # Position actuelle si détenue
-            pos = state.get("positions", {}).get(ticker)
-            pos_info = ""
-            if pos:
-                entry    = pos.get("entry_price", price)
-                pnl_pct  = (price - entry) / entry * 100
-                stop     = pos.get("stop_loss", 0)
-                tp       = pos.get("take_profit", 0)
-                currency = pos.get("currency", "EUR")
-                sym      = "$" if currency == "USD" else "€"
-                pos_info = (
-                    f"\n📊 <b>Position détenue :</b>\n"
-                    f"   Entrée : {entry:.2f}{sym} → Actuel : {price:.2f}{sym}\n"
-                    f"   P&L : {pnl_pct:+.1f}%\n"
-                    f"   Stop : {stop:.2f}{sym} | TP : {tp:.2f}{sym}\n"
+                results.append(
+                    f"{pnl_sign} <b>{ticker}</b> — Score {score:.0f}/100 {verdict}\n"
+                    f"   P&L : {pnl_pct:+.1f}% ({pnl_eur:+.0f}€) | Prix : {price:.2f}{sym}\n"
+                    f"   Stop : {stop_p:.2f} | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)"
                 )
-
-            # Verdict
-            if score >= 60:
-                verdict = "🟢 Signal fort — tendance saine"
-            elif score >= 40:
-                verdict = "🟡 Signal modéré — surveiller"
-            elif score >= 26:
-                verdict = "🟠 Signal faible — proche du seuil"
-            else:
-                verdict = "🔴 Signal éteint — essoufflement technique"
-
-            stop_p = price * (1 - atr_pct * 2.0)
-            tp_p   = price * (1 + tp_dynamic)
-
-            return (
-                f"🔍 <b>Analyse — {ticker}</b> | Régime {regime}\n"
-                f"{pos_info}\n"
-                f"📈 Score technique : <b>{score:.0f}/100</b>\n"
-                f"   {verdict}\n\n"
-                f"📐 Volatilité (ATR) : {atr_pct*100:.1f}%\n"
-                f"🛑 Stop suggéré : {stop_p:.2f} (-{atr_pct*2*100:.1f}%)\n"
-                f"🎯 TP suggéré : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
-                f"💡 {'Conserver — signal encore actif' if score >= 26 else 'Envisager une sortie — signal sous le seuil minimum (26/100)'}"
-            )
-        except Exception as e:
-            return f"❌ Erreur analyse {ticker} : {e}"
+            except Exception as e:
+                results.append(f"❌ <b>{ticker}</b> : erreur {e}")
+        
+        header = f"🔍 <b>Analyse portefeuille — Régime {regime}</b>\n\n"
+        return header + "\n\n".join(results)
+         
 
     elif cmd == "/status":
         from config import FULL_UNIVERSE
