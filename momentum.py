@@ -627,18 +627,28 @@ def run_satellite(state, spy_data):
     today   = str(date.today())
     universe = SATELLITE_BEAR if bear else SATELLITE_UNIVERSE
 
-    # ── Stop-loss & take-profit sur positions actives ─────────────────────
-    for ticker in list(state["satellite"].keys()):
-        pos  = state["satellite"][ticker]
+    # ── Stop-loss & take-profit sur positions actives (hors core) ────────
+    core_tickers = set(state.get("core", {}).keys())
+    all_sat_tickers = [t for t in state.get("positions", {}).keys()
+                       if t not in core_tickers]
+
+    for ticker in all_sat_tickers:
+        pos  = state["positions"][ticker]
         data = fetch_history(ticker)
         if not data:
             continue
         price     = data["price"]
-        entry     = pos["entry_price"]
-        pnl       = (price - entry) / entry
-        days_held = (date.today() - date.fromisoformat(pos["entry_date"])).days
-        stop      = -pos["atr_pct"] * SAT_STOP_ATR
-        pnl_eur   = pnl * pos["invested"]
+        entry     = pos.get("entry_price", price)
+        pnl       = (price - entry) / entry if entry else 0
+        days_held = (date.today() - date.fromisoformat(pos.get("entry_date", today))).days
+        atr_pct   = pos.get("atr_pct", 0.05)
+        stop      = -atr_pct * SAT_STOP_ATR
+        currency  = pos.get("currency", "EUR")
+        eur_usd   = pos.get("eur_usd", 1.12)
+        price_eur = price / eur_usd if currency == "USD" else price
+        entry_eur = entry / eur_usd if currency == "USD" else entry
+        pnl_eur   = (price_eur - entry_eur) * pos.get("nb_shares", pos.get("shares", 1))
+
         sell = False; reason = ""
         if pnl <= stop:
             sell = True; reason = f"🛑 Stop-loss ({pnl*100:.1f}%)"
@@ -652,15 +662,15 @@ def run_satellite(state, spy_data):
                 sell = True
                 reason = f"📉 Score trop faible ({cur_score:.0f}/100)"
         if sell:
-            emoji = "🟢" if pnl > 0 else "🔴"
-            msg   = f"{emoji} <b>SATELLITE — VENDRE {ticker}</b> {market_of(ticker)}\n"
+            emoji = "🟢" if pnl_eur > 0 else "🔴"
+            sym   = "$" if currency == "USD" else "€"
+            msg   = f"{emoji} <b>SATELLITE — SUGGÈRE VENTE {ticker}</b> {market_of(ticker)}\n"
             msg  += f"Raison : {reason}\n"
-            msg  += f"Prix entrée : {entry:.2f} → Prix actuel : {price:.2f}\n"
+            msg  += f"Prix entrée : {entry:.2f}{sym} → Prix actuel : {price:.2f}{sym}\n"
             msg  += f"P&L : {pnl*100:+.1f}% ({pnl_eur:+.0f}€)\n"
-            msg  += f"Jours tenus : {days_held}j"
+            msg  += f"Jours tenus : {days_held}j\n"
+            msg  += f"👉 /sold {ticker} {pos.get('nb_shares', pos.get('shares', 1))} [prix_exec]"
             send_telegram(msg)
-            del state["satellite"][ticker]
-            save_state(state)
 
     # ── Nouvelles entrées ─────────────────────────────────────────────────
     cash_available  = state.get("cash_eur", 0)
@@ -671,9 +681,9 @@ def run_satellite(state, spy_data):
 
     sat_scores = []
     for ticker in universe:
-        if ticker in state["satellite"]:
+        if ticker in state.get("satellite", {}):
             continue
-        if ticker in state["positions"]:
+        if ticker in state.get("positions", {}):
             continue
         data = fetch_history(ticker)
         if not data:
@@ -716,20 +726,17 @@ def run_satellite(state, spy_data):
 
     # ── Logique de rotation — indépendante du cash ────────────────────────
     ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
-    core_tickers = set(state.get("core", {}).keys())
 
     weak_positions = []
     for sat_ticker, sat_pos in state.get("positions", {}).items():
         if sat_ticker in core_tickers:
-            continue
-        if sat_ticker in state.get("core", {}):
             continue
         sat_data = fetch_history(sat_ticker)
         if not sat_data:
             continue
         sat_price      = sat_data["price"]
         sat_entry      = sat_pos.get("entry_price", sat_price)
-        sat_pnl        = (sat_price - sat_entry) / sat_entry
+        sat_pnl        = (sat_price - sat_entry) / sat_entry if sat_entry else 0
         sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime, held=True)
 
         # Exclure si score 0 mais P&L positif — faux positif filtre ATH
@@ -757,7 +764,7 @@ def run_satellite(state, spy_data):
                 if cand_score > worst_score + 15:
                     seen_pairs.add(pair)
                     worst_pos      = state.get("positions", {}).get(worst_ticker, {})
-                    worst_shares   = worst_pos.get("nb_shares", 0)
+                    worst_shares   = worst_pos.get("nb_shares", worst_pos.get("shares", 0))
                     worst_price    = worst_pos.get("current_price", 0)
                     worst_eur_usd  = worst_pos.get("eur_usd", 1.12)
                     worst_currency = worst_pos.get("currency", "EUR")
