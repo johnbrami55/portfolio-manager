@@ -253,7 +253,7 @@ def in_bear(spy_data):
 
 
 # ── SCORER SATELLITE HYBRIDE ──────────────────────────────────────────────────
-def score_satellite(data, regime):
+def score_satellite(data, regime, held=False):
     closes  = list(reversed(data["closes"]))
     highs   = list(reversed(data["highs"]))
     lows    = list(reversed(data["lows"]))
@@ -275,9 +275,8 @@ def score_satellite(data, regime):
 
     if regime == "BULL":
         # ── MODE BULL : BREAKOUT MOMENTUM ────────────────────────────────
-        # Filtre variation journalière — pas d'achat si +5% dans la journée
-        # Filtre "trop proche de l'ATH" — moins de 8% de marge → on passe
-        if len(closes) >= 252 and highs:
+        # Filtre ATH — skip si position déjà ouverte
+        if not held and len(closes) >= 252 and highs:
             high_52w = max(highs[:252])
             dist_ath = (high_52w - closes[0]) / high_52w
             if dist_ath < 0.08:
