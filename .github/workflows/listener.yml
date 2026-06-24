@@ -42,10 +42,10 @@ jobs:
         run: |
           git config --global user.name "portfolio-bot"
           git config --global user.email "portfolio-bot@github-actions"
-          git add -f portfolio_state.json
-          git stash
-          git pull --rebase origin main
-          git stash pop
+          cp portfolio_state.json /tmp/portfolio_state_new.json
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/portfolio_state_new.json portfolio_state.json
           git add -f portfolio_state.json
           git diff --staged --quiet || git commit -m "chore: update portfolio_state [skip ci]"
           git push
