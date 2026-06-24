@@ -678,24 +678,19 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
-
         if not sell:
-    cur_score, _, _ = score_satellite(data, regime, held=True)
-    entry_score = pos.get("entry_score", 0)
-    if cur_score < 26:
-        # Sortie sèche — score vraiment mort
-        sell = True
-        reason = f"📉 Score trop faible ({cur_score:.0f}/100) — sortie sèche"
-    elif entry_score > 0 and cur_score < entry_score - 15:
-        # Dégradation significative depuis l'entrée
-        sell = True
-        reason = f"📉 Dégradation score ({entry_score:.0f}→{cur_score:.0f}, -{entry_score-cur_score:.0f}pts)"
-    elif cur_score < 40 and best_candidate and best_candidate[1] > cur_score + 15:
-        # Score faible + meilleur candidat disponible
-        sell = True
-        reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
-                  f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
-
+            cur_score, _, _ = score_satellite(data, regime, held=True)
+            entry_score = pos.get("entry_score", 0)
+            if cur_score < 26:
+                sell = True
+                reason = f"📉 Score trop faible ({cur_score:.0f}/100) — sortie sèche"
+            elif entry_score > 0 and cur_score < entry_score - 15:
+                sell = True
+                reason = f"📉 Dégradation score ({entry_score:.0f}→{cur_score:.0f}, -{entry_score-cur_score:.0f}pts)"
+            elif cur_score < 40 and best_candidate and best_candidate[1] > cur_score + 15:
+                sell = True
+                reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
+                          f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
         if sell:
             emoji = "🟢" if pnl_eur > 0 else "🔴"
             sym   = "$" if currency == "USD" else "€"
