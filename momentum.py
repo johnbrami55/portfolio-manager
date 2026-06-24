@@ -646,6 +646,12 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
+        # ← ICI — score trop faible
+        if not sell:
+            cur_score, _, _ = score_satellite(data, regime, held=True)
+            if cur_score < 35:
+                sell = True
+                reason = f"📉 Score trop faible ({cur_score:.0f}/100)"
         if sell:
             emoji = "🟢" if pnl > 0 else "🔴"
             msg   = f"{emoji} <b>SATELLITE — VENDRE {ticker}</b> {market_of(ticker)}\n"
