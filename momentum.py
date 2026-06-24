@@ -646,7 +646,6 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
-        # ← ICI — score trop faible
         if not sell:
             cur_score, _, _ = score_satellite(data, regime, held=True)
             if cur_score < 35:
@@ -679,7 +678,6 @@ def run_satellite(state, spy_data):
         data = fetch_history(ticker)
         if not data:
             continue
-        # Filtre prix unitaire > 150€/$
         if data["price"] > MAX_PRICE:
             continue
         score, atr_pct, tp_dynamic = score_satellite(data, regime)
@@ -693,7 +691,6 @@ def run_satellite(state, spy_data):
         logger.info("Satellite: aucun candidat éligible")
         return
 
-    # Si pas de cash ET pas de positions à évaluer pour rotation → on sort
     if not has_cash and not state.get("positions", {}):
         logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
         return
@@ -730,10 +727,10 @@ def run_satellite(state, spy_data):
         sat_data = fetch_history(sat_ticker)
         if not sat_data:
             continue
-        sat_price     = sat_data["price"]
-        sat_entry     = sat_pos.get("entry_price", sat_price)
-        sat_pnl       = (sat_price - sat_entry) / sat_entry
-        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
+        sat_price      = sat_data["price"]
+        sat_entry      = sat_pos.get("entry_price", sat_price)
+        sat_pnl        = (sat_price - sat_entry) / sat_entry
+        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime, held=True)
 
         # Exclure si score 0 mais P&L positif — faux positif filtre ATH
         if sat_cur_score == 0 and sat_pnl > 0:
@@ -759,16 +756,15 @@ def run_satellite(state, spy_data):
                     continue
                 if cand_score > worst_score + 15:
                     seen_pairs.add(pair)
-# Estimation du cash libéré par la vente
-                    worst_pos     = state.get("positions", {}).get(worst_ticker, {})
-                    worst_shares  = worst_pos.get("nb_shares", 0)
-                    worst_price   = state.get("positions", {}).get(worst_ticker, {}).get("current_price", 0)
-                    worst_eur_usd = worst_pos.get("eur_usd", 1.12)
+                    worst_pos      = state.get("positions", {}).get(worst_ticker, {})
+                    worst_shares   = worst_pos.get("nb_shares", 0)
+                    worst_price    = worst_pos.get("current_price", 0)
+                    worst_eur_usd  = worst_pos.get("eur_usd", 1.12)
                     worst_currency = worst_pos.get("currency", "EUR")
-                    cash_freed    = worst_shares * (worst_price / worst_eur_usd if worst_currency == "USD" else worst_price)
-                    total_cash    = cash_freed + cash_deployable
-                    cand_shares   = int(total_cash / cand_price) if cand_price > 0 else 0
-                    cand_invest   = cand_shares * cand_price
+                    cash_freed     = worst_shares * (worst_price / worst_eur_usd if worst_currency == "USD" else worst_price)
+                    total_cash     = cash_freed + cash_deployable
+                    cand_shares    = int(total_cash / cand_price) if cand_price > 0 else 0
+                    cand_invest    = cand_shares * cand_price
 
                     rotation_lines.append(
                         f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
