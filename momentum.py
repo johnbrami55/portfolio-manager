@@ -712,51 +712,61 @@ def run_satellite(state, spy_data):
             msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (trop cher : {price:.2f}, besoin de {price-cash_deployable:.0f}€ de plus)\n\n"
             locked_candidates.append((ticker, score, price, atr_pct, tp_dynamic))
 
-    # ── Logique de rotation ───────────────────────────────────────────────
-    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10
+    # ── Logique de rotation — indépendante du cash ────────────────────────
+    # Compare toutes les positions satellite détenues avec tous les candidats
+    # du scan, peu importe si on a du cash ou pas
+    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
+    core_tickers = set(state.get("core", {}).keys())
 
-    if locked_candidates and state["satellite"]:
-        weak_positions = []
-        for sat_ticker, sat_pos in state["satellite"].items():
-            sat_data = fetch_history(sat_ticker)
-            if not sat_data:
-                continue
-            sat_price = sat_data["price"]
-            sat_entry = sat_pos["entry_price"]
-            sat_pnl   = (sat_price - sat_entry) / sat_entry
-            sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
+    # Évaluer toutes les positions satellite (exclure CORE)
+    weak_positions = []
+    for sat_ticker, sat_pos in state.get("positions", {}).items():
+        if sat_ticker in core_tickers:
+            continue  # on ne touche jamais au CORE via cette logique
+        sat_data = fetch_history(sat_ticker)
+        if not sat_data:
+            continue
+        sat_price = sat_data["price"]
+        sat_entry = sat_pos.get("entry_price", sat_price)
+        sat_pnl   = (sat_price - sat_entry) / sat_entry
+        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
 
-            if sat_cur_score < ROTATION_SCORE_THRESHOLD:
-                weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
+        if sat_cur_score < ROTATION_SCORE_THRESHOLD:
+            weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
 
-        weak_positions.sort(key=lambda x: x[2])
+    # Trier : score le plus faible en premier
+    weak_positions.sort(key=lambda x: x[2])
 
-        if weak_positions:
-            worst_ticker, worst_pnl, worst_score, worst_potential = weak_positions[0]
-            rotation_lines = []
-            seen_candidates = set()
-            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in locked_candidates[:3]:
-                if cand_ticker in seen_candidates:
+    if weak_positions and sat_scores:
+        rotation_lines = []
+        seen_pairs = set()
+
+        for worst_ticker, worst_pnl, worst_score, worst_potential in weak_positions[:2]:
+            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in sat_scores[:5]:
+                # Pas de rotation vers un titre déjà détenu
+                if cand_ticker in state.get("positions", {}):
+                    continue
+                pair = (worst_ticker, cand_ticker)
+                if pair in seen_pairs:
                     continue
                 if cand_score > worst_score + 15:
-                    seen_candidates.add(cand_ticker)
+                    seen_pairs.add(pair)
                     rotation_lines.append(
                         f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
-                        f"(P&L {worst_pnl*100:+.1f}%, score retombé à {worst_score:.0f}/100, "
-                        f"potentiel restant +{worst_potential*100:.0f}%) montre des signes d'essoufflement\n"
-                        f"   vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
+                        f"(P&L {worst_pnl*100:+.1f}%, score {worst_score:.0f}/100) "
+                        f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
                         f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
-                        f"💡 Envisage de vendre {worst_ticker} pour libérer du cash et acheter {cand_ticker}\n"
+                        f"💡 Vends {worst_ticker} → achète {cand_ticker}\n"
                     )
 
-            if rotation_lines:
-                msg += f"\n🔄 <b>SUGGESTIONS DE ROTATION</b>\n"
-                msg += "\n".join(rotation_lines)
-                msg += "\n"
+        if rotation_lines:
+            msg += f"\n🔄 <b>SUGGESTIONS DE ROTATION</b>\n"
+            msg += "\n".join(rotation_lines)
+            msg += "\n"
 
     msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
     msg += f"📌 Régime : {regime}"
-    send_telegram(msg)
+    send_telegram(msg))
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
