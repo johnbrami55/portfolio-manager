@@ -122,7 +122,7 @@ SATELLITE_BEAR = [
 def market_of(ticker: str) -> str:
     if ticker.endswith(".HK"):
         return "🇭🇰 HK"
-    if ticker.endswith((".PA", ".AS", ".MI", ".DE")):
+    if ticker.endswith((".PA", ".AS", ".MI", ".DE", ".F")):
         return "🇪🇺 EU"
     return "🇺🇸 US"
     
