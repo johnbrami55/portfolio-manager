@@ -754,12 +754,24 @@ def run_satellite(state, spy_data):
                     continue
                 if cand_score > worst_score + 15:
                     seen_pairs.add(pair)
+# Estimation du cash libéré par la vente
+                    worst_pos     = state.get("positions", {}).get(worst_ticker, {})
+                    worst_shares  = worst_pos.get("nb_shares", 0)
+                    worst_price   = state.get("positions", {}).get(worst_ticker, {}).get("current_price", 0)
+                    worst_eur_usd = worst_pos.get("eur_usd", 1.12)
+                    worst_currency = worst_pos.get("currency", "EUR")
+                    cash_freed    = worst_shares * (worst_price / worst_eur_usd if worst_currency == "USD" else worst_price)
+                    total_cash    = cash_freed + cash_deployable
+                    cand_shares   = int(total_cash / cand_price) if cand_price > 0 else 0
+                    cand_invest   = cand_shares * cand_price
+
                     rotation_lines.append(
                         f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
                         f"(P&L {worst_pnl*100:+.1f}%, score {worst_score:.0f}/100) "
                         f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
                         f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
-                        f"💡 Vends {worst_ticker} → achète {cand_ticker}\n"
+                        f"💡 Vends {worst_ticker} ({worst_shares} actions) → "
+                        f"achète {cand_ticker} : ~{cand_shares} actions = {cand_invest:.0f}€\n"
                     )
 
         if rotation_lines:
