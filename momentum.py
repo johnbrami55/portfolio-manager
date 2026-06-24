@@ -626,7 +626,7 @@ def run_satellite(state, spy_data):
             elif entry_score > 0 and cur_score < entry_score - 15:
                 sell = True
                 reason = f"📉 Dégradation score ({entry_score:.0f}→{cur_score:.0f}, -{entry_score-cur_score:.0f}pts)"
-            elif cur_score < 40 and best_candidate and best_candidate[1] > cur_score + 15:
+            elif entry_score > 0 and cur_score < 40 and best_candidate and best_candidate[1] > cur_score + 15:
                 sell = True
                 reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
                           f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
