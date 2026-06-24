@@ -720,6 +720,8 @@ def run_satellite(state, spy_data):
     for sat_ticker, sat_pos in state.get("positions", {}).items():
         if sat_ticker in core_tickers:
             continue
+        if sat_ticker in state.get("core", {}):
+            continue
         sat_data = fetch_history(sat_ticker)
         if not sat_data:
             continue
@@ -727,6 +729,10 @@ def run_satellite(state, spy_data):
         sat_entry     = sat_pos.get("entry_price", sat_price)
         sat_pnl       = (sat_price - sat_entry) / sat_entry
         sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
+
+        # Exclure si score 0 mais P&L positif — faux positif filtre ATH
+        if sat_cur_score == 0 and sat_pnl > 0:
+            continue
 
         if sat_cur_score < ROTATION_SCORE_THRESHOLD:
             weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
