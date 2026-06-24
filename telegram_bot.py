@@ -246,13 +246,25 @@ def handle_command(text: str) -> str:
             weight      = pending.get("weight", 0.0)
             beta        = pending.get("beta", 1.0)
         info = record_buy(state, ticker, nb_shares, exec_price, model_price, stop_loss, take_profit, weight, beta)
+        # Calcul et sauvegarde du score d'entrée
+        entry_score = 0
+        try:
+            from momentum import fetch_history, score_satellite
+            data = fetch_history(ticker)
+            if data:
+                regime = state.get("current_regime", "BULL")
+                entry_score, _, _ = score_satellite(data, regime)
+                state["positions"][ticker]["entry_score"] = round(entry_score, 1)
+        except Exception as e:
+            logger.warning(f"entry_score calc failed for {ticker}: {e}")
         save_state(state)
         slippage_str = f"{info['slippage_pct']:+.2%}" if model_price != exec_price else "N/A"
+        score_str = f"\nScore entrée: {entry_score:.0f}/100" if entry_score > 0 else ""
         return (
             f"✅ *BUY recorded: {ticker}*\n"
             f"{nb_shares} shares @ {exec_price:.2f}\n"
             f"Stop-loss: {stop_loss:.2f}\nTake-profit: {take_profit:.2f}\n"
-            f"Slippage vs model: {slippage_str}{flag}"
+            f"Slippage vs model: {slippage_str}{score_str}{flag}"
         )
 
     elif cmd == "/boughtcore":
