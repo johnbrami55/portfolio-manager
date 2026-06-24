@@ -766,7 +766,7 @@ def run_satellite(state, spy_data):
 
     msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
     msg += f"📌 Régime : {regime}"
-    send_telegram(msg))
+    send_telegram(msg)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
