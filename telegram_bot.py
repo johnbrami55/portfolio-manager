@@ -343,7 +343,7 @@ def handle_command(text: str) -> str:
             sign  = "\U0001f7e2" if pnl_eur >= 0 else "\U0001f534"
             layer = "🏦" if ticker in core_tickers else "🛰"
             lines.append(
-                f"{sign} {layer} *{ticker}* ({days}j)\n"
+                f"{sign} {layer} *{ticker}* — {shares} action{'s' if shares > 1 else ''} ({days}j)\n"
                 f"   Entrée: {entry:.2f}{sym} → Actuel: {price:.2f}{sym}\n"
                 f"   P&L: {pnl_eur:+.0f}€ ({pnl_pct:+.1%})\n"
                 f"   Stop: {stop:.2f}{sym}   TP: {tp:.2f}{sym}"
