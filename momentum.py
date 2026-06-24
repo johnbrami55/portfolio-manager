@@ -627,8 +627,30 @@ def run_satellite(state, spy_data):
     today   = str(date.today())
     universe = SATELLITE_BEAR if bear else SATELLITE_UNIVERSE
 
-    # ── Stop-loss & take-profit sur positions actives (hors core) ────────
     core_tickers = set(state.get("core", {}).keys())
+    MAX_PRICE    = 150
+
+    # ── 1. SCAN DES CANDIDATS EN PREMIER ─────────────────────────────────
+    sat_scores = []
+    for ticker in universe:
+        if ticker in state.get("satellite", {}):
+            continue
+        if ticker in state.get("positions", {}):
+            continue
+        data = fetch_history(ticker)
+        if not data:
+            continue
+        if data["price"] > MAX_PRICE:
+            continue
+        score, atr_pct, tp_dynamic = score_satellite(data, regime)
+        if score >= SAT_THRESH:
+            sat_scores.append((ticker, score, data["price"], atr_pct, tp_dynamic))
+            logger.info(f"  {ticker}: score={score:.1f}")
+
+    sat_scores.sort(key=lambda x: x[1], reverse=True)
+    best_candidate = sat_scores[0] if sat_scores else None
+
+    # ── 2. STOP-LOSS / TAKE-PROFIT / SCORE sur positions actives ─────────
     all_sat_tickers = [t for t in state.get("positions", {}).keys()
                        if t not in core_tickers]
 
@@ -656,21 +678,129 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
+
         if not sell:
             cur_score, _, _ = score_satellite(data, regime, held=True)
             if cur_score < 26:
+                # Sortie sèche — score vraiment mort
                 sell = True
-                reason = f"📉 Score trop faible ({cur_score:.0f}/100)"
+                reason = f"📉 Score trop faible ({cur_score:.0f}/100) — sortie sèche"
+            elif cur_score < 40:
+                # Sortie seulement si un meilleur candidat existe
+                if best_candidate and best_candidate[1] > cur_score + 15:
+                    sell = True
+                    reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
+                              f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
+
         if sell:
             emoji = "🟢" if pnl_eur > 0 else "🔴"
             sym   = "$" if currency == "USD" else "€"
+            nb    = pos.get("nb_shares", pos.get("shares", 1))
             msg   = f"{emoji} <b>SATELLITE — SUGGÈRE VENTE {ticker}</b> {market_of(ticker)}\n"
             msg  += f"Raison : {reason}\n"
             msg  += f"Prix entrée : {entry:.2f}{sym} → Prix actuel : {price:.2f}{sym}\n"
             msg  += f"P&L : {pnl*100:+.1f}% ({pnl_eur:+.0f}€)\n"
             msg  += f"Jours tenus : {days_held}j\n"
-            msg  += f"👉 /sold {ticker} {pos.get('nb_shares', pos.get('shares', 1))} [prix_exec]"
+            msg  += f"👉 /sold {ticker} {nb} [prix_exec]"
             send_telegram(msg)
+
+    # ── 3. CASH ET MESSAGE CANDIDATS ─────────────────────────────────────
+    cash_available  = state.get("cash_eur", 0)
+    CASH_RESERVE    = 140
+    cash_deployable = max(0, cash_available - CASH_RESERVE)
+    has_cash        = cash_deployable >= 140
+
+    if not sat_scores:
+        logger.info("Satellite: aucun candidat éligible")
+        return
+
+    if not has_cash and not state.get("positions", {}):
+        logger.info(f"Satellite: cash insuffisant ({cash_available:.0f}€) — pas de nouvel achat")
+        return
+
+    msg  = f"🟢 <b>SIGNAUX SATELLITE — Candidats classés par score</b>\n"
+    msg += f"💰 Cash disponible : {cash_available:.0f}€ (déployable : {cash_deployable:.0f}€)\n\n"
+
+    for ticker, score, price, atr_pct, tp_dynamic in sat_scores[:12]:
+        shares   = int(cash_deployable / price) if cash_deployable > 0 else 0
+        stop_p   = price * (1 - atr_pct * SAT_STOP_ATR)
+        tp_p     = price * (1 + tp_dynamic)
+        stop_pct = atr_pct * SAT_STOP_ATR * 100
+        market   = market_of(ticker)
+
+        if shares > 0:
+            invest = shares * price
+            msg += f"✅ <b>{ticker}</b> {market} — Score {score:.0f}/100\n"
+            msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
+            msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
+        else:
+            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
+
+    # ── 4. LOGIQUE DE ROTATION ────────────────────────────────────────────
+    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
+
+    weak_positions = []
+    for sat_ticker, sat_pos in state.get("positions", {}).items():
+        if sat_ticker in core_tickers:
+            continue
+        sat_data = fetch_history(sat_ticker)
+        if not sat_data:
+            continue
+        sat_price     = sat_data["price"]
+        sat_entry     = sat_pos.get("entry_price", sat_price)
+        sat_pnl       = (sat_price - sat_entry) / sat_entry if sat_entry else 0
+        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime, held=True)
+
+        if sat_cur_score == 0 and sat_pnl > 0:
+            continue
+
+        if sat_cur_score < ROTATION_SCORE_THRESHOLD:
+            weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
+
+    weak_positions.sort(key=lambda x: x[2])
+
+    if weak_positions and sat_scores:
+        rotation_lines = []
+        seen_pairs     = set()
+
+        for worst_ticker, worst_pnl, worst_score, worst_potential in weak_positions[:2]:
+            for cand_ticker, cand_score, cand_price, cand_atr, cand_tp in sat_scores[:3]:
+                if cand_ticker in state.get("positions", {}):
+                    continue
+                if cand_price > MAX_PRICE:
+                    continue
+                pair = (worst_ticker, cand_ticker)
+                if pair in seen_pairs:
+                    continue
+                if cand_score > worst_score + 15:
+                    seen_pairs.add(pair)
+                    worst_pos      = state.get("positions", {}).get(worst_ticker, {})
+                    worst_shares   = worst_pos.get("nb_shares", worst_pos.get("shares", 0))
+                    worst_price    = worst_pos.get("current_price", 0)
+                    worst_eur_usd  = worst_pos.get("eur_usd", 1.12)
+                    worst_currency = worst_pos.get("currency", "EUR")
+                    cash_freed     = worst_shares * (worst_price / worst_eur_usd if worst_currency == "USD" else worst_price)
+                    total_cash     = cash_freed + cash_deployable
+                    cand_shares    = int(total_cash / cand_price) if cand_price > 0 else 0
+                    cand_invest    = cand_shares * cand_price
+
+                    rotation_lines.append(
+                        f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
+                        f"(P&L {worst_pnl*100:+.1f}%, score {worst_score:.0f}/100) "
+                        f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
+                        f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
+                        f"💡 Vends {worst_ticker} ({worst_shares} actions) → "
+                        f"achète {cand_ticker} : ~{cand_shares} actions = {cand_invest:.0f}€\n"
+                    )
+
+        if rotation_lines:
+            msg += f"\n🔄 <b>SUGGESTIONS DE ROTATION</b>\n"
+            msg += "\n".join(rotation_lines)
+            msg += "\n"
+
+    msg += f"\n⏱ Hold max : {SAT_HOLD_DAYS}j\n"
+    msg += f"📌 Régime : {regime}"
+    send_telegram(msg)
 
     # ── Nouvelles entrées ─────────────────────────────────────────────────
     cash_available  = state.get("cash_eur", 0)
