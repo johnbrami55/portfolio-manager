@@ -383,8 +383,8 @@ def handle_command(text: str) -> str:
                 if not data:
                     results.append(f"❌ <b>{ticker}</b> : données indisponibles")
                     continue
-                
-                score, atr_pct, tp_dynamic = score_satellite(data, regime)
+                held = ticker in state.get("positions", {})
+                score, atr_pct, tp_dynamic = score_satellite(data, regime, held=held)
                 price = data["price"]
                 
                 pos = state.get("positions", {}).get(ticker)
