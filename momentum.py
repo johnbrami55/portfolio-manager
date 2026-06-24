@@ -276,9 +276,11 @@ def score_satellite(data, regime):
     if regime == "BULL":
         # ── MODE BULL : BREAKOUT MOMENTUM ────────────────────────────────
         # Filtre variation journalière — pas d'achat si +5% dans la journée
-        if len(closes) >= 2:
-            daily_change = (closes[0] - closes[1]) / closes[1]
-            if daily_change > 0.05:
+        # Filtre "trop proche de l'ATH" — moins de 8% de marge → on passe
+        if len(closes) >= 252 and highs:
+            high_52w = max(highs[:252])
+            dist_ath = (high_52w - closes[0]) / high_52w
+            if dist_ath < 0.08:
                 return 0.0, atr_pct, SAT_TP
 
         # RSI fort (max 20 pts)
