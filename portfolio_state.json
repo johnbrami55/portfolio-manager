@@ -279,7 +279,7 @@
       "model_price": 19.865,
       "slippage": 0.0,
       "stop_loss": 17.8785,
-      "take_profit": 23.440699999999996,
+      "take_profit": 23.4407,
       "trailing_high": 19.865,
       "beta": 1.0,
       "position_eur": 99.7,
@@ -305,22 +305,22 @@
       "current_price": 54.22,
       "current_price_eur": 54.22
     },
-    "BTBT": {
+    "BIV.F": {
       "entry_price": 1.945,
       "entry_date": "2026-06-24",
       "nb_shares": 50,
       "weight": 0.0,
       "model_price": 1.945,
       "slippage": 0.0,
-      "stop_loss": 1.7505000000000002,
+      "stop_loss": 1.7505,
       "take_profit": 2.2951,
       "trailing_high": 1.945,
       "beta": 0.0,
-      "position_eur": 94.43,
-      "currency": "USD",
+      "position_eur": 97.25,
+      "currency": "EUR",
       "eur_usd": 1.1331,
-      "current_price": 2.14,
-      "current_price_eur": 1.8886
+      "current_price": 1.945,
+      "current_price_eur": 1.945
     }
   },
   "last_rebal": "2026-06-18",
