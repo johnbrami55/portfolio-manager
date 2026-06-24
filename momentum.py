@@ -224,6 +224,7 @@ def score_satellite(data, regime, held=False):
     atr_pct = calc_atr(data["highs"], data["lows"], data["closes"])
     rsi     = calc_rsi(data["closes"])
 
+    # Filtre tendance 6 mois (hors BULL)
     if regime != "BULL" and len(closes) >= 126:
         perf_6m = (closes[0] - closes[125]) / closes[125]
         if perf_6m < -0.20:
@@ -232,18 +233,16 @@ def score_satellite(data, regime, held=False):
     score = 0.0
 
     if regime == "BULL":
-        if not held and len(closes) >= 252 and highs:
-            high_52w = max(highs[:252])
-            dist_ath = (high_52w - closes[0]) / high_52w
-            if dist_ath < 0.08:
-                return 0.0, atr_pct, SAT_TP
+        # ── MODE BULL : BREAKOUT MOMENTUM ────────────────────────────────
 
+        # RSI fort (max 20 pts)
         if 55 <= rsi <= 75:    score += 20.0
         elif 50 <= rsi < 55:   score += 12.0
         elif rsi > 75:         score += 5.0
         elif rsi < 40:         score += 0.0
         else:                  score += 8.0
 
+        # MAs alignées (max 20 pts)
         if len(closes) >= 200:
             ma20  = sum(closes[:20]) / 20
             ma50  = sum(closes[:50]) / 50
@@ -252,6 +251,7 @@ def score_satellite(data, regime, held=False):
             elif closes[0] > ma50 > ma200:        score += 15.0
             elif closes[0] > ma200:               score += 8.0
 
+        # Momentum récent (max 20 pts)
         if len(closes) >= 63:
             ret_1m = (closes[0] - closes[20]) / closes[20]
             ret_3m = (closes[0] - closes[62]) / closes[62]
@@ -262,6 +262,7 @@ def score_satellite(data, regime, held=False):
             elif ret_3m > 0.10: score += 6.0
             elif ret_3m > 0:    score += 3.0
 
+        # Volume fort (max 15 pts)
         if len(volumes) >= 21:
             avg_vol   = sum(volumes[1:21]) / 20
             vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
@@ -269,6 +270,7 @@ def score_satellite(data, regime, held=False):
             elif vol_ratio >= 1.5: score += 10.0
             elif vol_ratio >= 1.2: score += 6.0
 
+        # MACD positif (max 15 pts)
         if len(closes) >= 29:
             macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
             sig    = calc_ema(closes[:9],9)
@@ -280,24 +282,32 @@ def score_satellite(data, regime, held=False):
             elif macd > 0 and hist > 0:                  score += 10.0
             elif macd > 0:                               score += 5.0
 
-        if len(closes) >= 252 and highs:
-            high_52w = max(highs[:252])
-            dist_ath = (high_52w - closes[0]) / high_52w
+        # Distance ATH 52 semaines — intégrée dans le score (max +10 / min -30)
+        # Remplace l'ancien filtre bloquant + bonus séparé
+        if not held and len(closes) >= 252 and highs:
+            high_52w  = max(highs[:252])
+            dist_ath  = (high_52w - closes[0]) / high_52w
             if len(volumes) >= 21:
                 avg_vol   = sum(volumes[1:21]) / 20
                 vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
             else:
                 vol_ratio = 1.0
-            if dist_ath <= 0.05:
-                if vol_ratio >= 1.5:   score += 10.0
-                elif vol_ratio >= 1.2: score += 4.0
-                else:                  score -= 10.0
-            elif dist_ath <= 0.10:
+            if dist_ath < 0.08:
+                # Très proche ATH — pénalité sauf si volume fort (cassure)
+                if vol_ratio >= 1.5:   score += 5.0   # cassure avec volume → léger bonus
+                elif vol_ratio >= 1.2: score -= 10.0  # proche sans volume → pénalité
+                else:                  score -= 30.0  # essoufflé → forte pénalité
+            elif dist_ath < 0.15:
                 if vol_ratio >= 1.2:   score += 6.0
                 else:                  score += 2.0
-            elif dist_ath <= 0.20:     score += 3.0
+            elif dist_ath < 0.25:
+                score += 3.0   # zone idéale de retracement
+            # > 25% de l'ATH → neutre (trop loin, momentum faible)
 
     else:
+        # ── MODE NEUTRAL/BEAR : CONTRARIAN RETRACEMENT ───────────────────
+
+        # RSI oversold (max 25 pts)
         if rsi < 25:        score += 25.0
         elif rsi < 30:      score += 20.0
         elif rsi < 35:      score += 15.0
@@ -306,6 +316,7 @@ def score_satellite(data, regime, held=False):
         elif rsi > 60:      score += 2.0
         else:               score += 5.0
 
+        # Retracement depuis sommet (max 20 pts)
         if len(closes) >= 63:
             high_63 = max(highs[:63]) if highs else max(closes[:63])
             retrace = (high_63 - closes[0]) / high_63
@@ -314,6 +325,7 @@ def score_satellite(data, regime, held=False):
             elif retrace >= 0.15: score += 10.0
             elif retrace >= 0.10: score += 5.0
 
+        # Support MA200 (max 15 pts)
         if len(closes) >= 200:
             ma200      = sum(closes[:200]) / 200
             dist_ma200 = (closes[0] - ma200) / ma200
@@ -321,6 +333,7 @@ def score_satellite(data, regime, held=False):
             elif -0.10 <= dist_ma200 <= 0.10: score += 10.0
             elif dist_ma200 < -0.10:          score += 5.0
 
+        # Fibonacci (max 15 pts)
         if len(closes) >= 126 and highs and lows:
             high_126 = max(highs[:126])
             low_126  = min(lows[:126])
@@ -335,6 +348,7 @@ def score_satellite(data, regime, held=False):
                 elif abs(price - fib_500) <= tol: score += 12.0
                 elif abs(price - fib_382) <= tol: score += 10.0
 
+        # Volume sur creux (max 15 pts)
         if len(volumes) >= 21:
             avg_vol   = sum(volumes[1:21]) / 20
             vol_ratio = volumes[0] / avg_vol if avg_vol > 0 else 1.0
@@ -344,6 +358,7 @@ def score_satellite(data, regime, held=False):
             elif rsi_low and vol_ratio >= 0.8: score += 5.0
             elif vol_ratio >= 1.5:             score += 5.0
 
+        # MACD remonte depuis bas (max 10 pts)
         if len(closes) >= 29:
             macd   = calc_ema(closes[:12],12) - calc_ema(closes[:26],26)
             sig    = calc_ema(closes[:9],9)
@@ -355,6 +370,7 @@ def score_satellite(data, regime, held=False):
             elif macd < 0 and hist > 0:      score += 7.0
             elif macd > 0 and hist > hist_p: score += 3.0
 
+        # Qualité du creux
         if len(highs) >= 10 and len(lows) >= 10:
             range_recent = sum(highs[i]-lows[i] for i in range(5)) / 5
             range_older  = sum(highs[i]-lows[i] for i in range(5,10)) / 5
@@ -380,6 +396,7 @@ def score_satellite(data, regime, held=False):
                 if vol_trend < 0.7:   score += 8.0
                 elif vol_trend > 1.5: score -= 8.0
 
+        # Filtre BEAR strict
         if regime == "BEAR":
             if len(closes) >= 200:
                 ma200 = sum(closes[:200]) / 200
@@ -389,6 +406,7 @@ def score_satellite(data, regime, held=False):
             if rsi > 35:
                 return 0.0, atr_pct, SAT_TP
 
+    # ── Calcul du TP dynamique ────────────────────────────────────────────
     price = closes[0]
     tp_dynamic = None
 
@@ -409,7 +427,7 @@ def score_satellite(data, regime, held=False):
         tp_dynamic = SAT_TP
     tp_dynamic = max(0.08, min(0.35, tp_dynamic))
 
-    return min(100.0, score), atr_pct, tp_dynamic
+    return min(100.0, max(0.0, score)), atr_pct, tp_dynamic
 
 
 # ── STATE ─────────────────────────────────────────────────────────────────────
