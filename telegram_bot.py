@@ -26,10 +26,12 @@ _NYSE_TICKERS = {
 
 def exchange_of(ticker: str) -> str:
     if ticker.endswith(".PA"): return "Euronext Paris"
+    if ticker.endswith(".DE"): return "Xetra"
     if ticker.endswith(".AS"): return "Euronext Amsterdam"
     if ticker.endswith(".MI"): return "Borsa Italiana"
     if ticker.endswith(".HK"): return "HKEX"
     if ticker in _NYSE_TICKERS: return "NYSE"
+    if ticker.endswith(".F"):  return "Frankfurt"
     return "Nasdaq"
 
 
