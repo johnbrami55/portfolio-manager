@@ -347,3 +347,15 @@ SECTOR_MAP = {
     "2382.HK": "Technology",
     "2238.HK": "Consumer Discretionary",
 }
+
+SECTOR_ETF = {
+    "Crypto Mining":          "WGMI",
+    "Technology":             "XLK",
+    "Health Care":            "XLV",
+    "Financials":             "XLF",
+    "Consumer Discretionary": "XLY",
+    "Consumer Staples":       "XLP",
+    "Industrials":            "XLI",
+    "Energy":                 "XLE",
+    "Communication Services": "XLC",
+}

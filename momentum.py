@@ -12,7 +12,7 @@ from datetime import datetime, date, timedelta
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 logger = logging.getLogger(__name__)
 
-# ── CONFIG ────────────────────────────────────────────────────────────────────
+# ── CONFIG ──────────────────────────────────────────────────────────────────────
 CAPITAL       = 1893.0
 CORE_N        = 8
 CORE_MOM_DAYS = 189
@@ -85,7 +85,7 @@ def market_of(ticker: str) -> str:
         return "🇪🇺 EU"
     return "🇺🇸 US"
 
-# ── TELEGRAM ──────────────────────────────────────────────────────────────────
+# ── TELEGRAM ────────────────────────────────────────────────────────────────────
 def send_telegram(msg):
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT:
         logger.info(f"TELEGRAM: {msg}")
@@ -101,7 +101,7 @@ def send_telegram(msg):
         logger.error(f"Telegram error: {e}")
 
 
-# ── YAHOO FINANCE ─────────────────────────────────────────────────────────────
+# ── YAHOO FINANCE ───────────────────────────────────────────────────────────────
 def fetch_history(ticker, days=300):
     try:
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
@@ -145,7 +145,7 @@ def fetch_history(ticker, days=300):
         return None
 
 
-# ── INDICATEURS ───────────────────────────────────────────────────────────────
+# ── INDICATEURS ─────────────────────────────────────────────────────────────────
 def calc_momentum(closes, days):
     closes_r = list(reversed(closes))
     if len(closes_r) < days + 21:
@@ -211,7 +211,7 @@ def in_bear(spy_data):
     return closes[0] < ma
 
 
-# ── SCORER SATELLITE HYBRIDE ──────────────────────────────────────────────────
+# ── SCORER SATELLITE HYBRIDE ────────────────────────────────────────────────────
 def score_satellite(data, regime, held=False):
     closes  = list(reversed(data["closes"]))
     highs   = list(reversed(data["highs"]))
@@ -233,7 +233,7 @@ def score_satellite(data, regime, held=False):
     score = 0.0
 
     if regime == "BULL":
-        # ── MODE BULL : BREAKOUT MOMENTUM ────────────────────────────────
+        # ── MODE BULL : BREAKOUT MOMENTUM ──────────────────────────────────
 
         # RSI fort (max 20 pts)
         if 55 <= rsi <= 75:    score += 20.0
@@ -406,7 +406,7 @@ def score_satellite(data, regime, held=False):
             if rsi > 35:
                 return 0.0, atr_pct, SAT_TP
 
-    # ── Calcul du TP dynamique ────────────────────────────────────────────
+    # ── Calcul du TP dynamique ──────────────────────────────────────────
     price = closes[0]
     tp_dynamic = None
 
@@ -430,7 +430,7 @@ def score_satellite(data, regime, held=False):
     return min(100.0, max(0.0, score)), atr_pct, tp_dynamic
 
 
-# ── STATE ─────────────────────────────────────────────────────────────────────
+# ── STATE ───────────────────────────────────────────────────────────────────────
 def load_state():
     if os.path.exists(STATE_FILE):
         try:
@@ -459,7 +459,7 @@ def save_state(state):
         json.dump(state, f, indent=2, default=str)
 
 
-# ── CORE MOMENTUM ─────────────────────────────────────────────────────────────
+# ── CORE MOMENTUM ─────────────────────────────────────────────────────────
 def run_core(state, spy_data):
     regime  = detect_regime(spy_data)
     bear    = in_bear(spy_data)
@@ -576,7 +576,7 @@ def run_core(state, spy_data):
     save_state(state)
 
 
-# ── SATELLITE SCAN ────────────────────────────────────────────────────────────
+# ── SATELLITE SCAN ────────────────────────────────────────────────────────
 def run_satellite(state, spy_data):
     regime   = detect_regime(spy_data)
     bear     = in_bear(spy_data)
@@ -586,7 +586,7 @@ def run_satellite(state, spy_data):
     core_tickers = set(state.get("core", {}).keys())
     MAX_PRICE    = 150
 
-    # ── 1. SCAN DES CANDIDATS EN PREMIER ─────────────────────────────────
+    # ── 1. SCAN DES CANDIDATS EN PREMIER ─────────────────────────────
     sat_scores = []
     for ticker in universe:
         if ticker in state.get("satellite", {}):
@@ -606,7 +606,7 @@ def run_satellite(state, spy_data):
     sat_scores.sort(key=lambda x: x[1], reverse=True)
     best_candidate = sat_scores[0] if sat_scores else None
 
-    # ── 2. STOP-LOSS / TAKE-PROFIT / SCORE sur positions actives ─────────
+    # ── 2. STOP-LOSS / TAKE-PROFIT / RELATIVE STRENGTH sur positions actives ──
     all_sat_tickers = [t for t in state.get("positions", {}).keys()
                        if t not in core_tickers]
 
@@ -636,18 +636,34 @@ def run_satellite(state, spy_data):
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
 
         if not sell:
-            cur_score, _, _ = score_satellite(data, regime, held=True)
-            entry_score = pos.get("entry_score", 0)
-            if cur_score < 26:
-                sell = True
-                reason = f"📉 Score trop faible ({cur_score:.0f}/100) — sortie sèche"
-            elif entry_score > 0 and cur_score < entry_score - 15:
-                sell = True
-                reason = f"📉 Dégradation score ({entry_score:.0f}→{cur_score:.0f}, -{entry_score-cur_score:.0f}pts)"
-            elif entry_score > 0 and cur_score < 40 and best_candidate and best_candidate[1] > cur_score + 15:
-                sell = True
-                reason = (f"🔄 Rotation — score {cur_score:.0f}/100 "
-                          f"vs {best_candidate[0]} score {best_candidate[1]:.0f}/100")
+            # Faiblesse relative vs secteur sur 5 jours
+            try:
+                from config import SECTOR_MAP, SECTOR_ETF
+                sector = SECTOR_MAP.get(ticker, "")
+                sector_etf = SECTOR_ETF.get(sector, "SPY")
+
+                # Perf 5j du titre
+                hist_closes = list(reversed(data["closes"]))
+                if len(hist_closes) >= 6:
+                    perf_titre_5j = (hist_closes[0] - hist_closes[5]) / hist_closes[5]
+
+                    # Perf 5j de l'ETF sectoriel
+                    etf_data = fetch_history(sector_etf)
+                    if etf_data:
+                        etf_closes = list(reversed(etf_data["closes"]))
+                        if len(etf_closes) >= 6:
+                            perf_etf_5j = (etf_closes[0] - etf_closes[5]) / etf_closes[5]
+                            perf_relative = perf_titre_5j - perf_etf_5j
+
+                            if perf_relative < -0.10:
+                                sell = True
+                                reason = (
+                                    f"📉 Faiblesse relative vs {sector_etf} "
+                                    f"({perf_titre_5j*100:+.1f}% vs secteur {perf_etf_5j*100:+.1f}%, "
+                                    f"écart {perf_relative*100:+.1f}%)"
+                                )
+            except Exception as e:
+                logger.warning(f"Relative strength calc failed for {ticker}: {e}")
 
         if sell:
             emoji = "🟢" if pnl_eur > 0 else "🔴"
@@ -661,7 +677,7 @@ def run_satellite(state, spy_data):
             msg  += f"👉 /sold {ticker} {nb} [prix_exec]"
             send_telegram(msg)
 
-    # ── 3. CASH ET MESSAGE CANDIDATS ─────────────────────────────────────
+    # ── 3. CASH ET MESSAGE CANDIDATS ─────────────────────────────────
     cash_available  = state.get("cash_eur", 0)
     CASH_RESERVE    = 140
     cash_deployable = max(0, cash_available - CASH_RESERVE)
@@ -693,8 +709,8 @@ def run_satellite(state, spy_data):
         else:
             msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
 
-    # ── 4. LOGIQUE DE ROTATION ────────────────────────────────────────────
-    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 36
+    # ── 4. LOGIQUE DE ROTATION ────────────────────────────────────────
+    ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 55
 
     weak_positions = []
     for sat_ticker, sat_pos in state.get("positions", {}).items():
@@ -760,7 +776,7 @@ def run_satellite(state, spy_data):
     send_telegram(msg)
 
 
-# ── MAIN ──────────────────────────────────────────────────────────────────────
+# ── MAIN ────────────────────────────────────────────────────────────────────────
 def main():
     logger.info("=== Portfolio Manager — Production Run ===")
 
