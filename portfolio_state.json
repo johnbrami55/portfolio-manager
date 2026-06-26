@@ -61,11 +61,11 @@
       "take_profit": 119.86439999999999,
       "trailing_high": 101.58,
       "beta": 1.0,
-      "position_eur": 102.96,
+      "position_eur": 104.88,
       "currency": "EUR",
       "eur_usd": 1.139,
-      "current_price": 102.96,
-      "current_price_eur": 102.96
+      "current_price": 104.88,
+      "current_price_eur": 104.88
     },
     "RIOT": {
       "entry_price": 27.15,
@@ -265,11 +265,11 @@
       "take_profit": 23.4407,
       "trailing_high": 19.865,
       "beta": 1.0,
-      "position_eur": 98.86,
+      "position_eur": 101.8,
       "currency": "EUR",
       "eur_usd": 1.139,
-      "current_price": 19.772,
-      "current_price_eur": 19.772
+      "current_price": 20.36,
+      "current_price_eur": 20.36
     },
     "AIXA.DE": {
       "entry_price": 54.78,
@@ -282,11 +282,11 @@
       "take_profit": 64.6404,
       "trailing_high": 54.78,
       "beta": 1.0,
-      "position_eur": 156.36,
+      "position_eur": 158.76,
       "currency": "EUR",
       "eur_usd": 1.139,
-      "current_price": 52.12,
-      "current_price_eur": 52.12
+      "current_price": 52.92,
+      "current_price_eur": 52.92
     },
     "AFRM": {
       "entry_price": 78.0,
@@ -314,7 +314,7 @@
   "core_cash": 1135.8,
   "sat_cash": 757.2,
   "current_regime": "BULL",
-  "last_run": "2026-06-26T21:48:09.626144",
+  "last_run": "2026-06-26T23:09:29.508122",
   "last_run_utc": "2026-06-17T10:24:00",
   "performance": {
     "total_pnl_eur": -5.377540471006098,
