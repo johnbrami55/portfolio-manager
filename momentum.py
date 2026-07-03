@@ -509,8 +509,6 @@ def run_satellite(state, spy_data):
         entry     = pos.get("entry_price", price)
         pnl       = (price - entry) / entry if entry else 0
         days_held = (date.today() - date.fromisoformat(pos.get("entry_date", today))).days
-        atr_pct   = pos.get("atr_pct", 0.05)
-        stop      = -atr_pct * SAT_STOP_ATR
         currency  = pos.get("currency", "EUR")
         eur_usd   = pos.get("eur_usd", 1.12)
         price_eur = price / eur_usd if currency == "USD" else price
@@ -518,9 +516,7 @@ def run_satellite(state, spy_data):
         pnl_eur   = (price_eur - entry_eur) * pos.get("nb_shares", pos.get("shares", 1))
 
         sell = False; reason = ""
-        if pnl <= stop:
-            sell = True; reason = f"🛑 Stop-loss ({pnl*100:.1f}%)"
-        elif pnl >= SAT_TP:
+        if pnl >= SAT_TP:
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
         elif days_held >= SAT_HOLD_DAYS:
             sell = True; reason = f"⏱ Timeout ({days_held}j)"
