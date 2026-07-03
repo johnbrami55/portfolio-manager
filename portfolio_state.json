@@ -54,11 +54,11 @@
       "take_profit": 119.86439999999999,
       "trailing_high": 101.58,
       "beta": 1.0,
-      "position_eur": 101.56,
+      "position_eur": 101.58,
       "currency": "EUR",
       "eur_usd": 1.145,
-      "current_price": 101.56,
-      "current_price_eur": 101.56
+      "current_price": 101.58,
+      "current_price_eur": 101.58
     },
     "CSCO": {
       "entry_price": 118.96,
@@ -173,11 +173,11 @@
       "take_profit": 23.4407,
       "trailing_high": 19.865,
       "beta": 1.0,
-      "position_eur": 96.84,
+      "position_eur": 96.83,
       "currency": "EUR",
       "eur_usd": 1.145,
-      "current_price": 19.368,
-      "current_price_eur": 19.368
+      "current_price": 19.366,
+      "current_price_eur": 19.366
     },
     "AFRM": {
       "entry_price": 78.0,
@@ -241,7 +241,7 @@
   "core_cash": 1135.8,
   "sat_cash": 757.2,
   "current_regime": "BULL",
-  "last_run": "2026-07-03T10:10:12.625169",
+  "last_run": "2026-07-03T10:14:20.081406",
   "last_run_utc": "2026-06-17T10:24:00",
   "performance": {
     "total_pnl_eur": -120.67758791564621,
