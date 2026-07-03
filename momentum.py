@@ -212,7 +212,7 @@ def in_bear(spy_data):
 
 
 # ── SCORER SATELLITE HYBRIDE ────────────────────────────────────────────────────
-def score_satellite(data, regime, held=False):
+def score_satellite(data, regime):
     closes  = list(reversed(data["closes"]))
     highs   = list(reversed(data["highs"]))
     lows    = list(reversed(data["lows"]))
@@ -603,7 +603,7 @@ def run_satellite(state, spy_data):
         sat_price     = sat_data["price"]
         sat_entry     = sat_pos.get("entry_price", sat_price)
         sat_pnl       = (sat_price - sat_entry) / sat_entry if sat_entry else 0
-        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime, held=True)
+        sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
 
         if sat_cur_score == 0 and sat_pnl > 0:
             continue
