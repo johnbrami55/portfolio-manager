@@ -675,8 +675,10 @@ def main():
     run_core(state, spy_data)
     run_satellite(state, spy_data)
 
-    core_count = len(state.get("core", {}))
-    sat_count  = len(state.get("satellite", {}))
+    core_tickers = set(state.get("core", {}).keys())
+    all_positions = state.get("positions", {})
+    core_count = len([t for t in all_positions if t in core_tickers])
+    sat_count  = len([t for t in all_positions if t not in core_tickers])
     logger.info(f"Core: {core_count}/{CORE_N} | Satellite: {sat_count}/{MAX_SAT}")
 
     send_telegram(
