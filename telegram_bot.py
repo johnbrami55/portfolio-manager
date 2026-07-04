@@ -442,8 +442,10 @@ def handle_command(text: str) -> str:
 
     elif cmd == "/status":
         from config import FULL_UNIVERSE
-        core_count = len(state.get("core", {}))
-        sat_count  = len(state.get("satellite", {}))
+        core_tickers = set(state.get("core", {}).keys())
+        all_positions = state.get("positions", {})
+        core_count = len([t for t in all_positions if t in core_tickers])
+        sat_count  = len([t for t in all_positions if t not in core_tickers])
         return (
             f"⚙️ *System Status*\n"
             f"Regime: {state.get('current_regime','?')}\n"
