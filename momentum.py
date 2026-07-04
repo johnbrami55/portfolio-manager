@@ -130,7 +130,8 @@ def fetch_history(ticker, days=300):
         highs_c   = [x[2] for x in data_clean]
         lows_c    = [x[3] for x in data_clean]
         volumes_c = [x[4] for x in data_clean]
-        logger.info(f"{ticker}: dernière date={dates_c[-1]}, close={closes_c[-1]:.2f}")
+        vol_last = volumes_c[-1] if volumes_c else 0
+        logger.info(f"{ticker}: dernière date={dates_c[-1]}, close={closes_c[-1]:.2f}, vol={vol_last}")
         return {
             "dates":   dates_c,
             "closes":  closes_c,
@@ -217,6 +218,17 @@ def score_satellite(data, regime):
     highs   = list(reversed(data["highs"]))
     lows    = list(reversed(data["lows"]))
     volumes = list(reversed(data["volumes"]))
+
+    # Pour les marchés asiatiques fermés (volume J0 = 0), décaler sur J-1
+    if data.get("dates") and len(volumes) > 1:
+        last_date = data["dates"][-1]
+        from datetime import date as _date
+        days_since = (_date.today() - last_date).days
+        if volumes[0] == 0 or days_since > 1:
+            closes  = closes[1:]
+            highs   = highs[1:]
+            lows    = lows[1:]
+            volumes = volumes[1:]
 
     if len(closes) < 50:
         return 0.0, 0.02, SAT_TP
