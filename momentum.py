@@ -260,17 +260,28 @@ def score_satellite(data, regime):
                 return 0.0, atr_pct, SAT_TP  # effondrement — on évite
             # repli < 5% → pas encore retraité, trop proche du sommet → 0 pts
 
-    # ── 3. RSI EN ZONE DE REBOND 35-55 (max 25 pts) ─────────────────────────
-    if 35 <= rsi <= 45:
-        score += 25.0   # oversold recovery — zone idéale
-    elif 45 < rsi <= 55:
-        score += 15.0   # neutre légèrement haussier
-    elif 30 <= rsi < 35:
-        score += 10.0   # très oversold — risque de continuation baissière
-    elif rsi < 30:
-        score += 5.0    # trop oversold — possible couteau qui tombe
-    elif rsi > 70:
-        score -= 15.0   # suracheté — trop tard
+    # ── 3. RSI — PULLBACK DANS TENDANCE SAINE (max 20 pts) ──────────────────
+    if 40 <= rsi <= 55:    score += 20.0   # pullback sain dans une tendance haussière
+    elif 55 < rsi <= 62:   score += 12.0
+    elif 35 <= rsi < 40:   score += 10.0
+    elif rsi > 70:         score += 0.0    # euphorie — signal tardif, on n'achète pas
+    elif rsi > 62:         score += 4.0
+    else:                  score += 6.0    # rsi < 35 : trop oversold, risque couteau
+
+    # ── 3b. MOMENTUM RÉCENT — TIMING D'ENTRÉE (max +5 / -10 pts) ────────────
+    if len(closes) >= 63:
+        ret_1m = (closes[0] - closes[20]) / closes[20]
+        ret_3m = (closes[0] - closes[62]) / closes[62]
+        if ret_1m > 0.15:
+            score -= 10.0   # surchauffe récente — trop tard pour le pullback
+        elif ret_1m > 0.10:
+            score -= 5.0    # momentum fort — légèrement tardif
+        elif ret_1m < -0.05:
+            score += 5.0    # repli récent confirmé — bonne fenêtre d'entrée
+        if ret_3m > 0.10:
+            score += 5.0    # tendance de fond haussière confirmée
+        elif ret_3m < -0.15:
+            score -= 5.0    # tendance de fond baissière
 
     # ── 4. VOLUME EN BAISSE SUR LE REPLI (max 20 pts) ───────────────────────
     # Signe que les vendeurs s'épuisent — accumulation silencieuse
@@ -315,6 +326,14 @@ def score_satellite(data, regime):
             score += 6.0    # légèrement sous MA50 — zone de rebond possible
         elif dist_ma50 > 0.15:
             score -= 5.0    # trop au-dessus MA50 — extension
+
+    # ── 6b. DOUBLE PÉNALITÉ : proche ATH 52w + RSI élevé ────────────────────
+    if len(highs) >= 252:
+        ath_52w = max(highs[:252])
+        if ath_52w > 0:
+            dist_ath = (ath_52w - closes[0]) / ath_52w
+            if dist_ath < 0.03 and rsi > 65:
+                score -= 20.0   # euphorie + résistance majeure — double signal négatif
 
     # ── Calcul TP dynamique — retour au sommet récent + 10% ──────────────────
     price = closes[0]
@@ -489,21 +508,32 @@ def run_satellite(state, spy_data):
     MAX_PRICE    = 150
 
     # ── 1. SCAN DES CANDIDATS EN PREMIER ─────────────────────────────
-    sat_scores = []
+    sat_scores     = []
+    recent_sells   = state.get("recent_sells", {})
+    sat_score_hist = state.setdefault("sat_score_history", {})
     for ticker in universe:
         if ticker in state.get("satellite", {}):
             continue
         if ticker in state.get("positions", {}):
             continue
+        # Cooldown re-buy : interdit pendant 5 jours après une vente
+        sell_date = recent_sells.get(ticker)
+        if sell_date:
+            if (date.today() - date.fromisoformat(sell_date)).days < 5:
+                continue
         data = fetch_history(ticker)
         if not data:
             continue
         if data["price"] > MAX_PRICE:
             continue
         score, atr_pct, tp_dynamic = score_satellite(data, regime)
-        if score >= SAT_THRESH:
-            sat_scores.append((ticker, score, data["price"], atr_pct, tp_dynamic))
-            logger.info(f"  {ticker}: score={score:.1f}")
+        # Lissage sur 3 runs pour filtrer le bruit
+        hist = (sat_score_hist.get(ticker, []) + [score])[-3:]
+        sat_score_hist[ticker] = hist
+        smoothed = sum(hist) / len(hist)
+        if smoothed >= SAT_THRESH:
+            sat_scores.append((ticker, smoothed, data["price"], atr_pct, tp_dynamic))
+            logger.info(f"  {ticker}: score={score:.1f} lissé={smoothed:.1f}")
 
     sat_scores.sort(key=lambda x: x[1], reverse=True)
     best_candidate = sat_scores[0] if sat_scores else None
@@ -526,6 +556,10 @@ def run_satellite(state, spy_data):
         price_eur = price / eur_usd if currency == "USD" else price
         entry_eur = entry / eur_usd if currency == "USD" else entry
         pnl_eur   = (price_eur - entry_eur) * pos.get("nb_shares", pos.get("shares", 1))
+
+        # Cooldown : pas de vente proposée avant 5 jours de détention
+        if days_held < 5:
+            continue
 
         sell = False; reason = ""
         if pnl >= SAT_TP:
@@ -559,6 +593,8 @@ def run_satellite(state, spy_data):
                 logger.warning(f"Relative strength calc failed for {ticker}: {e}")
 
         if sell:
+            # Enregistrer pour le cooldown re-buy
+            state.setdefault("recent_sells", {})[ticker] = today
             emoji = "🟢" if pnl_eur > 0 else "🔴"
             sym   = "$" if currency == "USD" else "€"
             nb    = pos.get("nb_shares", pos.get("shares", 1))
@@ -616,12 +652,16 @@ def run_satellite(state, spy_data):
         sat_entry     = sat_pos.get("entry_price", sat_price)
         sat_pnl       = (sat_price - sat_entry) / sat_entry if sat_entry else 0
         sat_cur_score, _, sat_tp_dynamic = score_satellite(sat_data, regime)
+        # Lissage sur 3 runs
+        sat_hist = (sat_score_hist.get(sat_ticker, []) + [sat_cur_score])[-3:]
+        sat_score_hist[sat_ticker] = sat_hist
+        sat_smoothed = sum(sat_hist) / len(sat_hist)
 
         if sat_cur_score == 0 and sat_pnl > 0:
             continue
 
-        if sat_cur_score < ROTATION_SCORE_THRESHOLD:
-            weak_positions.append((sat_ticker, sat_pnl, sat_cur_score, sat_tp_dynamic))
+        if sat_smoothed < ROTATION_SCORE_THRESHOLD:
+            weak_positions.append((sat_ticker, sat_pnl, sat_smoothed, sat_tp_dynamic))
 
     weak_positions.sort(key=lambda x: x[2])
 
