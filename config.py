@@ -188,6 +188,8 @@ US_TICKERS = [
     "CELH", "RDDT", "CAVA", "JOBY", "ACHR", "LUNR",
     "PONY", "RGTI", "QUBT", "KULR",
     "WULF", "CORZ", "CIFR", "EXPI",
+    # Aérospatial / satellites
+    "ASTS", "RKLB",
 ]
 
 HK_TICKERS = [
@@ -298,6 +300,7 @@ SECTOR_MAP = {
     "CAVA": "Consumer Discretionary", "JOBY": "Industrials", "ACHR": "Industrials",
     "LUNR": "Industrials", "PONY": "Technology", "RGTI": "Technology",
     "QUBT": "Technology", "KULR": "Technology", "EXPI": "Financials",
+    "ASTS": "Industrials", "RKLB": "Industrials",
     # HK (HKEX)
     "0700.HK": "Communication Services",
     "9988.HK": "Consumer Discretionary",
