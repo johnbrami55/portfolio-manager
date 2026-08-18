@@ -46,9 +46,10 @@ CORE_UNIVERSE = [
     # France (EUR → USD, filtré à 100 USD au runtime)
     "BNP.PA", "GLE.PA", "ACA.PA", "ORA.PA",
     "TFI.PA", "STLAP.PA", "RNO.PA", "VIE.PA", "SGO.PA", "SAN.PA",
-    # Allemagne
+    # Allemagne / Frankfurt
     "DBK.DE", "CBK.DE", "VNA.DE", "DTE.DE",
     "BAYN.DE", "MBG.DE", "ENR.DE", "RWE.DE", "BMW.DE",
+    "PC6.F",
     # Pays-Bas
     "INGA.AS", "ABN.AS", "PHIA.AS", "UNA.AS", "RAND.AS",
     # Espagne
@@ -101,7 +102,7 @@ TICKER_NAMES = {
     "DBK.DE": "Deutsche Bank", "CBK.DE": "Commerzbank", "VNA.DE": "Vonovia",
     "DTE.DE": "Deutsche Telekom", "BAYN.DE": "Bayer",
     "MBG.DE": "Mercedes-Benz", "ENR.DE": "Siemens Energy",
-    "RWE.DE": "RWE", "BMW.DE": "BMW",
+    "RWE.DE": "RWE", "BMW.DE": "BMW", "PC6.F": "PetroChina (Frankfurt)",
     # ── CORE Pays-Bas ─────────────────────────────────────────────────────────
     "INGA.AS": "ING Groep", "ABN.AS": "ABN AMRO", "PHIA.AS": "Philips",
     "UNA.AS": "Unilever", "RAND.AS": "Randstad",
@@ -501,7 +502,7 @@ def run_core(state, spy_data):
     def price_usd(ticker, native_price):
         if ticker.endswith(".HK"):
             return native_price * fx_hkd
-        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR", ".F", ".MU", ".SG")):
             return native_price * fx_eur
         return native_price  # déjà en USD
 
@@ -509,14 +510,14 @@ def run_core(state, spy_data):
         """Convertit le prix natif en EUR pour les calculs de position."""
         if ticker.endswith(".HK"):
             return native_price * fx_hkd / fx_eur  # HKD → USD → EUR
-        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR", ".F", ".MU", ".SG")):
             return native_price  # déjà en EUR
         return native_price / fx_eur  # USD → EUR
 
     def native_currency(ticker):
         if ticker.endswith(".HK"):
             return "HKD"
-        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR", ".F", ".MU", ".SG")):
             return "€"
         return "$"
 
