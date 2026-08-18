@@ -421,14 +421,25 @@ def run_core(state, spy_data):
         logger.info(f"Core: pas de rebalancement (dernier: {state['last_rebal']})")
         return
 
-    MAX_CORE_PRICE = 100  # cohérence avec le budget par slot (en USD)
+    MAX_CORE_PRICE = 110  # seuil en USD — appliqué après conversion de la devise native
+
+    # Taux de change pour comparer les prix EU/HK en USD
+    fx_eur = (fetch_history("EURUSD=X") or {}).get("price", 1.13)
+    fx_hkd = (fetch_history("HKDUSD=X") or {}).get("price", 0.128)
+
+    def price_usd(ticker, native_price):
+        if ticker.endswith(".HK"):
+            return native_price * fx_hkd
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+            return native_price * fx_eur
+        return native_price  # déjà en USD
 
     scores = []
     for ticker in CORE_UNIVERSE:
         data = fetch_history(ticker)
         if not data:
             continue
-        if data["price"] > MAX_CORE_PRICE:
+        if price_usd(ticker, data["price"]) > MAX_CORE_PRICE:
             continue
         closes = data["closes"]
         if len(closes) >= 200:
