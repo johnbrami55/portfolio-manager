@@ -79,10 +79,10 @@
       "trailing_high": 121.48,
       "beta": 3.7,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 95.9767,
-      "current_price_eur": 82.8663,
-      "position_eur": 82.87
+      "eur_usd": 1.1579,
+      "current_price": 96.02,
+      "current_price_eur": 82.9229,
+      "position_eur": 82.92
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -93,7 +93,7 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1582,
+      "eur_usd": 1.1579,
       "current_price": 1.0795,
       "current_price_eur": 1.0795,
       "position_eur": 107.95
@@ -107,10 +107,10 @@
       "trailing_high": 84.7,
       "beta": 4.03,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 67.31,
-      "current_price_eur": 58.1155,
-      "position_eur": 232.46
+      "eur_usd": 1.1579,
+      "current_price": 67.59,
+      "current_price_eur": 58.3707,
+      "position_eur": 233.48
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -121,10 +121,10 @@
       "trailing_high": 22.38,
       "beta": 3.45,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 16.805,
-      "current_price_eur": 14.5094,
-      "position_eur": 145.09
+      "eur_usd": 1.1579,
+      "current_price": 16.535,
+      "current_price_eur": 14.2796,
+      "position_eur": 142.8
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -135,10 +135,10 @@
       "trailing_high": 19.31,
       "beta": 2.81,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 18.975,
-      "current_price_eur": 16.383,
-      "position_eur": 131.06
+      "eur_usd": 1.1579,
+      "current_price": 18.735,
+      "current_price_eur": 16.1795,
+      "position_eur": 129.44
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -149,10 +149,10 @@
       "trailing_high": 33.305,
       "beta": 2.83,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 27.795,
-      "current_price_eur": 23.9982,
-      "position_eur": 143.99
+      "eur_usd": 1.1579,
+      "current_price": 27.89,
+      "current_price_eur": 24.0858,
+      "position_eur": 144.51
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -163,10 +163,10 @@
       "trailing_high": 50.665,
       "beta": 3.85,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 45.115,
-      "current_price_eur": 38.9523,
-      "position_eur": 233.71
+      "eur_usd": 1.1579,
+      "current_price": 45.15,
+      "current_price_eur": 38.9915,
+      "position_eur": 233.95
     },
     "HOOD": {
       "entry_price": 93.575,
@@ -177,10 +177,10 @@
       "trailing_high": 93.575,
       "beta": 1.99,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 92.92,
-      "current_price_eur": 80.2271,
-      "position_eur": 160.45
+      "eur_usd": 1.1579,
+      "current_price": 93.43,
+      "current_price_eur": 80.6861,
+      "position_eur": 161.37
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -191,10 +191,10 @@
       "trailing_high": 99.36,
       "beta": 3.54,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 79.91,
-      "current_price_eur": 68.9943,
-      "position_eur": 68.99
+      "eur_usd": 1.1579,
+      "current_price": 80.1,
+      "current_price_eur": 69.1744,
+      "position_eur": 69.17
     },
     "WULF": {
       "entry_price": 16.8,
@@ -205,10 +205,10 @@
       "trailing_high": 16.8,
       "beta": 3.04,
       "currency": "USD",
-      "eur_usd": 1.1582,
-      "current_price": 16.275,
-      "current_price_eur": 14.0518,
-      "position_eur": 126.47
+      "eur_usd": 1.1579,
+      "current_price": 15.975,
+      "current_price_eur": 13.796,
+      "position_eur": 124.16
     }
   },
   "last_rebal": "2026-08-18",
@@ -216,7 +216,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 2,
   "current_regime": "BULL",
-  "last_run": "2026-08-18T16:34:02.284456",
+  "last_run": "2026-08-18T17:29:02.438465",
   "performance": {
     "total_pnl_eur": 0,
     "total_pnl_pct": 0,
