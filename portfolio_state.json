@@ -79,10 +79,10 @@
       "trailing_high": 121.48,
       "beta": 3.7,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 95.765,
-      "current_price_eur": 82.7027,
-      "position_eur": 82.7
+      "eur_usd": 1.1578,
+      "current_price": 96.015,
+      "current_price_eur": 82.9281,
+      "position_eur": 82.93
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -93,7 +93,7 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1579,
+      "eur_usd": 1.1578,
       "current_price": 1.0795,
       "current_price_eur": 1.0795,
       "position_eur": 107.95
@@ -107,10 +107,10 @@
       "trailing_high": 84.7,
       "beta": 4.03,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 67.23,
-      "current_price_eur": 58.0598,
-      "position_eur": 232.24
+      "eur_usd": 1.1578,
+      "current_price": 67.2,
+      "current_price_eur": 58.0406,
+      "position_eur": 232.16
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -121,10 +121,10 @@
       "trailing_high": 22.38,
       "beta": 3.45,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 16.365,
-      "current_price_eur": 14.1328,
-      "position_eur": 141.33
+      "eur_usd": 1.1578,
+      "current_price": 16.175,
+      "current_price_eur": 13.9703,
+      "position_eur": 139.7
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -135,10 +135,10 @@
       "trailing_high": 19.31,
       "beta": 2.81,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 18.645,
-      "current_price_eur": 16.1018,
-      "position_eur": 128.81
+      "eur_usd": 1.1578,
+      "current_price": 18.825,
+      "current_price_eur": 16.2592,
+      "position_eur": 130.07
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -149,10 +149,10 @@
       "trailing_high": 33.305,
       "beta": 2.83,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 27.835,
-      "current_price_eur": 24.0383,
-      "position_eur": 144.23
+      "eur_usd": 1.1578,
+      "current_price": 27.91,
+      "current_price_eur": 24.1059,
+      "position_eur": 144.64
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -163,10 +163,10 @@
       "trailing_high": 50.665,
       "beta": 3.85,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 45.03,
-      "current_price_eur": 38.8879,
-      "position_eur": 233.33
+      "eur_usd": 1.1578,
+      "current_price": 44.525,
+      "current_price_eur": 38.4562,
+      "position_eur": 230.74
     },
     "HOOD": {
       "entry_price": 93.575,
@@ -177,10 +177,10 @@
       "trailing_high": 93.575,
       "beta": 1.99,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 92.99,
-      "current_price_eur": 80.3062,
-      "position_eur": 160.61
+      "eur_usd": 1.1578,
+      "current_price": 92.883,
+      "current_price_eur": 80.223,
+      "position_eur": 160.45
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -191,10 +191,10 @@
       "trailing_high": 99.36,
       "beta": 3.54,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 79.56,
-      "current_price_eur": 68.708,
-      "position_eur": 68.71
+      "eur_usd": 1.1578,
+      "current_price": 79.625,
+      "current_price_eur": 68.7721,
+      "position_eur": 68.77
     },
     "WULF": {
       "entry_price": 16.8,
@@ -205,10 +205,10 @@
       "trailing_high": 16.8,
       "beta": 3.04,
       "currency": "USD",
-      "eur_usd": 1.1579,
-      "current_price": 15.77,
-      "current_price_eur": 13.619,
-      "position_eur": 122.57
+      "eur_usd": 1.1578,
+      "current_price": 15.61,
+      "current_price_eur": 13.4824,
+      "position_eur": 121.34
     }
   },
   "last_rebal": "2026-08-18",
@@ -216,7 +216,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 2,
   "current_regime": "BULL",
-  "last_run": "2026-08-18T17:56:41.096172",
+  "last_run": "2026-08-18T18:47:12.679297",
   "performance": {
     "total_pnl_eur": 0,
     "total_pnl_pct": 0,
