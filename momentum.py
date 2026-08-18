@@ -449,6 +449,13 @@ def run_core(state, spy_data):
                 continue
         mom = calc_momentum(closes, CORE_MOM_DAYS)
         if mom is not None:
+            # Filtre "trop proche de l'ATH" — éviter d'acheter au sommet
+            if len(closes) >= 252:
+                closes_r_ath = list(reversed(closes))
+                high_52w = max(closes_r_ath[:252])
+                dist_ath = (high_52w - closes_r_ath[0]) / high_52w
+                if dist_ath < 0.05:
+                    continue
             scores.append((ticker, mom, data["price"]))
 
     scores.sort(key=lambda x: x[1], reverse=True)
