@@ -85,6 +85,77 @@ SATELLITE_BEAR = [
     "SXR8.DE",
 ]
 
+TICKER_NAMES = {
+    # ── CORE USA ──────────────────────────────────────────────────────────────
+    "CSCO": "Cisco", "INTC": "Intel", "T": "AT&T", "VZ": "Verizon",
+    "BAC": "Bank of America", "WFC": "Wells Fargo", "C": "Citigroup",
+    "F": "Ford", "GM": "General Motors", "PFE": "Pfizer", "KO": "Coca-Cola",
+    "MO": "Altria", "WBA": "Walgreens", "PYPL": "PayPal", "DIS": "Disney",
+    "NKE": "Nike", "MRK": "Merck", "PARA": "Paramount",
+    # ── CORE France ───────────────────────────────────────────────────────────
+    "BNP.PA": "BNP Paribas", "GLE.PA": "Société Générale",
+    "ACA.PA": "Crédit Agricole", "ORA.PA": "Orange", "TFI.PA": "TF1",
+    "STLAP.PA": "Stellantis", "RNO.PA": "Renault", "VIE.PA": "Veolia",
+    "SGO.PA": "Saint-Gobain", "SAN.PA": "Sanofi",
+    # ── CORE Allemagne ────────────────────────────────────────────────────────
+    "DBK.DE": "Deutsche Bank", "CBK.DE": "Commerzbank", "VNA.DE": "Vonovia",
+    "DTE.DE": "Deutsche Telekom", "BAYN.DE": "Bayer",
+    "MBG.DE": "Mercedes-Benz", "ENR.DE": "Siemens Energy",
+    "RWE.DE": "RWE", "BMW.DE": "BMW",
+    # ── CORE Pays-Bas ─────────────────────────────────────────────────────────
+    "INGA.AS": "ING Groep", "ABN.AS": "ABN AMRO", "PHIA.AS": "Philips",
+    "UNA.AS": "Unilever", "RAND.AS": "Randstad",
+    # ── CORE Espagne ──────────────────────────────────────────────────────────
+    "SAN.MC": "Banco Santander", "BBVA.MC": "BBVA", "IBE.MC": "Iberdrola",
+    "REP.MC": "Repsol", "TEF.MC": "Telefónica", "CLNX.MC": "Cellnex",
+    # ── CORE Hong Kong ────────────────────────────────────────────────────────
+    "0005.HK": "HSBC", "0941.HK": "China Mobile", "1398.HK": "ICBC",
+    "0939.HK": "CCB", "2628.HK": "China Life", "0002.HK": "CLP Holdings",
+    "0003.HK": "HK & China Gas", "0857.HK": "PetroChina",
+    "1088.HK": "China Shenhua", "0386.HK": "Sinopec", "0762.HK": "China Unicom",
+    # ── SATELLITE USA ─────────────────────────────────────────────────────────
+    "NVDA": "Nvidia", "AMD": "AMD", "META": "Meta", "TSLA": "Tesla",
+    "COIN": "Coinbase", "MSTR": "MicroStrategy", "RIOT": "Riot Platforms",
+    "MARA": "Marathon Digital", "PLTR": "Palantir", "SMCI": "Super Micro",
+    "HOOD": "Robinhood", "SOFI": "SoFi", "HIMS": "Hims & Hers",
+    "DKNG": "DraftKings", "AFRM": "Affirm", "CLSK": "CleanSpark",
+    "HUT": "Hut 8", "ASTS": "AST SpaceMobile", "RKLB": "Rocket Lab",
+    "SOUN": "SoundHound AI", "IONQ": "IonQ", "UPST": "Upstart",
+    "CELH": "Celsius Holdings", "RDDT": "Reddit", "CAVA": "CAVA Group",
+    "JOBY": "Joby Aviation", "ACHR": "Archer Aviation",
+    "LUNR": "Intuitive Machines", "PONY": "Pony.ai",
+    "RGTI": "Rigetti Computing", "QUBT": "Quantum Computing",
+    "KULR": "KULR Technology", "WULF": "TeraWulf",
+    "CORZ": "Core Scientific", "BTBT": "Bit Digital",
+    "CIFR": "Cipher Mining", "EXPI": "eXp World", "GENIE": "Genie Energy",
+    # ── SATELLITE EU ──────────────────────────────────────────────────────────
+    "SXRV.DE": "iShares MSCI World", "VVSM.DE": "Invesco NASDAQ",
+    "SEC0.DE": "iShares S&P 500", "QDVE.DE": "iShares S&P 500 IT",
+    "ASML.AS": "ASML", "ADYEN.AS": "Adyen", "BESI.AS": "BE Semiconductor",
+    "MDXH.AS": "MDxHealth", "STM.PA": "STMicroelectronics",
+    "CAP.PA": "Capgemini", "DSY.PA": "Dassault Systèmes", "ALO.PA": "Alstom",
+    "AIXA.DE": "Aixtron", "EVT.DE": "Evotec",
+    "SXR8.DE": "iShares MSCI World ETF",
+    # ── SATELLITE Hong Kong ───────────────────────────────────────────────────
+    "0700.HK": "Tencent", "9988.HK": "Alibaba", "3690.HK": "Meituan",
+    "1810.HK": "Xiaomi", "1299.HK": "AIA Group", "1801.HK": "Innovent Bio",
+    "9866.HK": "NIO", "2015.HK": "Li Auto", "9618.HK": "JD.com",
+    "1024.HK": "Kuaishou", "9888.HK": "Baidu", "9999.HK": "NetEase",
+    "0285.HK": "BYD Electronic", "6160.HK": "BeiGene",
+    "9868.HK": "XPeng", "0020.HK": "SJM Holdings", "9961.HK": "Trip.com",
+    "2382.HK": "Sunny Optical", "2238.HK": "GAC Group",
+    # ── SATELLITE BEAR ────────────────────────────────────────────────────────
+    "LMT": "Lockheed Martin", "RTX": "RTX Corp",
+    "NOC": "Northrop Grumman", "GD": "General Dynamics",
+    "XOM": "ExxonMobil", "CVX": "Chevron",
+    "WMT": "Walmart", "COST": "Costco", "PG": "Procter & Gamble",
+    "ABBV": "AbbVie",
+}
+
+def tname(ticker: str) -> str:
+    """Retourne le nom lisible d'un ticker, ou le ticker lui-même si inconnu."""
+    return TICKER_NAMES.get(ticker, ticker)
+
 def market_of(ticker: str) -> str:
     if ticker.endswith(".HK"):
         return "🇭🇰 HK"
@@ -497,13 +568,13 @@ def run_core(state, spy_data):
         msg += f"❌ <b>VENDRE :</b>\n"
         for ticker in to_sell:
             pos = state["core"][ticker]
-            msg += f"→ {ticker} (acheté à {pos['entry_price']:.2f}$)\n"
+            msg += f"→ {ticker} — {tname(ticker)} (acheté à {pos['entry_price']:.2f}$)\n"
         msg += "\n"
 
     if to_keep:
         msg += f"✅ <b>GARDER (rien à faire) :</b>\n"
         for ticker in to_keep:
-            msg += f"→ {ticker}\n"
+            msg += f"→ {ticker} — {tname(ticker)}\n"
         msg += "\n"
 
     if to_buy:
@@ -517,7 +588,7 @@ def run_core(state, spy_data):
                 curr         = native_currency(ticker)
                 shares       = int(slot_size / price_e)   # nb titres pour ~slot_size €
                 invest       = shares * price_e            # montant réel en EUR
-                msg += f"→ <b>{ticker}</b>\n"
+                msg += f"→ <b>{ticker}</b> — {tname(ticker)}\n"
                 msg += f"   Prix : {price_native:.2f} {curr}\n"
                 msg += f"   Shares : {shares}\n"
                 msg += f"   Investir : {invest:.0f}€\n"
@@ -646,6 +717,7 @@ def run_satellite(state, spy_data):
             sym   = "$" if currency == "USD" else "€"
             nb    = pos.get("nb_shares", pos.get("shares", 1))
             msg   = f"{emoji} <b>SATELLITE — SUGGÈRE VENTE {ticker}</b> {market_of(ticker)}\n"
+            msg  += f"{tname(ticker)}\n"
             msg  += f"Raison : {reason}\n"
             msg  += f"Prix entrée : {entry:.2f}{sym} → Prix actuel : {price:.2f}{sym}\n"
             msg  += f"P&L : {pnl*100:+.1f}% ({pnl_eur:+.0f}€)\n"
@@ -679,11 +751,11 @@ def run_satellite(state, spy_data):
 
         if shares > 0:
             invest = shares * price
-            msg += f"✅ <b>{ticker}</b> {market} — Score {score:.0f}/100\n"
+            msg += f"✅ <b>{ticker}</b> {market} — {tname(ticker)} — Score {score:.0f}/100\n"
             msg += f"   Prix : {price:.2f} | {shares} actions = {invest:.0f}€\n"
             msg += f"   Stop : {stop_p:.2f} (-{stop_pct:.1f}%) | TP : {tp_p:.2f} (+{tp_dynamic*100:.0f}%)\n\n"
         else:
-            msg += f"🔒 <b>{ticker}</b> {market} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
+            msg += f"🔒 <b>{ticker}</b> {market} — {tname(ticker)} — Score {score:.0f}/100 (prix : {price:.2f}, cash insuffisant)\n\n"
 
     # ── 4. LOGIQUE DE ROTATION ────────────────────────────────────────
     ROTATION_SCORE_THRESHOLD = SAT_THRESH + 10  # = 55
@@ -738,9 +810,9 @@ def run_satellite(state, spy_data):
                     cand_invest    = cand_shares * cand_price
 
                     rotation_lines.append(
-                        f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} "
+                        f"⚠️ <b>{worst_ticker}</b> {market_of(worst_ticker)} ({tname(worst_ticker)}) "
                         f"(P&L {worst_pnl*100:+.1f}%, score {worst_score:.0f}/100) "
-                        f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} "
+                        f"vs <b>{cand_ticker}</b> {market_of(cand_ticker)} ({tname(cand_ticker)}) "
                         f"(score {cand_score:.0f}/100, potentiel +{cand_tp*100:.0f}%)\n"
                         f"💡 Vends {worst_ticker} ({worst_shares} actions) → "
                         f"achète {cand_ticker} : ~{cand_shares} actions = {cand_invest:.0f}€\n"
