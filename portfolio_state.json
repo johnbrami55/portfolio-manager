@@ -92,11 +92,11 @@
       "take_profit": 1.29,
       "trailing_high": 1.0795,
       "beta": 1.0,
-      "currency": "HKD",
-      "eur_usd": 1.1581,
-      "current_price": 9.805,
-      "current_price_eur": 9.805,
-      "position_eur": 980.5
+      "currency": "EUR",
+      "eur_usd": 1.14,
+      "current_price": 1.08,
+      "current_price_eur": 1.08,
+      "position_eur": 108.00
     },
     "ASTS": {
       "entry_price": 84.7,
