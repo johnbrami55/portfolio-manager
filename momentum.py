@@ -39,16 +39,23 @@ YF_HEADERS = {
 }
 
 CORE_UNIVERSE = [
-    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "AMD",
-    "AVGO", "ORCL", "CRM", "ADBE", "NOW", "PANW", "SNPS", "CDNS",
-    "LMT", "RTX", "NOC", "GD",
-    "LLY", "ABBV", "ISRG", "DXCM",
-    "V", "MA", "GS", "MS", "JPM",
-    "COST", "HD", "WMT", "PG",
-    "XOM", "CVX",
-    "INTC", "CSCO", "T", "VZ", "BAC", "F", "PYPL", "DIS", "NKE", "PFE",
-    "KO", "PEP", "MRK", "ABT", "NEE", "PM", "UPS", "DHR",
-    "SXR8.DE",
+    # USA — blue chips < 100 USD
+    "CSCO", "INTC", "T", "VZ", "BAC", "WFC", "C",
+    "F", "GM", "PFE", "KO", "MO", "WBA", "PYPL",
+    "DIS", "NKE", "MRK", "PARA",
+    # France (EUR → USD, filtré à 100 USD au runtime)
+    "BNP.PA", "GLE.PA", "ACA.PA", "ORA.PA",
+    "TFI.PA", "STLAP.PA", "RNO.PA", "VIE.PA", "SGO.PA", "SAN.PA",
+    # Allemagne
+    "DBK.DE", "CBK.DE", "VNA.DE", "DTE.DE",
+    "BAYN.DE", "MBG.DE", "ENR.DE", "RWE.DE", "BMW.DE",
+    # Pays-Bas
+    "INGA.AS", "ABN.AS", "PHIA.AS", "UNA.AS", "RAND.AS",
+    # Espagne
+    "SAN.MC", "BBVA.MC", "IBE.MC", "REP.MC", "TEF.MC", "CLNX.MC",
+    # Hong Kong (HKD → USD, tous bien < 100 USD)
+    "0005.HK", "0941.HK", "1398.HK", "0939.HK", "2628.HK",
+    "0002.HK", "0003.HK", "0857.HK", "1088.HK", "0386.HK", "0762.HK",
 ]
 
 SATELLITE_UNIVERSE = [
@@ -414,10 +421,14 @@ def run_core(state, spy_data):
         logger.info(f"Core: pas de rebalancement (dernier: {state['last_rebal']})")
         return
 
+    MAX_CORE_PRICE = 100  # cohérence avec le budget par slot (en USD)
+
     scores = []
     for ticker in CORE_UNIVERSE:
         data = fetch_history(ticker)
         if not data:
+            continue
+        if data["price"] > MAX_CORE_PRICE:
             continue
         closes = data["closes"]
         if len(closes) >= 200:
