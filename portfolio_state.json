@@ -1,87 +1,228 @@
 {
   "core": {
-    "INTC": {"shares": 1, "entry_price": 121.48, "entry_date": "2026-06-17"},
-    "0857.HK": {"shares": 100, "entry_price": 1.0795, "entry_date": "2026-08-18"}
+    "INTC": {
+      "shares": 1,
+      "entry_price": 121.48,
+      "entry_date": "2026-06-17"
+    },
+    "0857.HK": {
+      "shares": 100,
+      "entry_price": 1.0795,
+      "entry_date": "2026-08-18"
+    }
   },
   "satellite": {
-    "ASTS": {"entry_price": 84.70, "entry_date": "2026-07-02", "atr_pct": 0.08, "shares": 4, "invested": 338.80},
-    "CIFR": {"entry_price": 22.38, "entry_date": "2026-07-06", "atr_pct": 0.09, "shares": 10, "invested": 223.80},
-    "CORZ": {"entry_price": 19.31, "entry_date": "2026-08-18", "atr_pct": 0.08, "shares": 8, "invested": 154.48},
-    "HIMS": {"entry_price": 33.305, "entry_date": "2026-07-20", "atr_pct": 0.07, "shares": 6, "invested": 199.83},
-    "IONQ": {"entry_price": 50.665, "entry_date": "2026-07-06", "atr_pct": 0.09, "shares": 6, "invested": 303.99},
-    "HOOD": {"entry_price": 93.575, "entry_date": "2026-08-18", "atr_pct": 0.06, "shares": 2, "invested": 187.15},
-    "RKLB": {"entry_price": 99.36, "entry_date": "2026-07-02", "atr_pct": 0.09, "shares": 1, "invested": 99.36},
-    "WULF": {"entry_price": 16.80, "entry_date": "2026-08-18", "atr_pct": 0.08, "shares": 9, "invested": 151.20}
+    "ASTS": {
+      "entry_price": 84.7,
+      "entry_date": "2026-07-02",
+      "atr_pct": 0.08,
+      "shares": 4,
+      "invested": 338.8
+    },
+    "CIFR": {
+      "entry_price": 22.38,
+      "entry_date": "2026-07-06",
+      "atr_pct": 0.09,
+      "shares": 10,
+      "invested": 223.8
+    },
+    "CORZ": {
+      "entry_price": 19.31,
+      "entry_date": "2026-08-18",
+      "atr_pct": 0.08,
+      "shares": 8,
+      "invested": 154.48
+    },
+    "HIMS": {
+      "entry_price": 33.305,
+      "entry_date": "2026-07-20",
+      "atr_pct": 0.07,
+      "shares": 6,
+      "invested": 199.83
+    },
+    "IONQ": {
+      "entry_price": 50.665,
+      "entry_date": "2026-07-06",
+      "atr_pct": 0.09,
+      "shares": 6,
+      "invested": 303.99
+    },
+    "HOOD": {
+      "entry_price": 93.575,
+      "entry_date": "2026-08-18",
+      "atr_pct": 0.06,
+      "shares": 2,
+      "invested": 187.15
+    },
+    "RKLB": {
+      "entry_price": 99.36,
+      "entry_date": "2026-07-02",
+      "atr_pct": 0.09,
+      "shares": 1,
+      "invested": 99.36
+    },
+    "WULF": {
+      "entry_price": 16.8,
+      "entry_date": "2026-08-18",
+      "atr_pct": 0.08,
+      "shares": 9,
+      "invested": 151.2
+    }
   },
   "positions": {
     "INTC": {
-      "entry_price": 121.48, "entry_date": "2026-06-17", "nb_shares": 1,
-      "stop_loss": 109.33, "take_profit": 143.35, "trailing_high": 121.48,
-      "beta": 3.3, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 97.00, "current_price_eur": 85.09, "position_eur": 85.09
+      "entry_price": 121.48,
+      "entry_date": "2026-06-17",
+      "nb_shares": 1,
+      "stop_loss": 109.33,
+      "take_profit": 143.35,
+      "trailing_high": 121.48,
+      "beta": 3.3,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 97.0,
+      "current_price_eur": 85.09,
+      "position_eur": 85.09
     },
     "0857.HK": {
-      "entry_price": 1.0795, "entry_date": "2026-08-18", "nb_shares": 100,
-      "stop_loss": 1.02, "take_profit": 1.29, "trailing_high": 1.0795,
-      "beta": 1.0, "currency": "EUR", "eur_usd": 1.14,
-      "current_price": 1.0795, "current_price_eur": 1.0795, "position_eur": 107.95
+      "entry_price": 1.0795,
+      "entry_date": "2026-08-18",
+      "nb_shares": 100,
+      "stop_loss": 1.02,
+      "take_profit": 1.29,
+      "trailing_high": 1.0795,
+      "beta": 1.0,
+      "currency": "EUR",
+      "eur_usd": 1.14,
+      "current_price": 1.0795,
+      "current_price_eur": 1.0795,
+      "position_eur": 107.95
     },
     "ASTS": {
-      "entry_price": 84.70, "entry_date": "2026-07-02", "nb_shares": 4,
-      "stop_loss": 76.23, "take_profit": 99.95, "trailing_high": 84.70,
-      "beta": 2.5, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 66.90, "current_price_eur": 58.68, "position_eur": 234.74
+      "entry_price": 84.7,
+      "entry_date": "2026-07-02",
+      "nb_shares": 4,
+      "stop_loss": 76.23,
+      "take_profit": 99.95,
+      "trailing_high": 84.7,
+      "beta": 2.5,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 66.9,
+      "current_price_eur": 58.68,
+      "position_eur": 234.74
     },
     "CIFR": {
-      "entry_price": 22.38, "entry_date": "2026-07-06", "nb_shares": 10,
-      "stop_loss": 20.14, "take_profit": 26.41, "trailing_high": 22.38,
-      "beta": 3.0, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 17.21, "current_price_eur": 15.10, "position_eur": 150.96
+      "entry_price": 22.38,
+      "entry_date": "2026-07-06",
+      "nb_shares": 10,
+      "stop_loss": 20.14,
+      "take_profit": 26.41,
+      "trailing_high": 22.38,
+      "beta": 3.0,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 17.21,
+      "current_price_eur": 15.1,
+      "position_eur": 150.96
     },
     "CORZ": {
-      "entry_price": 19.31, "entry_date": "2026-08-18", "nb_shares": 8,
-      "stop_loss": 17.75, "take_profit": 24.06, "trailing_high": 19.31,
-      "beta": 2.8, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 19.31, "current_price_eur": 16.94, "position_eur": 135.49
+      "entry_price": 19.31,
+      "entry_date": "2026-08-18",
+      "nb_shares": 8,
+      "stop_loss": 17.75,
+      "take_profit": 24.06,
+      "trailing_high": 19.31,
+      "beta": 2.8,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 19.31,
+      "current_price_eur": 16.94,
+      "position_eur": 135.49
     },
     "HIMS": {
-      "entry_price": 33.305, "entry_date": "2026-07-20", "nb_shares": 6,
-      "stop_loss": 29.97, "take_profit": 39.30, "trailing_high": 33.305,
-      "beta": 2.6, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 28.34, "current_price_eur": 24.86, "position_eur": 149.19
+      "entry_price": 33.305,
+      "entry_date": "2026-07-20",
+      "nb_shares": 6,
+      "stop_loss": 29.97,
+      "take_profit": 39.3,
+      "trailing_high": 33.305,
+      "beta": 2.6,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 28.34,
+      "current_price_eur": 24.86,
+      "position_eur": 149.19
     },
     "IONQ": {
-      "entry_price": 50.665, "entry_date": "2026-07-06", "nb_shares": 6,
-      "stop_loss": 45.60, "take_profit": 59.78, "trailing_high": 50.665,
-      "beta": 3.5, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 45.19, "current_price_eur": 39.64, "position_eur": 237.84
+      "entry_price": 50.665,
+      "entry_date": "2026-07-06",
+      "nb_shares": 6,
+      "stop_loss": 45.6,
+      "take_profit": 59.78,
+      "trailing_high": 50.665,
+      "beta": 3.5,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 45.19,
+      "current_price_eur": 39.64,
+      "position_eur": 237.84
     },
     "HOOD": {
-      "entry_price": 93.575, "entry_date": "2026-08-18", "nb_shares": 2,
-      "stop_loss": 84.21, "take_profit": 110.41, "trailing_high": 93.575,
-      "beta": 2.5, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 93.52, "current_price_eur": 82.04, "position_eur": 164.08
+      "entry_price": 93.575,
+      "entry_date": "2026-08-18",
+      "nb_shares": 2,
+      "stop_loss": 84.21,
+      "take_profit": 110.41,
+      "trailing_high": 93.575,
+      "beta": 2.5,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 93.52,
+      "current_price_eur": 82.04,
+      "position_eur": 164.08
     },
     "RKLB": {
-      "entry_price": 99.36, "entry_date": "2026-07-02", "nb_shares": 1,
-      "stop_loss": 89.42, "take_profit": 117.24, "trailing_high": 99.36,
-      "beta": 2.9, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 78.64, "current_price_eur": 69.0, "position_eur": 69.0
+      "entry_price": 99.36,
+      "entry_date": "2026-07-02",
+      "nb_shares": 1,
+      "stop_loss": 89.42,
+      "take_profit": 117.24,
+      "trailing_high": 99.36,
+      "beta": 2.9,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 78.64,
+      "current_price_eur": 69.0,
+      "position_eur": 69.0
     },
     "WULF": {
-      "entry_price": 16.80, "entry_date": "2026-08-18", "nb_shares": 9,
-      "stop_loss": 15.10, "take_profit": 20.16, "trailing_high": 16.80,
-      "beta": 3.2, "currency": "USD", "eur_usd": 1.14,
-      "current_price": 16.76, "current_price_eur": 14.70, "position_eur": 132.30
+      "entry_price": 16.8,
+      "entry_date": "2026-08-18",
+      "nb_shares": 9,
+      "stop_loss": 15.1,
+      "take_profit": 20.16,
+      "trailing_high": 16.8,
+      "beta": 3.2,
+      "currency": "USD",
+      "eur_usd": 1.14,
+      "current_price": 16.76,
+      "current_price_eur": 14.7,
+      "position_eur": 132.3
     }
   },
-  "last_rebal": "2026-06-18",
+  "last_rebal": "2026-08-18",
   "capital": 1893.0,
   "initial_capital": 1893.0,
   "cash_eur": 2,
   "current_regime": "BULL",
   "last_run": "2026-08-18T15:00:00",
-  "performance": {"total_pnl_eur": 0, "total_pnl_pct": 0, "weekly_returns": [], "vs_cac40": []},
+  "performance": {
+    "total_pnl_eur": 0,
+    "total_pnl_pct": 0,
+    "weekly_returns": [],
+    "vs_cac40": []
+  },
   "trade_history": [],
   "price_alerts": {},
   "signals_paused": false,
