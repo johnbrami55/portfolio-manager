@@ -434,6 +434,21 @@ def run_core(state, spy_data):
             return native_price * fx_eur
         return native_price  # déjà en USD
 
+    def price_eur_fn(ticker, native_price):
+        """Convertit le prix natif en EUR pour les calculs de position."""
+        if ticker.endswith(".HK"):
+            return native_price * fx_hkd / fx_eur  # HKD → USD → EUR
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+            return native_price  # déjà en EUR
+        return native_price / fx_eur  # USD → EUR
+
+    def native_currency(ticker):
+        if ticker.endswith(".HK"):
+            return "HKD"
+        if ticker.endswith((".PA", ".DE", ".AS", ".MC", ".MI", ".L", ".BR")):
+            return "€"
+        return "$"
+
     scores = []
     for ticker in CORE_UNIVERSE:
         data = fetch_history(ticker)
@@ -456,7 +471,8 @@ def run_core(state, spy_data):
                 dist_ath = (high_52w - closes_r_ath[0]) / high_52w
                 if dist_ath < 0.05:
                     continue
-            scores.append((ticker, mom, data["price"]))
+            # Stocker (ticker, momentum, prix_natif, prix_eur)
+            scores.append((ticker, mom, data["price"], price_eur_fn(ticker, data["price"])))
 
     scores.sort(key=lambda x: x[1], reverse=True)
     target = [s[0] for s in scores[:CORE_N]]
@@ -494,13 +510,15 @@ def run_core(state, spy_data):
         cash_available = state.get("cash_eur", 0)
         msg += f"📈 <b>ACHETER :</b>\n"
         for ticker in to_buy:
-            data = next((s for s in scores if s[0] == ticker), None)
-            if data:
-                price    = data[2]
-                shares   = int(slot_size / price)
-                invest   = shares * price
+            entry = next((s for s in scores if s[0] == ticker), None)
+            if entry:
+                price_native = entry[2]          # prix dans la devise native du marché
+                price_e      = entry[3]          # prix converti en EUR
+                curr         = native_currency(ticker)
+                shares       = int(slot_size / price_e)   # nb titres pour ~slot_size €
+                invest       = shares * price_e            # montant réel en EUR
                 msg += f"→ <b>{ticker}</b>\n"
-                msg += f"   Prix : {price:.2f}$\n"
+                msg += f"   Prix : {price_native:.2f} {curr}\n"
                 msg += f"   Shares : {shares}\n"
                 msg += f"   Investir : {invest:.0f}€\n"
                 if cash_available < invest + 140:
