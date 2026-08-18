@@ -683,8 +683,8 @@ def run_satellite(state, spy_data):
         sell = False; reason = ""
         if pnl >= SAT_TP:
             sell = True; reason = f"🎯 Take-profit ({pnl*100:.1f}%)"
-        elif days_held >= SAT_HOLD_DAYS:
-            sell = True; reason = f"⏱ Timeout ({days_held}j)"
+        elif days_held >= SAT_HOLD_DAYS and -0.03 <= pnl <= 0.03:
+            sell = True; reason = f"⏱ Timeout — position stagnante ({days_held}j, {pnl*100:+.1f}%)"
 
         if not sell:
             # Faiblesse relative vs secteur sur 5 jours
