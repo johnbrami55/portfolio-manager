@@ -79,10 +79,10 @@
       "trailing_high": 121.48,
       "beta": 3.74,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 93.425,
-      "current_price_eur": 80.0372,
-      "position_eur": 80.04
+      "eur_usd": 1.1666,
+      "current_price": 93.19,
+      "current_price_eur": 79.8825,
+      "position_eur": 79.88
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -93,7 +93,7 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1673,
+      "eur_usd": 1.1666,
       "current_price": 1.0895,
       "current_price_eur": 1.0895,
       "position_eur": 108.95
@@ -107,10 +107,10 @@
       "trailing_high": 84.7,
       "beta": 4.08,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 66.4349,
-      "current_price_eur": 56.9148,
-      "position_eur": 227.66
+      "eur_usd": 1.1666,
+      "current_price": 66.11,
+      "current_price_eur": 56.6695,
+      "position_eur": 226.68
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -121,10 +121,10 @@
       "trailing_high": 22.38,
       "beta": 3.47,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 16.215,
-      "current_price_eur": 13.8914,
-      "position_eur": 138.91
+      "eur_usd": 1.1666,
+      "current_price": 15.8499,
+      "current_price_eur": 13.5865,
+      "position_eur": 135.87
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -135,10 +135,10 @@
       "trailing_high": 19.31,
       "beta": 2.77,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 19.105,
-      "current_price_eur": 16.3673,
-      "position_eur": 130.94
+      "eur_usd": 1.1666,
+      "current_price": 18.755,
+      "current_price_eur": 16.0768,
+      "position_eur": 128.61
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -149,10 +149,10 @@
       "trailing_high": 33.305,
       "beta": 2.96,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 29.545,
-      "current_price_eur": 25.3112,
-      "position_eur": 151.87
+      "eur_usd": 1.1666,
+      "current_price": 29.55,
+      "current_price_eur": 25.3303,
+      "position_eur": 151.98
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -163,10 +163,10 @@
       "trailing_high": 50.665,
       "beta": 3.9,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 43.9465,
-      "current_price_eur": 37.649,
-      "position_eur": 225.89
+      "eur_usd": 1.1666,
+      "current_price": 43.3728,
+      "current_price_eur": 37.1792,
+      "position_eur": 223.07
     },
     "HOOD": {
       "entry_price": 93.575,
@@ -177,10 +177,10 @@
       "trailing_high": 93.575,
       "beta": 1.98,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 99.185,
-      "current_price_eur": 84.9718,
-      "position_eur": 169.94
+      "eur_usd": 1.1666,
+      "current_price": 96.79,
+      "current_price_eur": 82.9684,
+      "position_eur": 165.94
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -191,10 +191,10 @@
       "trailing_high": 99.36,
       "beta": 3.55,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 76.38,
-      "current_price_eur": 65.4347,
-      "position_eur": 65.43
+      "eur_usd": 1.1666,
+      "current_price": 76.36,
+      "current_price_eur": 65.4558,
+      "position_eur": 65.46
     },
     "WULF": {
       "entry_price": 16.8,
@@ -205,10 +205,10 @@
       "trailing_high": 16.8,
       "beta": 3.14,
       "currency": "USD",
-      "eur_usd": 1.1673,
-      "current_price": 15.705,
-      "current_price_eur": 13.4545,
-      "position_eur": 121.09
+      "eur_usd": 1.1666,
+      "current_price": 15.405,
+      "current_price_eur": 13.2052,
+      "position_eur": 118.85
     }
   },
   "last_rebal": "2026-08-18",
@@ -216,7 +216,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 2,
   "current_regime": "BULL",
-  "last_run": "2026-08-19T16:33:53.607914",
+  "last_run": "2026-08-19T17:28:27.232661",
   "performance": {
     "total_pnl_eur": 0,
     "total_pnl_pct": 0,
