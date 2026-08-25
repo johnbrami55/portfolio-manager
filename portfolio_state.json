@@ -87,9 +87,9 @@
       "beta": 1.0,
       "currency": "EUR",
       "eur_usd": 1.1678,
-      "current_price": 1.0965,
-      "current_price_eur": 1.0965,
-      "position_eur": 109.65
+      "current_price": 1.135,
+      "current_price_eur": 1.135,
+      "position_eur": 113.5
     },
     "ASTS": {
       "entry_price": 84.7,
@@ -195,7 +195,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 194.09581753829235,
   "current_regime": "BULL",
-  "last_run": "2026-08-25T21:30:35.376699",
+  "last_run": "2026-08-25T22:29:41.613378",
   "performance": {
     "total_pnl_eur": 31.80184459245939,
     "total_pnl_pct": 0.016799706599291805,
