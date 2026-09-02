@@ -70,12 +70,12 @@
       "stop_loss": 109.33,
       "take_profit": 143.35,
       "trailing_high": 121.48,
-      "beta": 3.67,
+      "beta": 3.66,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 88.97,
-      "current_price_eur": 76.7277,
-      "position_eur": 76.73
+      "current_price_eur": 76.8345,
+      "position_eur": 76.83
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -86,7 +86,7 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 1.1415,
       "current_price_eur": 1.1415,
       "position_eur": 114.15
@@ -100,10 +100,10 @@
       "trailing_high": 84.7,
       "beta": 4.05,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 55.8,
-      "current_price_eur": 48.1219,
-      "position_eur": 192.49
+      "current_price_eur": 48.1889,
+      "position_eur": 192.76
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -112,12 +112,12 @@
       "stop_loss": 20.14,
       "take_profit": 26.41,
       "trailing_high": 22.38,
-      "beta": 3.32,
+      "beta": 3.31,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 14.61,
-      "current_price_eur": 12.5997,
-      "position_eur": 126.0
+      "current_price_eur": 12.6172,
+      "position_eur": 126.17
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -126,12 +126,12 @@
       "stop_loss": 17.75,
       "take_profit": 24.06,
       "trailing_high": 19.31,
-      "beta": 2.76,
+      "beta": 2.7,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 16.07,
-      "current_price_eur": 13.8588,
-      "position_eur": 110.87
+      "current_price_eur": 13.8781,
+      "position_eur": 111.02
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -140,12 +140,12 @@
       "stop_loss": 29.97,
       "take_profit": 39.3,
       "trailing_high": 33.305,
-      "beta": 3.15,
+      "beta": 3.13,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 28.44,
-      "current_price_eur": 24.5267,
-      "position_eur": 147.16
+      "current_price_eur": 24.5608,
+      "position_eur": 147.36
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -156,10 +156,10 @@
       "trailing_high": 50.665,
       "beta": 3.89,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 37.78,
-      "current_price_eur": 32.5815,
-      "position_eur": 195.49
+      "current_price_eur": 32.6268,
+      "position_eur": 195.76
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -168,12 +168,12 @@
       "stop_loss": 89.42,
       "take_profit": 117.24,
       "trailing_high": 99.36,
-      "beta": 3.5,
+      "beta": 3.54,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 62.54,
-      "current_price_eur": 53.9345,
-      "position_eur": 53.93
+      "current_price_eur": 54.0095,
+      "position_eur": 54.01
     },
     "WULF": {
       "entry_price": 16.8,
@@ -182,12 +182,12 @@
       "stop_loss": 15.1,
       "take_profit": 20.16,
       "trailing_high": 16.8,
-      "beta": 2.96,
+      "beta": 2.95,
       "currency": "USD",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "current_price": 14.65,
-      "current_price_eur": 12.6342,
-      "position_eur": 113.71
+      "current_price_eur": 12.6517,
+      "position_eur": 113.87
     },
     "AIXA.DE": {
       "entry_price": 36.77,
@@ -202,7 +202,7 @@
       "beta": 1.0,
       "position_eur": 178.95,
       "currency": "EUR",
-      "eur_usd": 1.1596,
+      "eur_usd": 1.1579,
       "entry_score": 57.0,
       "current_price": 35.79,
       "current_price_eur": 35.79
@@ -213,7 +213,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 10.245817538292329,
   "current_regime": "BULL",
-  "last_run": "2026-09-01T23:58:10.613039",
+  "last_run": "2026-09-02T04:15:26.614786",
   "performance": {
     "total_pnl_eur": 31.80184459245939,
     "total_pnl_pct": 0.016799706599291805,
