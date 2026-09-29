@@ -72,10 +72,10 @@
       "trailing_high": 121.48,
       "beta": 4.0,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 116.03,
-      "current_price_eur": 102.0252,
-      "position_eur": 102.03
+      "current_price_eur": 102.234,
+      "position_eur": 102.23
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -86,10 +86,10 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1373,
-      "current_price": 1.045,
-      "current_price_eur": 1.045,
-      "position_eur": 104.5
+      "eur_usd": 1.1349,
+      "current_price": 1.069,
+      "current_price_eur": 1.069,
+      "position_eur": 106.9
     },
     "ASTS": {
       "entry_price": 84.7,
@@ -100,10 +100,10 @@
       "trailing_high": 84.7,
       "beta": 4.2,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 61.0,
-      "current_price_eur": 53.6373,
-      "position_eur": 214.55
+      "current_price_eur": 53.7471,
+      "position_eur": 214.99
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -114,10 +114,10 @@
       "trailing_high": 22.38,
       "beta": 3.66,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 16.74,
-      "current_price_eur": 14.7195,
-      "position_eur": 147.19
+      "current_price_eur": 14.7496,
+      "position_eur": 147.5
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -128,10 +128,10 @@
       "trailing_high": 19.31,
       "beta": 3.82,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 16.52,
-      "current_price_eur": 14.526,
-      "position_eur": 116.21
+      "current_price_eur": 14.5558,
+      "position_eur": 116.45
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -142,10 +142,10 @@
       "trailing_high": 33.305,
       "beta": 3.4,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 28.78,
-      "current_price_eur": 25.3063,
-      "position_eur": 151.84
+      "current_price_eur": 25.3581,
+      "position_eur": 152.15
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -156,10 +156,10 @@
       "trailing_high": 50.665,
       "beta": 3.81,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 44.58,
-      "current_price_eur": 39.1992,
-      "position_eur": 235.2
+      "current_price_eur": 39.2794,
+      "position_eur": 235.68
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -170,10 +170,10 @@
       "trailing_high": 99.36,
       "beta": 3.49,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 72.19,
-      "current_price_eur": 63.4767,
-      "position_eur": 63.48
+      "current_price_eur": 63.6066,
+      "position_eur": 63.61
     },
     "WULF": {
       "entry_price": 16.8,
@@ -184,10 +184,10 @@
       "trailing_high": 16.8,
       "beta": 3.35,
       "currency": "USD",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "current_price": 15.12,
-      "current_price_eur": 13.295,
-      "position_eur": 119.66
+      "current_price_eur": 13.3222,
+      "position_eur": 119.9
     },
     "AIXA.DE": {
       "entry_price": 36.77,
@@ -200,12 +200,12 @@
       "take_profit": 43.388600000000004,
       "trailing_high": 36.77,
       "beta": 1.0,
-      "position_eur": 174.0,
+      "position_eur": 182.5,
       "currency": "EUR",
-      "eur_usd": 1.1373,
+      "eur_usd": 1.1349,
       "entry_score": 57.0,
-      "current_price": 34.8,
-      "current_price_eur": 34.8
+      "current_price": 36.5,
+      "current_price_eur": 36.5
     }
   },
   "last_rebal": "2026-08-18",
@@ -213,7 +213,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 10.245817538292329,
   "current_regime": "BULL",
-  "last_run": "2026-09-29T02:13:56.439069",
+  "last_run": "2026-09-29T08:55:06.518305",
   "performance": {
     "total_pnl_eur": 31.80184459245939,
     "total_pnl_pct": 0.016799706599291805,
