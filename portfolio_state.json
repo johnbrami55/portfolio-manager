@@ -72,10 +72,10 @@
       "trailing_high": 121.48,
       "beta": 3.34,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 92.96,
-      "current_price_eur": 82.66,
-      "position_eur": 82.66
+      "current_price_eur": 82.8088,
+      "position_eur": 82.81
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -86,10 +86,10 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1246,
-      "current_price": 1.1115,
-      "current_price_eur": 1.1115,
-      "position_eur": 111.15
+      "eur_usd": 1.1226,
+      "current_price": 1.0755,
+      "current_price_eur": 1.0755,
+      "position_eur": 107.55
     },
     "ASTS": {
       "entry_price": 84.7,
@@ -100,10 +100,10 @@
       "trailing_high": 84.7,
       "beta": 4.51,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 40.9,
-      "current_price_eur": 36.3683,
-      "position_eur": 145.47
+      "current_price_eur": 36.4337,
+      "position_eur": 145.73
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -114,10 +114,10 @@
       "trailing_high": 22.38,
       "beta": 3.86,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 9.13,
-      "current_price_eur": 8.1184,
-      "position_eur": 81.18
+      "current_price_eur": 8.133,
+      "position_eur": 81.33
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -128,10 +128,10 @@
       "trailing_high": 19.31,
       "beta": 4.28,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 14.25,
-      "current_price_eur": 12.6711,
-      "position_eur": 101.37
+      "current_price_eur": 12.6939,
+      "position_eur": 101.55
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -142,10 +142,10 @@
       "trailing_high": 33.305,
       "beta": 3.63,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 29.21,
-      "current_price_eur": 25.9735,
-      "position_eur": 155.84
+      "current_price_eur": 26.0203,
+      "position_eur": 156.12
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -156,10 +156,10 @@
       "trailing_high": 50.665,
       "beta": 4.34,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 32.28,
-      "current_price_eur": 28.7034,
-      "position_eur": 172.22
+      "current_price_eur": 28.755,
+      "position_eur": 172.53
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -170,10 +170,10 @@
       "trailing_high": 99.36,
       "beta": 3.94,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 53.67,
-      "current_price_eur": 47.7234,
-      "position_eur": 47.72
+      "current_price_eur": 47.8092,
+      "position_eur": 47.81
     },
     "WULF": {
       "entry_price": 16.8,
@@ -184,10 +184,10 @@
       "trailing_high": 16.8,
       "beta": 4.16,
       "currency": "USD",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "current_price": 12.76,
-      "current_price_eur": 11.3462,
-      "position_eur": 102.12
+      "current_price_eur": 11.3666,
+      "position_eur": 102.3
     },
     "AIXA.DE": {
       "entry_price": 36.77,
@@ -200,12 +200,12 @@
       "take_profit": 43.388600000000004,
       "trailing_high": 36.77,
       "beta": 1.0,
-      "position_eur": 157.1,
+      "position_eur": 150.42,
       "currency": "EUR",
-      "eur_usd": 1.1246,
+      "eur_usd": 1.1226,
       "entry_score": 57.0,
-      "current_price": 31.42,
-      "current_price_eur": 31.42
+      "current_price": 30.085,
+      "current_price_eur": 30.085
     }
   },
   "last_rebal": "2026-09-29",
@@ -213,7 +213,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 10.245817538292329,
   "current_regime": "BULL",
-  "last_run": "2026-10-22T05:13:40.926037",
+  "last_run": "2026-10-22T10:28:27.419626",
   "performance": {
     "total_pnl_eur": 31.80184459245939,
     "total_pnl_pct": 0.016799706599291805,
