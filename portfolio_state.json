@@ -70,12 +70,12 @@
       "stop_loss": 109.33,
       "take_profit": 143.35,
       "trailing_high": 121.48,
-      "beta": 3.53,
+      "beta": 3.43,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 58.13,
-      "current_price_eur": 52.0496,
-      "position_eur": 52.05
+      "current_price_eur": 52.0961,
+      "position_eur": 52.1
     },
     "PC6.F": {
       "entry_price": 1.0795,
@@ -86,10 +86,10 @@
       "trailing_high": 1.0795,
       "beta": 1.0,
       "currency": "EUR",
-      "eur_usd": 1.1168,
-      "current_price": 1.1255,
-      "current_price_eur": 1.1255,
-      "position_eur": 112.55
+      "eur_usd": 1.1158,
+      "current_price": 1.139,
+      "current_price_eur": 1.139,
+      "position_eur": 113.9
     },
     "ASTS": {
       "entry_price": 84.7,
@@ -98,12 +98,12 @@
       "stop_loss": 76.23,
       "take_profit": 99.95,
       "trailing_high": 84.7,
-      "beta": 3.22,
+      "beta": 3.64,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 33.69,
-      "current_price_eur": 30.166,
-      "position_eur": 120.66
+      "current_price_eur": 30.193,
+      "position_eur": 120.77
     },
     "CIFR": {
       "entry_price": 22.38,
@@ -112,12 +112,12 @@
       "stop_loss": 20.14,
       "take_profit": 26.41,
       "trailing_high": 22.38,
-      "beta": 3.32,
+      "beta": 3.25,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 6.53,
-      "current_price_eur": 5.847,
-      "position_eur": 58.47
+      "current_price_eur": 5.8522,
+      "position_eur": 58.52
     },
     "CORZ": {
       "entry_price": 19.31,
@@ -126,12 +126,12 @@
       "stop_loss": 17.75,
       "take_profit": 24.06,
       "trailing_high": 19.31,
-      "beta": 2.86,
+      "beta": 2.94,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 13.13,
-      "current_price_eur": 11.7566,
-      "position_eur": 94.05
+      "current_price_eur": 11.7671,
+      "position_eur": 94.14
     },
     "HIMS": {
       "entry_price": 33.305,
@@ -140,12 +140,12 @@
       "stop_loss": 29.97,
       "take_profit": 39.3,
       "trailing_high": 33.305,
-      "beta": 2.65,
+      "beta": 1.89,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 19.13,
-      "current_price_eur": 17.129,
-      "position_eur": 102.77
+      "current_price_eur": 17.1443,
+      "position_eur": 102.87
     },
     "IONQ": {
       "entry_price": 50.665,
@@ -154,12 +154,12 @@
       "stop_loss": 45.6,
       "take_profit": 59.78,
       "trailing_high": 50.665,
-      "beta": 3.09,
+      "beta": 3.16,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 34.99,
-      "current_price_eur": 31.33,
-      "position_eur": 187.98
+      "current_price_eur": 31.358,
+      "position_eur": 188.15
     },
     "RKLB": {
       "entry_price": 99.36,
@@ -168,12 +168,12 @@
       "stop_loss": 89.42,
       "take_profit": 117.24,
       "trailing_high": 99.36,
-      "beta": 3.03,
+      "beta": 3.18,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 62.71,
-      "current_price_eur": 56.1505,
-      "position_eur": 56.15
+      "current_price_eur": 56.2007,
+      "position_eur": 56.2
     },
     "WULF": {
       "entry_price": 16.8,
@@ -182,12 +182,12 @@
       "stop_loss": 15.1,
       "take_profit": 20.16,
       "trailing_high": 16.8,
-      "beta": 3.75,
+      "beta": 3.76,
       "currency": "USD",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "current_price": 12.56,
-      "current_price_eur": 11.2462,
-      "position_eur": 101.22
+      "current_price_eur": 11.2563,
+      "position_eur": 101.31
     },
     "AIXA.DE": {
       "entry_price": 36.77,
@@ -200,12 +200,12 @@
       "take_profit": 43.388600000000004,
       "trailing_high": 36.77,
       "beta": 1.0,
-      "position_eur": 158.75,
+      "position_eur": 158.7,
       "currency": "EUR",
-      "eur_usd": 1.1168,
+      "eur_usd": 1.1158,
       "entry_score": 57.0,
-      "current_price": 31.75,
-      "current_price_eur": 31.75
+      "current_price": 31.74,
+      "current_price_eur": 31.74
     }
   },
   "last_rebal": "2026-11-10",
@@ -213,7 +213,7 @@
   "initial_capital": 1893.0,
   "cash_eur": 10.245817538292329,
   "current_regime": "BULL",
-  "last_run": "2026-11-10T21:23:28.689120",
+  "last_run": "2026-11-11T08:07:44.114303",
   "performance": {
     "total_pnl_eur": 31.80184459245939,
     "total_pnl_pct": 0.016799706599291805,
