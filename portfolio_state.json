@@ -1,16 +1,5 @@
 {
-  "core": {
-    "INTC": {
-      "shares": 1,
-      "entry_price": 121.48,
-      "entry_date": "2026-06-17"
-    },
-    "PC6.F": {
-      "shares": 100,
-      "entry_price": 1.0795,
-      "entry_date": "2026-08-18"
-    }
-  },
+  "core": {},
   "satellite": {
     "ASTS": {
       "entry_price": 84.7,
@@ -208,7 +197,7 @@
       "current_price_eur": 30.78
     }
   },
-  "last_rebal": "2026-11-10",
+  "last_rebal": "2026-11-17",
   "capital": 1893.0,
   "initial_capital": 1893.0,
   "cash_eur": 10.245817538292329,
